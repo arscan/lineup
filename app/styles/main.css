@@ -1,0 +1,10 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-image: url(../images/temp_background.jpg);
+    background-size: 100%;
+    background-position: bottom;
+}
