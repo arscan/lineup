@@ -27,51 +27,125 @@ angular.module('lineupApp')
             'width': '100%',
         });
 
-        console.log(Raphael);
-        
-        var paper = Raphael(elem[0], "100%", 100);
-        paper.path( ['M', 0, 22, 'L', elem.width(), 22 ] ).attr({width: '10px', stroke: '#b6a0b4', 'stroke-width':7, 'opacity': .5}).glow({color: '#b6a0b4', opacity: .2, width: 5});
-        paper.path( ['M', 0, 30, 'L', elem.width(), 30 ] ).attr({width: '10px', stroke: '#b6a0b4', 'stroke-width': 3, 'opacity': .5}).glow({color: '#b6a0b4', opacity: .2, width: 5});
-
-        var w = 0;
-        while(w < elem.width()){
-            w += 80;
-            paper.rect(w,11,5,8).attr({'stroke-width': 0, fill: '#b6a0b4', 'opacity': .5}).glow({color: '#b6a0b4', opacity: .2, width: 5});
-        }
-
-        w = 0;
-        while(w < elem.width()){
-            w += 102;
-            paper.rect(w,31,8,5).attr({id: 'hiii2', 'stroke-width': 0, fill: '#b6a0b4', 'opacity': .5}).glow({color: '#b6a0b4', opacity: .2, width: 5});
-        }
-
-        paper.path( ['M', 0, 42, 'L', elem.width(), 42 ] ).attr({width: '10px', stroke: '#12b7a7', 'stroke-width': 10, 'opacity': .3}).glow({color: '#12b7a7', opacity: .2, width: 5});
-
-        paper.path( ['M', 0, 75, 'L', elem.width(), 75 ] ).attr({width: '10px', stroke: '#12b7a7', 'stroke-width': 6, 'opacity': .3}).glow({color: '#12b7a7', opacity: .2, width: 5});
-
-        w = 500;
-        while(w < elem.width()-500){
-            w += 60;
-            paper.rect(10 + w,65,4,10).attr({id: 'hiii2', 'stroke-width': 0, fill: '#12b7a7', 'opacity': .3}).glow({color: '#12b7a7', opacity: .2, width: 5});
-        }
-
-        w = 0;
-        while(w < elem.width()){
-            w += 95;
-            paper.rect(10 + w,78,4,6).attr({id: 'hiii2', 'stroke-width': 0, fill: '#12b7a7', 'opacity': .3}).glow({color: '#12b7a7', opacity: .2, width: 5});
-        }
-
-        function drawTrapezoid(x, y, width, height){
-            paper.path(['M', x, y+height, 'L', x, y+height-10, 'L', x+ (height-10), y, 'L', x+width, y, 'L', x+width, y+10, 'L', x+width-(height-10), y+height, 'Z']).attr({'fill': '#12b7a7', opacity: .4, "stroke-width": 0});
-            
-            
-            
+        var PANEL_COLORS = {
+            BLUE: '#12b7a7', 
+            RED: '#b6a0b4', 
+            ORANGE: '#fd5f00'
         };
 
-        drawTrapezoid(160, 30, 800, 40);
-        drawTrapezoid(1400, 65, 500, 20);
+        var paper = new Raphael(elem[0], '100%', 100);
 
-        // paper.path(['M', 160, 70, 'L', 160, 60, 'L', 190, 30, 'L', 800, 30, 'L', 800, 40, 'L', 770, 70, 'Z']).attr({'fill': '#12b7a7', opacity: .4, "stroke-width": 0});
+        function drawTrapezoid(x, y, width, height){
+            paper
+               .path(['M', x, y+height, 'L', x, y+height-10, 'L', x+ (height-10), y, 'L', x+width, y, 'L', x+width, y+10, 'L', x+width-(height-10), y+height, 'Z'])
+               .attr({'fill': PANEL_COLORS.BLUE, opacity: 0.4, 'stroke-width': 0});
+        }
+
+        function drawHorizontalLine(x, y, width, strokeWidth, color){
+            paper
+               .path( ['M', x, y, 'L', x + width, y ] )
+               .attr({stroke: color, 'stroke-width':strokeWidth, 'opacity': 0.4})
+               .glow({color: color, opacity: 0.2, width: 5});
+        }
+
+        function drawTickMarks(x, y, width, height, gapWidth, count, color, label){
+
+            for(var i = 0; i< count; i++){
+
+                paper
+                   .rect(x + i * gapWidth,y,width,height)
+                   .attr({'stroke-width': 0, fill: color, 'opacity': 0.4})
+                   .glow({color: color, opacity: 0.2, width: 5});
+
+
+                if(typeof label === 'function'){
+                    var labelVal = label.call(window, i);
+                    if(typeof labelVal === 'string' && labelVal.length > 0){
+                        paper
+                           .text(2 + x + i * gapWidth, y-8, labelVal)
+                           .attr({'font-size': 12, fill: color, 'font-weight': 'bold', 'opacity': 0.4});
+                    }
+
+                }
+
+            }
+        } 
+
+
+        drawHorizontalLine(0,23,elem.width(),5,PANEL_COLORS.RED);
+        drawHorizontalLine(0,30,elem.width(),3,PANEL_COLORS.RED);
+
+        drawHorizontalLine(850,42,150,6,PANEL_COLORS.BLUE);
+
+        $(paper.rect(850,38,150,7)
+            .attr({'stroke-width': 0, fill: PANEL_COLORS.RED, 'opacity': 0.5}).node)
+            .velocity({x: "-=100", width: "+=120"}, {duration: 8000, loop: true, easing: "linear"});
+
+        drawHorizontalLine(1240,40,20,8,PANEL_COLORS.BLUE);
+        drawHorizontalLine(0,42,elem.width(),8,PANEL_COLORS.BLUE);
+        drawHorizontalLine(0,75,elem.width(),6,PANEL_COLORS.BLUE);
+        drawHorizontalLine(100,43,10,6,PANEL_COLORS.BLUE);
+        drawHorizontalLine(1440,45,260,5,PANEL_COLORS.ORANGE);
+        drawHorizontalLine(1750,38,100,5,PANEL_COLORS.ORANGE);
+        drawHorizontalLine(1460,38,180,5,PANEL_COLORS.RED);
+
+        drawTickMarks(10,15,3,5,80,elem.width()/80,PANEL_COLORS.RED);
+        drawTickMarks(30,32,9,4,120,elem.width()/120,PANEL_COLORS.RED);
+        drawTickMarks(300,15,3,5,25,15,PANEL_COLORS.RED);
+        drawTickMarks(1300,15,3,5,100,5,PANEL_COLORS.RED);
+        drawTickMarks(10,78,4,6,95,(elem.width())/95,PANEL_COLORS.BLUE);
+
+        drawTickMarks(500,65,4,10,60,(elem.width()-1000)/60,PANEL_COLORS.BLUE, function(index){
+            if(index % 2){
+                return null;
+            } else {
+                return '' +  (10 + Math.floor(Math.random()*90));
+            }
+        });
+
+        drawTrapezoid(160, 33, 600, 40);
+        drawTrapezoid(1300, 65, 500, 20);
+        drawTrapezoid(250, 25, 550, 25);
+
+        $(paper.rect(500,15,200,4)
+            .attr({'stroke-width': 0, fill: PANEL_COLORS.BLUE, 'opacity': 0.8}).node)
+            .velocity({x: "+=900"}, {duration: 2000, loop: true, easing: "linear"});
+
+        $(paper.rect(800,48,35,8)
+            .attr({'stroke-width': 0, fill: PANEL_COLORS.BLUE, 'opacity': 0.8}).node)
+            .velocity({x: "+=500"}, {delay: 234, duration: 1000, loop: true, easing: "linear"});
+
+        $(paper.rect(800,30,100,4)
+            .attr({'stroke-width': 0, fill: PANEL_COLORS.RED, 'opacity': 0.5}).node)
+            .velocity({x: "+=500", width: "-=80"}, {delay: 150, duration: 4000, loop: true, easing: "linear"});
+
+
+
+        // tester.node.id = 'tester';
+        // $("#tester").velocity({x: "+=200"});
+
+        /*
+        function createAnimation(start, end, element){
+            
+            return function(){
+                   return $(element).velocity({x: '+=100'});
+            };
+        }
+
+        // var anim = createAnimation(100,elem.width()-400, tester.node);
+
+        var anim1 = $(tester.node).velocity({x: '+=100', y: function(){return '+' + Math.random()*100}}, {loop: true, duration: 1000});
+
+        setTimeout(function(){
+            console.log(anim1);
+
+        }, 4000);
+
+       */
+
+
+        // $(tester.node).velocity({x: "+=500"}, {loop:4});
+
 
 
     }
