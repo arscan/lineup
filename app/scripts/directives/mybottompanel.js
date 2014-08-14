@@ -75,15 +75,17 @@ angular.module('lineupApp')
         drawHorizontalLine(0,23,elem.width(),5,PANEL_COLORS.RED);
         drawHorizontalLine(0,30,elem.width(),3,PANEL_COLORS.RED);
 
-        drawHorizontalLine(850,42,150,6,PANEL_COLORS.BLUE);
+        drawHorizontalLine(0,42,elem.width(),8,PANEL_COLORS.BLUE);
 
-        $(paper.rect(850,38,150,7)
-            .attr({'stroke-width': 0, fill: PANEL_COLORS.RED, 'opacity': 0.5}).node)
+        $(paper.rect(850,40,150,5)
+            .attr({'stroke-width': 0, fill: PANEL_COLORS.RED, 'opacity': 0.8}).node)
             .velocity({x: "-=100", width: "+=120"}, {duration: 8000, loop: true, easing: "linear"});
 
-        drawHorizontalLine(1240,40,20,8,PANEL_COLORS.BLUE);
-        drawHorizontalLine(0,42,elem.width(),8,PANEL_COLORS.BLUE);
+            drawHorizontalLine(850,42,150,6,PANEL_COLORS.BLUE);
         drawHorizontalLine(0,75,elem.width(),6,PANEL_COLORS.BLUE);
+        drawHorizontalLine(1240,40,20,8,PANEL_COLORS.BLUE);
+
+
         drawHorizontalLine(100,43,10,6,PANEL_COLORS.BLUE);
         drawHorizontalLine(1440,45,260,5,PANEL_COLORS.ORANGE);
         drawHorizontalLine(1750,38,100,5,PANEL_COLORS.ORANGE);
@@ -118,35 +120,6 @@ angular.module('lineupApp')
         $(paper.rect(800,30,100,4)
             .attr({'stroke-width': 0, fill: PANEL_COLORS.RED, 'opacity': 0.5}).node)
             .velocity({x: "+=500", width: "-=80"}, {delay: 150, duration: 4000, loop: true, easing: "linear"});
-
-
-
-        // tester.node.id = 'tester';
-        // $("#tester").velocity({x: "+=200"});
-
-        /*
-        function createAnimation(start, end, element){
-            
-            return function(){
-                   return $(element).velocity({x: '+=100'});
-            };
-        }
-
-        // var anim = createAnimation(100,elem.width()-400, tester.node);
-
-        var anim1 = $(tester.node).velocity({x: '+=100', y: function(){return '+' + Math.random()*100}}, {loop: true, duration: 1000});
-
-        setTimeout(function(){
-            console.log(anim1);
-
-        }, 4000);
-
-       */
-
-
-        // $(tester.node).velocity({x: "+=500"}, {loop:4});
-
-
 
     }
     return {
