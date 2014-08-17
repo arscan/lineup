@@ -22,7 +22,7 @@
     <!-- Add your site or application content here -->
     <div class="container">
 
-      <div ng-view=""></div>
+      <div ng-view="" class="backdrop"></div>
 
     </div>
 
@@ -37,6 +37,9 @@
        ga('create', 'UA-XXXXX-X');
        ga('send', 'pageview');
     </script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.js"></script>
+    <script src="scripts/AssimpJSONLoader.js"></script>
 
     <!-- build:js(.) scripts/oldieshim.js -->
     <!--[if lt IE 9]>
@@ -59,11 +62,13 @@
     <!-- endbower -->
     <!-- endbuild -->
 
+
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/directives/myinfogroup.js"></script>
         <script src="scripts/directives/mybottompanel.js"></script>
+        <script src="scripts/directives/myskeleton.js"></script>
         <!-- endbuild -->
 </body>
 </html>

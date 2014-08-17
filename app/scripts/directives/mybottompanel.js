@@ -79,7 +79,7 @@ angular.module('lineupApp')
 
         $(paper.rect(850,40,150,5)
             .attr({'stroke-width': 0, fill: PANEL_COLORS.RED, 'opacity': 0.8}).node)
-            .velocity({x: "-=100", width: "+=120"}, {duration: 8000, loop: true, easing: "linear"});
+            .velocity({x: '-=100', width: '+=120'}, {duration: 8000, loop: true, easing: 'linear'});
 
             drawHorizontalLine(850,42,150,6,PANEL_COLORS.BLUE);
         drawHorizontalLine(0,75,elem.width(),6,PANEL_COLORS.BLUE);
@@ -111,15 +111,15 @@ angular.module('lineupApp')
 
         $(paper.rect(500,15,200,4)
             .attr({'stroke-width': 0, fill: PANEL_COLORS.BLUE, 'opacity': 0.8}).node)
-            .velocity({x: "+=900"}, {duration: 2000, loop: true, easing: "linear"});
+            .velocity({x: '+=900'}, {duration: 2000, loop: true, easing: 'linear'});
 
         $(paper.rect(800,48,35,8)
             .attr({'stroke-width': 0, fill: PANEL_COLORS.BLUE, 'opacity': 0.8}).node)
-            .velocity({x: "+=500"}, {delay: 234, duration: 1000, loop: true, easing: "linear"});
+            .velocity({x: '+=500'}, {delay: 234, duration: 1000, loop: true, easing: 'linear'});
 
         $(paper.rect(800,30,100,4)
             .attr({'stroke-width': 0, fill: PANEL_COLORS.RED, 'opacity': 0.5}).node)
-            .velocity({x: "+=500", width: "-=80"}, {delay: 150, duration: 4000, loop: true, easing: "linear"});
+            .velocity({x: '+=500', width: '-=80'}, {delay: 150, duration: 4000, loop: true, easing: 'linear'});
 
     }
     return {
