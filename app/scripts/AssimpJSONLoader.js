@@ -301,7 +301,6 @@ THREE.AssimpJSONLoader.prototype = {
             idx = node.meshes[i];
             obj.add(new THREE.Mesh( meshes[idx], material));
         }
-        console.log("putting material");
         // load the material
         /*
         for(i = 0; node.meshes && i < node.meshes.length; ++i) {

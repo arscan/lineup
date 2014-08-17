@@ -27,7 +27,7 @@
 
     function createScene(element, width, height){
 
-        var container, scene, renderer, camera, light, clock;
+        var container, scene, renderer, camera, clock;
         var VIEW_ANGLE, ASPECT, NEAR, FAR;
 
         container = (element[0]);
@@ -49,7 +49,9 @@
         // renderer.shadowMapType = THREE.PCFShadowMap;
         // renderer.shadowMapAutoUpdate = true;
 
-        container.appendChild(renderer.domElement);
+        var canvas = renderer.domElement;
+
+        container.appendChild(canvas);
 
         camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 
@@ -70,6 +72,7 @@
 
             assimpjson.scale.x = assimpjson.scale.y = assimpjson.scale.z = 1.2;
             assimpjson.updateMatrix();
+            assimpjson.rotation.y = Math.PI/2;
 
             scene.add(assimpjson);
             requestAnimationFrame(render);
@@ -84,29 +87,33 @@
             renderer.render(scene, camera);
             requestAnimationFrame(render);
         }
+
+        return $(canvas);
     }
 
 
     angular.module('lineupApp')
     .directive('mySkeleton', function () {
         return {
-            template: '<div style="position: absolute; width: 500; height: 500; bottom: 320px; left: 400px;" class="skeleton"></div>',
+            template: '<div style="position: absolute; width: 500; height: 0; bottom: 320px; left: 450px; overflow: hidden;" class="skeleton"></div>',
             restrict: 'E',
             link: function postLink(scope, element, attrs) {
-                 var width = attrs.width || 300,
-                     height = attrs.height || 300,
+                 var width = attrs.width || 350,
+                     height = attrs.height || 350,
+                     delay = attrs.delay || 0,
                      skeletonDiv = $('.skeleton', element);
+                
+            setTimeout(function(){
+                var skeletonCanvas = createScene($('.skeleton', element), width, height);
 
-                 // skeletonDiv.velocity({bottom: '+=10', left: '+=10'}, {loop: true});
-            // skeletonDiv.velocity({top: '+=500', width: '-=80'}, {delay: 150, duration: 4000, loop: true, easing: 'linear'});
+                skeletonCanvas.css({
+                     position: 'relative',
+                     top: height * -1
+                 });
 
-
-                     console.log('---');
-                     console.log(attrs);
-                     console.log('---');
-
-                console.log(attrs);
-                createScene($('.skeleton', element), width, height);
+                skeletonDiv.velocity({height: height}, {duration:  3000, delay: delay});
+                skeletonCanvas.velocity({top: 0}, {duration: 3000, delay: delay});
+            }, 4000);
 
             }
         };
