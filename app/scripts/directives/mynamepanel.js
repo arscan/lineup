@@ -23,7 +23,8 @@ angular.module('lineupApp')
               'text-transform': 'uppercase',
               'height': '300px',
               'font-family': '"Roboto", sans-serif',
-              'padding-left': '80px'
+              'padding-left': '80px',
+              'text-shadow': '0 0 30px #fff'
           });
 
           var nameHeader = $('<div>name</div>');
