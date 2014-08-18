@@ -15,6 +15,7 @@ angular.module('lineupApp')
           var outerDiv = $('<div/>');
 
           outerDiv.css({
+              opacity: 0.6,
               position: 'absolute',
               left: -300,
               bottom: 500,
@@ -162,9 +163,9 @@ angular.module('lineupApp')
 
           outerDiv
              .velocity({bottom: 190, left: 300})
-             .delay(7000)
+             .delay(5000)
              .velocity({left: 30})
-             .velocity({left: 0}, {duration: 3000, loop: true});
+             .velocity({left: 0}, {duration: 3000, loop: false});
 
           svgContainer.velocity({top: '-=100px', height: 200}, {duration:  700, delay: 2800, easing: 'linear', progress: function(el,percent){ }});
           svgSubContainer.velocity({top: 0}, {duration: 700, delay: 2800, easing: 'linear'});
@@ -173,11 +174,11 @@ angular.module('lineupApp')
           $('li.infoBox0', infoBox)
              .delay(1500)
              .velocity('transition.slideRightIn', {stagger: 100})
-             .delay(5000)
+             .delay(3000)
              .velocity('transition.slideRightOut', {duration: 100});
 
           $('li.infoBox1', infoBox)
-             .delay(8500)
+             .delay(6500)
              .velocity('transition.slideRightIn', {stagger:  200});
 
       }

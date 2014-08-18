@@ -18,7 +18,7 @@
         fragmentShader: [
             'varying vec3 vNormal;',
             'void main() {',
-            '  float intensity = 1.05 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
+            '  float intensity = 1.20 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
             '  vec3 outline = vec3( 0.0708, 0.714, 0.652 ) * pow( intensity, 3.0 );',
             '  gl_FragColor = vec4(outline, intensity);',
             '}'
@@ -108,12 +108,14 @@
 
                 skeletonCanvas.css({
                      position: 'relative',
-                     top: height * -1
+                     top: height * -1,
+                     '-webkit-filter': 'blur(1px)'
+                     
                  });
 
                 skeletonDiv.velocity({height: height}, {duration:  3000, delay: delay});
                 skeletonCanvas.velocity({top: 0}, {duration: 3000, delay: delay});
-            }, 4000);
+            }, 7000);
 
             }
         };
