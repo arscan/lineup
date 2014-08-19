@@ -91,11 +91,10 @@
         return $(canvas);
     }
 
-
     angular.module('lineupApp')
     .directive('mySkeleton', function () {
         return {
-            template: '<div style="position: absolute; width: 500; height: 0; bottom: 320px; left: 450px; overflow: hidden;" class="skeleton"></div>',
+            template: '<div style="position: absolute; width: 500; height: 0; bottom: 320px; left: 400px; overflow: hidden;" class="skeleton"></div>',
             restrict: 'E',
             link: function postLink(scope, element, attrs) {
                  var width = attrs.width || 350,
