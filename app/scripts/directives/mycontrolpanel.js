@@ -24,6 +24,7 @@ angular.module('lineupApp')
               'border-radius': '5px',
               opacity: 0,
               width: '300px',
+              'z-index': 2
           });
 
           $(".header", element).css({
@@ -42,8 +43,8 @@ angular.module('lineupApp')
           });
 
           $(".button", element).click(function(){
-              console.log($(this).data("position"));
               scope.currentPosition = $(this).data("position");
+              scope.$apply();
           });
 
 

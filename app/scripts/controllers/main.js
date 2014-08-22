@@ -10,5 +10,4 @@
 angular.module('lineupApp')
   .controller('MainCtrl', function ($scope) {
     $scope.currentPosition = 0;
-    $scope.$watch(function(){console.log("CHANGED")});
   });

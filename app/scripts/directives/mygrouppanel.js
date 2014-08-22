@@ -19,11 +19,8 @@ angular.module('lineupApp')
 
           scope.index = (!attrs.index ? 0 : attrs.index);
 
+          /* todo: implement */
           scope.$watch('currentPosition', function(){console.log("Position changed to " + scope.currentPosition)});
-
-          // setInterval(function(){console.log(scope.currentPosition), 2000});
-
-          console.log(scope.currentPosition);
 
           console.log(scope.index);
 
