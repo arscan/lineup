@@ -8,8 +8,14 @@
  */
 angular.module('lineupApp')
   .directive('myControlPanel', function () {
+    var template = '<div>' +
+        '<div class="header">Control Panel Placeholder</div>' + 
+        '<div class="button" ng-click="currentPosition = 0" ng-class="{selected: currentPosition == 0}">Projects</div>' + 
+        '<div class="button" ng-click="currentPosition = 1" ng-class="{selected: currentPosition == 1}">Thing 2</div>' + 
+        '<div class="button" ng-click="currentPosition = 2" ng-class="{selected: currentPosition == 2}">Thing 3</div>' + 
+        '<div class="button" ng-click="currentPosition = 3" ng-class="{selected: currentPosition == 3}">Thing 4</div></div>';
     return {
-      template: '<div><div class="header">Control Panel Placeholder</div><div class="button" data-position="0">Projects</div><div class="button" data-position="1">Thing 2</div><div class="button" data-position="2">Thing 3</div><div class="button" data-position="3">Thing 4</div></div>',
+      template: template,
       restrict: 'E',
       scope: {
           currentPosition: '='
@@ -41,11 +47,13 @@ angular.module('lineupApp')
               cursor: 'pointer',
               'border-radius': 4
           });
+          /*
 
           $(".button", element).click(function(){
               scope.currentPosition = $(this).data("position");
               scope.$apply();
           });
+         */
 
 
 
