@@ -45,7 +45,6 @@ angular.module('lineupApp')
           createArc(100, 100, 60, 140, 270).attr({stroke: '#12b7a7', 'stroke-width': '2px'});
           createArc(100, 100, 99, 359, 0).attr({stroke: '#12b7a7', 'stroke-width': '2px'});
 
-
           element.append(outerDiv);
 
           outerDiv.velocity({left: 200},{delay: 100, duration: 1000} );

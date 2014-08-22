@@ -9,9 +9,6 @@
  */
 angular.module('lineupApp')
   .controller('MainCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
+    $scope.currentPosition = 0;
+    $scope.$watch(function(){console.log("CHANGED")});
   });

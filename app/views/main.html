@@ -2,10 +2,17 @@
 
 <img src="images/quill.png" id="quill"/>
 
+<my-control-panel current-position="currentPosition"></my-control-panel>
 <my-name-panel></my-name-panel>
 <my-skeleton width="450" height="450"></my-skeleton>
 <my-circle-viz></my-circle-viz>
-<my-group-panel title="Projects">
+
+<my-group-panel title="Projects" current-position="{{currentPosition}}">
+    <my-encom-boardroom></my-encom-boardroom>
+    <my-encom-globe></my-encom-globe>
+    <my-hexasphere></my-hexasphere>
+    <my-github-timeline></my-github-timeline>
+    <my-streamed></my-streamed>
 </my-group-panel>
 <!--
 <my-group-panel title="Vitals">

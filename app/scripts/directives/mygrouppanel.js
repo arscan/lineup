@@ -9,21 +9,44 @@
 angular.module('lineupApp')
   .directive('myGroupPanel', function () {
     return {
+      transclude: true,
       template: '<div ng-transclude></div ng-transclude>',
       restrict: 'E',
-      transclude: true,
+      scope: {
+          currentPosition: '@'
+      },
       link: function postLink(scope, element, attrs) {
+
+          scope.index = (!attrs.index ? 0 : attrs.index);
+
+          scope.$watch('currentPosition', function(){console.log("Position changed to " + scope.currentPosition)});
+
+          // setInterval(function(){console.log(scope.currentPosition), 2000});
+
+          console.log(scope.currentPosition);
+
+          console.log(scope.index);
+
+          $(element).css({
+              position: "absolute",
+              right: 100,
+              bottom: 400,
+              width: 500,
+          });
 
           var children = $(element).children().children();
 
           children.css({
-              border: '1px solid #fff'
+              border: '1px solid #fff',
+              padding: '10px',
+              width: 200,
+              float: 'left'
           });
 
 
           var $titleDiv = $("<div/>");
 
-          var paper = new Raphael(element[0], 300, 100);
+          var paper = new Raphael(element[0], 300, 50);
 
           $titleDiv.text(attrs.title);
 
@@ -40,13 +63,6 @@ angular.module('lineupApp')
               'left': 35
           });
 
-          $(element).css({
-              position: "absolute",
-              right: 200,
-              top: 300,
-              width: 500,
-              height: 100
-          });
 
           paper
               .path( ['M', 5, 15, 'L', 5, 40, 'L', 250, 40 ] )
