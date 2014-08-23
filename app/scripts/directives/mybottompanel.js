@@ -29,7 +29,7 @@ angular.module('lineupApp')
 
         var PANEL_COLORS = {
             BLUE: '#12b7a7', 
-            RED: '#b6a0b4', 
+            RED: '#eac7df', 
             ORANGE: '#fd5f00'
         };
 

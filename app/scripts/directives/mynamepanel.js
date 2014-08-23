@@ -19,24 +19,25 @@ angular.module('lineupApp')
               position: 'absolute',
               left: -300,
               bottom: 500,
-              color: '#b6a0b4',
+              color: '#eac7df',
               'text-transform': 'uppercase',
               'height': '300px',
               'font-family': '"Roboto", sans-serif',
               'padding-left': '80px',
-              'text-shadow': '0 0 30px #fff'
+              'text-shadow': '0 0 30px #eac7df'
           });
 
           var nameHeader = $('<div>name</div>');
           nameHeader.css({
               color: '#12b7a7',
              'line-height': '1em',
-             'font-weight': 'bold'
+             'font-weight': 'bold',
+              'text-shadow': '0 0 30px #12b7a7'
           });
 
           var nameBox = $('<div>Scanlon</div>');
           nameBox.css({
-             color: '#b6a0b4',
+             color: '#eac7df',
              'font-size': '2.6em',
              'line-height': '1em',
              'margin-bottom': '15px',
@@ -118,8 +119,8 @@ angular.module('lineupApp')
 
               paper
                 .path( ['M', 26, yStart, 'L', 42, yStart + dir*16, 'L', 70, yStart + dir*16 ] )
-                .attr({stroke: '#b6a0b4', 'stroke-width':1, 'opacity': 0.5})
-                .glow({color: '#b6a0b4', opacity: 0.2, width: 5});
+                .attr({stroke: '#eac7df', 'stroke-width':1, 'opacity': 0.5})
+                .glow({color: '#eac7df', opacity: 0.2, width: 5});
           }
 
           /* blue vertical line */
@@ -131,20 +132,20 @@ angular.module('lineupApp')
           /* stem of bullets */
           paper
             .path( ['M', 0, 100, 'L', 34, 100] )
-            .attr({stroke: '#b6a0b4', 'stroke-width':1, 'opacity': 0.5})
-            .glow({color: '#b6a0b4', opacity: 0.2, width: 5});
+            .attr({stroke: '#eac7df', 'stroke-width':1, 'opacity': 0.5})
+            .glow({color: '#eac7df', opacity: 0.2, width: 5});
 
           /* two short middle bullets */
 
           paper
             .path( ['M', 34, 100, 'L', 42, 92, 'L', 70, 92] )
-            .attr({stroke: '#b6a0b4', 'stroke-width':1, 'opacity': 0.5})
-            .glow({color: '#b6a0b4', opacity: 0.2, width: 5});
+            .attr({stroke: '#eac7df', 'stroke-width':1, 'opacity': 0.5})
+            .glow({color: '#eac7df', opacity: 0.2, width: 5});
 
           paper
             .path( ['M', 34, 100, 'L', 42, 108, 'L', 70, 108] )
-            .attr({stroke: '#b6a0b4', 'stroke-width':1, 'opacity': 0.5})
-            .glow({color: '#b6a0b4', opacity: 0.2, width: 5});
+            .attr({stroke: '#eac7df', 'stroke-width':1, 'opacity': 0.5})
+            .glow({color: '#eac7df', opacity: 0.2, width: 5});
 
           for(var i = 1; i<13; i++){
               var dir = -1;
