@@ -9,7 +9,6 @@
 angular.module('lineupApp')
   .directive('myControlPanel', function () {
     var template = '<div>' +
-        '<div class="header">Control Panel Placeholder</div>' + 
         '<div class="button" ng-click="currentPosition = 0" ng-class="{selected: currentPosition == 0}">Projects</div>' + 
         '<div class="button" ng-click="currentPosition = 1" ng-class="{selected: currentPosition == 1}">Bio</div>' + 
         '<div class="button" ng-click="currentPosition = 2" ng-class="{selected: currentPosition == 2}">Travel</div>' + 
@@ -25,18 +24,12 @@ angular.module('lineupApp')
           
           element.css({
               position: 'absolute',
-              bottom: '550px',
-              left: '175px',
+              bottom: '150px',
+              right: '175px',
               color: '#fff',
-              border: '1px solid #aaa',
-              'border-radius': '5px',
               opacity: 0,
-              width: '300px',
+              width: '400px',
               'z-index': 2
-          });
-
-          $(".header", element).css({
-              'border-bottom': '1px solid #aaa'
           });
 
           $(".button", element).css({
@@ -49,32 +42,15 @@ angular.module('lineupApp')
               cursor: 'pointer',
               'border-radius': 4
           });
-          /*
-
-          $(".button", element).click(function(){
-              scope.currentPosition = $(this).data("position");
-              scope.$apply();
-          });
-         */
-
-
 
           element
              .velocity({scale: 0}, {duration: 0})
              .velocity({
-                  left: 150,
-                  bottom: 600,
+                  right: 150,
                   opacity: 0.8,
                   scale: 1,
               }, {
-                  delay: 8000, 
-                  duration: 1000,
-                  easing: 'easeOutBack'
-              })
-              .velocity({
-                  left: 160,
-                  easing: 'easeOutBack'
-              }, {
+                  delay: 2000, 
                   duration: 1000,
                   easing: 'easeOutBack'
               });

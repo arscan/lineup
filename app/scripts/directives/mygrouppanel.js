@@ -8,6 +8,11 @@
  */
 angular.module('lineupApp')
   .directive('myGroupPanel', function () {
+    var COLORS = {
+        ORANGE: '#fd5f00',
+        PINK: '#EAC7DF',
+        BLUE: '#12B7A7'
+    };
     var PANEL_POSITIONS = [
         {right: 100, bottom: 400, scale: 1, opacity: 1},
         {right: -500, bottom: 400, scale: 1, opacity: 1},
@@ -72,30 +77,32 @@ angular.module('lineupApp')
 
 
           $titleDiv.css({
-              color: "#fff",
+              color: "#f7d671",
               'font-family': '"Roboto", sans-serif',
               'text-transform': 'uppercase',
               'font-size': "1.4em",
               'position': 'absolute',
               'top': 0,
-              'left': 35
+              'left': 35,
           });
+
 
           paper
               .path( ['M', 5, 15, 'L', 5, 40, 'L', 250, 40 ] )
-              .attr({stroke: "#fff", 'stroke-width':2, 'opacity': 0.4, 'position': 'absolute'})
-              .glow({color: "#fff", opacity: 0.2, width: 5});
+              .attr({stroke: COLORS.ORANGE, 'stroke-width':2, 'opacity': 0.4, 'position': 'absolute'})
+              .glow({color: COLORS.ORANGE, opacity: 0.2, width: 5});
 
           paper
               .circle(5,15,3)
-              .attr({fill: "#fff", 'stroke-width':0, 'opacity': 0.6, 'position': 'absolute'})
-              .glow({color: "#fff", opacity: 0.2, width: 5});
+              .attr({fill: COLORS.PINK, 'stroke-width':0, 'opacity': 0.6, 'position': 'absolute'})
+              .glow({color: COLORS.PINK, opacity: 0.2, width: 5});
 
           paper
               .circle(5,40,3)
-              .attr({fill: "#fff", 'stroke-width':0, 'opacity': 0.6, 'position': 'absolute'})
-              .glow({color: "#fff", opacity: 0.2, width: 5});
+              .attr({fill: COLORS.PINK, 'stroke-width':0, 'opacity': 0.6, 'position': 'absolute'})
+              .glow({color: COLORS.PINK, opacity: 0.2, width: 5});
 
+         
 
 
           $(element).append($titleDiv);
