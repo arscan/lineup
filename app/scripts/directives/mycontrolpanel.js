@@ -11,9 +11,10 @@ angular.module('lineupApp')
     var template = '<div>' +
         '<div class="header">Control Panel Placeholder</div>' + 
         '<div class="button" ng-click="currentPosition = 0" ng-class="{selected: currentPosition == 0}">Projects</div>' + 
-        '<div class="button" ng-click="currentPosition = 1" ng-class="{selected: currentPosition == 1}">Thing 2</div>' + 
-        '<div class="button" ng-click="currentPosition = 2" ng-class="{selected: currentPosition == 2}">Thing 3</div>' + 
-        '<div class="button" ng-click="currentPosition = 3" ng-class="{selected: currentPosition == 3}">Thing 4</div></div>';
+        '<div class="button" ng-click="currentPosition = 1" ng-class="{selected: currentPosition == 1}">Bio</div>' + 
+        '<div class="button" ng-click="currentPosition = 2" ng-class="{selected: currentPosition == 2}">Travel</div>' + 
+        '<div class="button" ng-click="currentPosition = 3" ng-class="{selected: currentPosition == 3}">Online</div>' + 
+        '<div class="button" ng-click="currentPosition = 4" ng-class="{selected: currentPosition == 4}">About</div></div>';
     return {
       template: template,
       restrict: 'E',
@@ -21,6 +22,7 @@ angular.module('lineupApp')
           currentPosition: '='
       },
       link: function postLink(scope, element, attrs) {
+          
           element.css({
               position: 'absolute',
               bottom: '550px',
@@ -65,7 +67,7 @@ angular.module('lineupApp')
                   opacity: 0.8,
                   scale: 1,
               }, {
-                  delay: 800, 
+                  delay: 8000, 
                   duration: 1000,
                   easing: 'easeOutBack'
               })

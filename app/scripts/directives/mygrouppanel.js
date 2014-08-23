@@ -8,6 +8,13 @@
  */
 angular.module('lineupApp')
   .directive('myGroupPanel', function () {
+    var PANEL_POSITIONS = [
+        {right: 100, bottom: 400, scale: 1, opacity: 1},
+        {right: -500, bottom: 400, scale: 1, opacity: 1},
+        {right: -500, bottom: 400, scale: 1, opacity: 1},
+        {right: -100, bottom: 700, scale: .3, opacity: .2},
+        {right: 0, bottom: 600, scale: .5, opacity: .4}
+    ];
     return {
       transclude: true,
       template: '<div ng-transclude></div ng-transclude>',
@@ -17,18 +24,34 @@ angular.module('lineupApp')
       },
       link: function postLink(scope, element, attrs) {
 
-          scope.index = (!attrs.index ? 0 : attrs.index);
+          var index = (!attrs.index ? 0 : attrs.index);
+
+          var movePosition = function(ix, currentPos){
+             var position = ((currentPos - ix) + PANEL_POSITIONS.length) % PANEL_POSITIONS.length;
+             element.velocity(PANEL_POSITIONS[position]);
+          }
+
 
           /* todo: implement */
-          scope.$watch('currentPosition', function(){console.log("Position changed to " + scope.currentPosition)});
+          scope.$watch('currentPosition', function(){
+              console.log("Position changed to " + scope.currentPosition)
+              console.log(index);
+              movePosition(index, scope.currentPosition);
 
-          console.log(scope.index);
+              // element.velocity(PANEL_POSITIONS[scope.currentPosition]);
+          
+          });
+
+          movePosition(index, scope.currentPosition);
 
           $(element).css({
               position: "absolute",
               right: 100,
               bottom: 400,
               width: 500,
+              'font-family': '"Roboto", sans-serif',
+              color: '#fff',
+              'text-shadow': 'rgb(255, 255, 255) 0px 0px 30px'
           });
 
           var children = $(element).children().children();
@@ -47,8 +70,6 @@ angular.module('lineupApp')
 
           $titleDiv.text(attrs.title);
 
-          // $titleDiv.text(attrs.title);
-
 
           $titleDiv.css({
               color: "#fff",
@@ -59,7 +80,6 @@ angular.module('lineupApp')
               'top': 0,
               'left': 35
           });
-
 
           paper
               .path( ['M', 5, 15, 'L', 5, 40, 'L', 250, 40 ] )
