@@ -17,8 +17,8 @@ angular.module('lineupApp')
         {right: 100, bottom: 400, scale: 1, opacity: 1},
         {right: -500, bottom: 400, scale: 1, opacity: 1},
         {right: -500, bottom: 400, scale: 1, opacity: 1},
-        {right: -100, bottom: 700, scale: .3, opacity: .2},
-        {right: 0, bottom: 600, scale: .5, opacity: .4}
+        {right: -100, bottom: 700, scale: 0.3, opacity: 0.2},
+        {right: 0, bottom: 600, scale: 0.5, opacity: 0.4}
     ];
     return {
       transclude: true,
@@ -34,13 +34,11 @@ angular.module('lineupApp')
           var movePosition = function(ix, currentPos){
              var position = ((currentPos - ix) + PANEL_POSITIONS.length) % PANEL_POSITIONS.length;
              element.velocity(PANEL_POSITIONS[position]);
-          }
+          };
 
 
           /* todo: implement */
           scope.$watch('currentPosition', function(){
-              console.log("Position changed to " + scope.currentPosition)
-              console.log(index);
               movePosition(index, scope.currentPosition);
 
               // element.velocity(PANEL_POSITIONS[scope.currentPosition]);
@@ -50,7 +48,7 @@ angular.module('lineupApp')
           movePosition(index, scope.currentPosition);
 
           $(element).css({
-              position: "absolute",
+              position: 'absolute',
               right: 100,
               bottom: 400,
               width: 500,
@@ -69,7 +67,7 @@ angular.module('lineupApp')
           });
 
 
-          var $titleDiv = $("<div/>");
+          var $titleDiv = $('<div/>');
 
           var paper = new Raphael(element[0], 300, 50);
 
@@ -77,10 +75,10 @@ angular.module('lineupApp')
 
 
           $titleDiv.css({
-              color: "#f7d671",
+              color: '#f7d671',
               'font-family': '"Roboto", sans-serif',
               'text-transform': 'uppercase',
-              'font-size': "1.4em",
+              'font-size': '1.4em',
               'position': 'absolute',
               'top': 0,
               'left': 35,

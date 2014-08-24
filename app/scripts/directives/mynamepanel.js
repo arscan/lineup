@@ -147,12 +147,12 @@ angular.module('lineupApp')
             .attr({stroke: '#eac7df', 'stroke-width':1, 'opacity': 0.5})
             .glow({color: '#eac7df', opacity: 0.2, width: 5});
 
-          for(var i = 1; i<13; i++){
+          for(var k = 1; k<13; k++){
               var dir = -1;
-              if(i > 6){
+              if(k > 6){
                   dir = 1;
               }
-              drawSvgLine(10 + i * 14, dir);
+              drawSvgLine(10 + k * 14, dir);
           }
 
           outerDiv.append(nameHeader)

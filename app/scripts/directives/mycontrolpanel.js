@@ -32,7 +32,7 @@ angular.module('lineupApp')
               'z-index': 2
           });
 
-          $(".button", element).css({
+          $('.button', element).css({
               width: 50,
               float: 'left',
               height: 20,

@@ -21,7 +21,7 @@ angular.module('lineupApp')
           });
 
 
-          var $titleDiv = $("<div/>");
+          var $titleDiv = $('<div/>');
 
           $titleDiv.text(attrs.title);
 

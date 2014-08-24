@@ -12,7 +12,6 @@ angular.module('lineupApp')
       restrict: 'E',
       link: function postLink(scope, element, attrs) {
 
-
           var outerDiv = $('<div/>');
 
           outerDiv.css({

@@ -41,6 +41,19 @@
     </script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.js"></script>
+
+    <!-- threejs effects shaders -->
+    <script src="http://mrdoob.github.com/three.js/examples/js/shaders/CopyShader.js"></script>
+    <script src="http://mrdoob.github.com/three.js/examples/js/shaders/HorizontalBlurShader.js"></script>
+    <script src="http://mrdoob.github.com/three.js/examples/js/shaders/VerticalBlurShader.js"></script>
+    <script src="http://mrdoob.github.com/three.js/examples/js/shaders/ConvolutionShader.js"></script>
+    <script src="http://mrdoob.github.com/three.js/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="http://mrdoob.github.com/three.js/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="http://mrdoob.github.com/three.js/examples/js/postprocessing/MaskPass.js"></script>
+    <script src="http://mrdoob.github.com/three.js/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="scripts/BloomPass.js"></script>
+
+    <!-- threejs json loader -->
     <script src="scripts/AssimpJSONLoader.js"></script>
 
     <!-- build:js(.) scripts/oldieshim.js -->
@@ -70,13 +83,11 @@
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
-        <script src="scripts/directives/myinfogroup.js"></script>
         <script src="scripts/directives/mybottompanel.js"></script>
         <script src="scripts/directives/myskeleton.js"></script>
         <script src="scripts/directives/mynamepanel.js"></script>
         <script src="scripts/directives/mycircleviz.js"></script>
         <script src="scripts/directives/mygrouppanel.js"></script>
-        <script src="scripts/directives/myrightcarousel.js"></script>
         <script src="scripts/directives/myprojector.js"></script>
         <script src="scripts/directives/mycontrolpanel.js"></script>
         <script src="scripts/directives/myencomboardroom.js"></script>
