@@ -6,6 +6,15 @@
  * @description
  * # mySkeleton
  */
+
+/* TODO: Implement projector effect */
+/* NOTE: having trouble finguring out how to do it properly */
+/* So, do something like this in the meantime: */
+/* http://threejs.org/examples/webgl_postprocessing_godrays.html */
+/* if I change line 40 in the shader to */
+/*  vec2 delta = -1.0 * (vSunPositionScreenSpace - vUv); */
+/* it will draw the godlines to the sun... */
+
 ;(function(angular, THREE){
     var Shaders = {
         skeleton: {
