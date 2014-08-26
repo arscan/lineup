@@ -228,10 +228,11 @@ THREE.ShaderGodRays = {
                 // objects black, the god-rays will be white streaks. Therefore value is inverted
                 // before being combined with tColors
 
-                "gl_FragColor = texture2D( tColors, vUv ) + 20.0*texture2D( tGodRays, vUv );", //changed by rscanlon
+                "gl_FragColor = texture2D( tColors, vUv ) + 30.0*texture2D( tGodRays, vUv );", //changed by rscanlon
                 // "gl_FragColor.a = texture2D( tColors, vUv ) + texture2D( tGodRays, vUv );", //changed by rscanlon
 
-                "gl_FragColor.a = 5.0* texture2D(tGodRays, vUv).b + 5.0* texture2D(tColors, vUv).b;",
+                "gl_FragColor.a = texture2D(tGodRays, vUv).r + texture2D(tGodRays,vUv).g + texture2D(tGodRays, vUv).b + 5.0* texture2D(tColors, vUv).g;",
+
 
             "}"
 

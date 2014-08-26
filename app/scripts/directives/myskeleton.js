@@ -82,7 +82,7 @@
         container.appendChild(canvas);
 
         camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
-        camera.position.set(-170, 0, 600);
+        camera.position.set(-190, 15, 600);
         scene.add(camera);
 
         /*
@@ -220,8 +220,8 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                 // screenSpacePosition.x = ( screenSpacePosition.x + 1 ) / 2;
                 // screenSpacePosition.y = ( screenSpacePosition.y + 1 ) / 2;
 
-                screenSpacePosition.x = 0;
-                screenSpacePosition.y = 0;
+                screenSpacePosition.x = -.5;
+                screenSpacePosition.y = -.1;
 
                 // Give it to the god-ray and sun shaders
 
@@ -366,8 +366,8 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                         // top: height * -1,
                         // border: '1px solid #fff',
                         width: width,
-                        bottom:0,
-                        left: 0,
+                        bottom:-10,
+                        left: -20,
                         height: height
                         // '-webkit-filter': 'blur(1px)'
 
