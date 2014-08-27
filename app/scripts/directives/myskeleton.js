@@ -61,6 +61,8 @@
 
 
         var loader = new THREE.AssimpJSONLoader();
+        var texture = THREE.ImageUtils.loadTexture( "models/nametexture.png" );
+
 
         VIEW_ANGLE = 45;
         ASPECT = width / height;
@@ -71,6 +73,7 @@
         clock = new THREE.Clock();
 
         scene = new THREE.Scene();
+
 
         renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
 
@@ -121,7 +124,18 @@
             skeletonObject.updateMatrix();
             skeletonObject.rotation.y = Math.PI/2;
 
+
             scene.add(skeletonObject);
+
+            var planegeometry = new THREE.PlaneGeometry( 300, 200 );
+            var planematerial = new THREE.MeshBasicMaterial( {map: texture, transparent: true} );
+
+  
+            var plane = new THREE.Mesh( planegeometry, planematerial );
+            plane.position.x = -150;
+            plane.position.y = 80;
+            plane.position.z = -50;
+            scene.add( plane );
             initPostprocessing();
             // requestAnimationFrame(render);
              render();

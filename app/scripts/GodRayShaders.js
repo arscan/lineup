@@ -231,7 +231,7 @@ THREE.ShaderGodRays = {
                 "gl_FragColor = texture2D( tColors, vUv ) + 30.0*texture2D( tGodRays, vUv );", //changed by rscanlon
                 // "gl_FragColor.a = texture2D( tColors, vUv ) + texture2D( tGodRays, vUv );", //changed by rscanlon
 
-                "gl_FragColor.a = texture2D(tGodRays, vUv).r + texture2D(tGodRays,vUv).g + texture2D(tGodRays, vUv).b + 5.0* texture2D(tColors, vUv).g;",
+                "gl_FragColor.a = texture2D(tGodRays, vUv).r + texture2D(tGodRays,vUv).g + texture2D(tGodRays, vUv).b + texture2D(tColors, vUv).a;",
 
 
             "}"
