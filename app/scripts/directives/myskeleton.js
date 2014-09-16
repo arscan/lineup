@@ -37,8 +37,8 @@
                 '  if(gl_FragCoord.y > currentTime * 150.0){',
                 '    gl_FragColor = vec4(0.0,0.0,0.0,0.0);',
                 '  } else {',
-                '    float intensity = 1.20 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
-                '    vec3 outline = vec3( 0.0708, 0.714, 0.652 ) * pow( intensity, 3.0 );',
+                '    float intensity = 1.30 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
+                '    vec3 outline = vec3( 0.0708, 0.714, 0.652 ) * pow( intensity, 1.0 );',
                 '    gl_FragColor = vec4(outline, intensity);',
                 ' } ',
                 '}'
@@ -120,7 +120,7 @@
 
         loader.load( 'models/skeleton.json', skeletonMaterial, function ( skeletonObject ) {
 
-            skeletonObject.scale.x = skeletonObject.scale.y = skeletonObject.scale.z = 1.2;
+            skeletonObject.scale.x = skeletonObject.scale.y = skeletonObject.scale.z = 1.4;
             skeletonObject.updateMatrix();
             skeletonObject.rotation.y = Math.PI/2;
 
@@ -174,8 +174,6 @@
 
             var godraysGenShader = THREE.ShaderGodRays[ "godrays_generate" ];
             postprocessing.godrayGenUniforms = THREE.UniformsUtils.clone( godraysGenShader.uniforms );
-            console.log("------");
-            console.log(postprocessing.godrayGenUniforms[ "vSunPositionScreenSpace" ]);
             postprocessing.materialGodraysGenerate = new THREE.ShaderMaterial( {
 
                 uniforms: postprocessing.godrayGenUniforms,
@@ -364,7 +362,7 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
     .directive('mySkeleton', function () {
         return {
             // template: '<div style="position: absolute; width: 500; height: 0; bottom: 320px; left: 400px; overflow: hidden;" class="skeleton"></div>',
-            template: '<div style="position: absolute;  overflow: hidden;" class="skeleton"></div>',
+            template: '<div style="position: absolute;  overflow: hidden; width: 100%; height: 100%;" class="skeleton"></div>',
             restrict: 'E',
             link: function postLink(scope, element, attrs) {
                 var width = attrs.width || 350,
@@ -376,7 +374,7 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                     var threeD = createScene($('.skeleton', element), width, height);
 
                     threeD.canvas.css({
-                        position: 'relative',
+                        position: 'absolute',
                         // top: height * -1,
                         // border: '1px solid #fff',
                         width: width,

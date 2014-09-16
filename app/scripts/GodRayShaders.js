@@ -54,7 +54,6 @@ THREE.ShaderGodRays = {
                 type: "t",
                 value: null
             },
-
             fStepSize: {
                 type: "f",
                 value: 1.0
@@ -158,9 +157,14 @@ THREE.ShaderGodRays = {
                 // TAPS_PER_PASS is greater than the number of samples actually accumulated.
                 // When the result is inverted (in the shader 'godrays_combine', this produces
                 // a slight bright spot at the position of the sun, even when it is occluded.
-
-                "gl_FragColor = vec4(col/TAPS_PER_PASS);",
-                "gl_FragColor.a = 1.0;",
+                
+                // "gl_FragColor = base;",
+                // "if ( base.rgb == 0.0 ) {",
+                "   gl_FragColor = vec4(col/8.0);",
+                "   gl_FragColor.a = 1.0;",
+                // "} else {",
+                // "   gl_FragColor.a = 0.0;",
+                // "}",
 
             "}"
 
@@ -230,8 +234,13 @@ THREE.ShaderGodRays = {
 
                 "gl_FragColor = texture2D( tColors, vUv ) + 30.0*texture2D( tGodRays, vUv );", //changed by rscanlon
                 // "gl_FragColor.a = texture2D( tColors, vUv ) + texture2D( tGodRays, vUv );", //changed by rscanlon
+                //
 
-                "gl_FragColor.a = texture2D(tGodRays, vUv).r + texture2D(tGodRays,vUv).g + texture2D(tGodRays, vUv).b + texture2D(tColors, vUv).a;",
+                "if (texture2D( tColors, vUv).a > 0.0){",
+                "  gl_FragColor = texture2D(tColors, vUv);",
+                "}",
+
+                "gl_FragColor.a = (texture2D(tGodRays, vUv).r + texture2D(tGodRays,vUv).g + texture2D(tGodRays, vUv).b + texture2D(tColors, vUv).a);",
 
 
             "}"
