@@ -103,7 +103,7 @@ THREE.ShaderGodRays = {
 
                 // Number of iterations between pixel and sun
 
-                "float iters = dist/fStepSize;",
+                "float iters = dist/fStepSize + 3.0;", // add 3.0 here to make it go to the edge...
 
                 "vec2 uv = vUv.xy;",
                 "vec4 col = vec4(0.0,0.0,0.0,0.0);",
