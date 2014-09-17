@@ -46,6 +46,83 @@
         }
     };
 
+    function renderToCanvas(width, height, renderFunction) {
+        var buffer = document.createElement('canvas');
+        buffer.width = width;
+        buffer.height = height;
+    
+        renderFunction(buffer.getContext('2d'));
+
+        return buffer;
+    };
+
+    function drawBullet(ctx, yStart, dir){ 
+        yStart = yStart + 75;
+        ctx.beginPath();
+        ctx.moveTo(26, yStart);
+        ctx.lineTo(42, yStart + dir * 16);
+        ctx.lineTo(70, yStart + dir * 16);
+        ctx.stroke();
+
+    }
+
+    function createNameCanvas(name, subject, details){
+
+        return renderToCanvas(600, 600, function(ctx){
+
+            ctx.font = "bold 12pt Roboto";
+            ctx.fillStyle = '#12b7a7';
+            ctx.fillText("NAME", 80, 20);
+
+            ctx.font = "bold 30pt Roboto";
+            ctx.fillStyle = '#eac7df';
+            ctx.fillText(name.toUpperCase(), 78, 60);
+
+            ctx.font = "bold 20pt Roboto";
+            ctx.fillStyle = '#eac7df';
+            ctx.fillText("SUBJECT: " + subject.toUpperCase(), 80, 100);
+
+            for(var i = 0; i< details.length; i++){
+                ctx.font = "bold 12pt Roboto";
+                ctx.fillStyle = '#eac7df';
+                ctx.fillText(details[i].toUpperCase(), 80, 140 + i*22);
+
+            }
+
+            ctx.strokeStyle='#12b7a7';
+            ctx.lineWidth=2;
+            ctx.beginPath();
+            ctx.moveTo(68, 75);
+            ctx.lineTo(68, 280);
+            ctx.stroke();
+
+            ctx.strokeStyle='#eac7df';
+            ctx.lineWidth=2;
+
+            for(var k = 1; k<13; k++){
+                var dir = -1;
+                if(k > 6){
+                    dir = 1;
+                }
+                drawBullet(ctx, 10 + k * 14, dir);
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(0, 175);
+            ctx.lineTo(34, 175);
+            ctx.lineTo(42, 183);
+            ctx.lineTo(70, 183);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(34, 175);
+            ctx.lineTo(42, 167);
+            ctx.lineTo(70, 167);
+            ctx.stroke();
+
+        });
+
+    };
+
     function createScene(element, width, height){
 
         var container, scene, renderer, camera, clock;
@@ -61,7 +138,6 @@
 
 
         var loader = new THREE.AssimpJSONLoader();
-        var texture = THREE.ImageUtils.loadTexture( "models/nametexture.png" );
 
 
         VIEW_ANGLE = 45;
@@ -85,8 +161,19 @@
         container.appendChild(canvas);
 
         camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
-        camera.position.set(-190, 15, 600);
+        camera.position.set(0, 0, 600);
         scene.add(camera);
+
+        var nameCanvas = createNameCanvas("Scanlon", "Robert Scanlon", ["education", 
+                                          "cornell: bs computer science", 
+                                          "mit: Ms engineering & management", 
+                                          "", 
+                                          "Occupation",
+                                          "software engineer",
+                                          "web, data viz"]);
+
+        var nameTexture = new THREE.Texture(nameCanvas)
+        nameTexture.needsUpdate = true;
 
         /*
         var parameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, stencilBuffer: false };
@@ -123,18 +210,19 @@
             skeletonObject.scale.x = skeletonObject.scale.y = skeletonObject.scale.z = 1.4;
             skeletonObject.updateMatrix();
             skeletonObject.rotation.y = Math.PI/2;
+            skeletonObject.position.x = 160;
+            skeletonObject.position.y = 80;
 
 
             scene.add(skeletonObject);
 
-            var planegeometry = new THREE.PlaneGeometry( 300, 200 );
-            var planematerial = new THREE.MeshBasicMaterial( {map: texture, transparent: true} );
-
+            var planegeometry = new THREE.PlaneGeometry( 400, 400 );
+            var planematerial = new THREE.MeshBasicMaterial( {map: nameTexture, transparent: true} );
   
             var plane = new THREE.Mesh( planegeometry, planematerial );
-            plane.position.x = -150;
-            plane.position.y = 80;
-            plane.position.z = -50;
+            plane.position.x = -50;
+            plane.position.y = -50;
+            plane.position.z = 0;
             scene.add( plane );
             initPostprocessing();
             // requestAnimationFrame(render);
@@ -165,8 +253,8 @@
 
             // Aggressive downsize god-ray ping-pong render targets to minimize cost
 
-            var w = width / 4.0;
-            var h = height / 4.0;
+            var w = width / 2.0;
+            var h = height / 2.0;
             postprocessing.rtTextureGodRays1 = new THREE.WebGLRenderTarget( w, h, pars );
             postprocessing.rtTextureGodRays2 = new THREE.WebGLRenderTarget( w, h, pars );
 
@@ -207,7 +295,7 @@ postprocessing.godraysFakeSunUniforms.bgColor.value.setHex( bgColor );
 postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
 */
 
-            postprocessing.godrayCombineUniforms.fGodRayIntensity.value = 0.75;
+            postprocessing.godrayCombineUniforms.fGodRayIntensity.value = 1.0;
 
             postprocessing.quad = new THREE.Mesh( new THREE.PlaneGeometry( width, height ), postprocessing.materialGodraysGenerate );
             postprocessing.quad.position.z = -9900;
@@ -219,6 +307,9 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
             // console.log(postprocessing);
             var time = clock.getElapsedTime() - 5;
             scene.children[1].rotation.y -= 0.005;
+            scene.children[2].position.x += (Math.sin(time) / 2);
+            scene.children[2].position.y += (Math.cos(time) / 2);
+            scene.children[2].position.z += (Math.cos(time) / 2);
 
             Shaders.skeleton.uniforms.currentTime.value = time;
 
@@ -232,8 +323,8 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                 // screenSpacePosition.x = ( screenSpacePosition.x + 1 ) / 2;
                 // screenSpacePosition.y = ( screenSpacePosition.y + 1 ) / 2;
 
-                screenSpacePosition.x = -.5;
-                screenSpacePosition.y = -.1;
+                screenSpacePosition.x = -0.1;
+                screenSpacePosition.y = -0.05;
 
                 // Give it to the god-ray and sun shaders
 

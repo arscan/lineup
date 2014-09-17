@@ -81,7 +81,7 @@ THREE.ShaderGodRays = {
 
         fragmentShader: [
 
-            "#define TAPS_PER_PASS 6.0",
+            "#define TAPS_PER_PASS 3.0",
 
             "varying vec2 vUv;",
 
