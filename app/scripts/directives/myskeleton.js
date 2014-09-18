@@ -72,6 +72,7 @@
 
             ctx.font = "bold 12pt Roboto";
             ctx.fillStyle = '#12b7a7';
+            ctx.lineWidth = 0;
             ctx.fillText("NAME", 80, 20);
 
             ctx.font = "bold 30pt Roboto";
@@ -241,6 +242,8 @@
 
             var pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat };
             postprocessing.rtTextureColors = new THREE.WebGLRenderTarget( width, height, pars );
+            postprocessing.rtTextureBlur = new THREE.WebGLRenderTarget( width, height, pars );
+            postprocessing.rtTextureBlur2 = new THREE.WebGLRenderTarget( width, height, pars );
 
             // Switching the depth formats to luminance from rgb doesn't seem to work. I didn't
             // investigate further for now.
@@ -249,7 +252,7 @@
             // I would have this quarter size and use it as one of the ping-pong render
             // targets but the aliasing causes some temporal flickering
 
-            postprocessing.rtTextureDepth = new THREE.WebGLRenderTarget( width, height, pars );
+            // postprocessing.rtTextureDepth = new THREE.WebGLRenderTarget( width, height, pars );
 
             // Aggressive downsize god-ray ping-pong render targets to minimize cost
 
@@ -267,6 +270,51 @@
                 uniforms: postprocessing.godrayGenUniforms,
                 vertexShader: godraysGenShader.vertexShader,
                 fragmentShader: godraysGenShader.fragmentShader
+
+            } );
+
+
+            var godraysBlurV = THREE.ShaderGodRays[ "godrays_blur_v" ];
+            postprocessing.godrayBlurVUniforms = THREE.UniformsUtils.clone( godraysBlurV.uniforms );
+
+            postprocessing.materialGodraysBlurV = new THREE.ShaderMaterial( {
+
+                uniforms: postprocessing.godrayBlurVUniforms,
+                vertexShader: godraysBlurV.vertexShader,
+                fragmentShader: godraysBlurV.fragmentShader
+
+            } );
+
+            var godraysBlurH = THREE.ShaderGodRays[ "godrays_blur_h" ];
+            postprocessing.godrayBlurHUniforms = THREE.UniformsUtils.clone( godraysBlurH.uniforms );
+
+            postprocessing.materialGodraysBlurH = new THREE.ShaderMaterial( {
+
+                uniforms: postprocessing.godrayBlurHUniforms,
+                vertexShader: godraysBlurH.vertexShader,
+                fragmentShader: godraysBlurH.fragmentShader
+
+            } );
+
+            var godraysBlurV2 = THREE.VerticalBlurShader;
+            postprocessing.godrayBlurV2Uniforms = THREE.UniformsUtils.clone( godraysBlurV2.uniforms );
+
+            postprocessing.materialGodraysBlurV2 = new THREE.ShaderMaterial( {
+
+                uniforms: postprocessing.godrayBlurV2Uniforms,
+                vertexShader: godraysBlurV2.vertexShader,
+                fragmentShader: godraysBlurV2.fragmentShader
+
+            } );
+
+            var godraysBlurH2 = THREE.HorizontalBlurShader;
+            postprocessing.godrayBlurH2Uniforms = THREE.UniformsUtils.clone( godraysBlurH2.uniforms );
+
+            postprocessing.materialGodraysBlurH2 = new THREE.ShaderMaterial( {
+
+                uniforms: postprocessing.godrayBlurH2Uniforms,
+                vertexShader: godraysBlurH2.vertexShader,
+                fragmentShader: godraysBlurH2.fragmentShader
 
             } );
 
@@ -356,7 +404,7 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                 // postprocessing.godraysFakeSunUniforms[ "fAspect" ].value = window.innerWidth / height;
 
                 // postprocessing.scene.overrideMaterial = postprocessing.materialGodraysFakeSun;
-                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureColors );
+                // renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureColors );
 
 
                 // renderer.enableScissorTest( false );
@@ -372,7 +420,7 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
 
 
                 // scene.overrideMaterial = materialDepth;//skeletonMaterial; //materialDepth;
-                renderer.render( scene, camera, postprocessing.rtTextureDepth, true );
+                // renderer.render( scene, camera, postprocessing.rtTextureDepth, true );
 
                 // -- Render god-rays --
 
@@ -396,12 +444,49 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
 
                 postprocessing.godrayGenUniforms[ "fStepSize" ].value = stepLen;
                 postprocessing.godrayGenUniforms[ "tInput" ].value = postprocessing.rtTextureColors; // rob changed from depth
-
                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysGenerate;
-
                 renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureGodRays2 );
 
+                postprocessing.godrayBlurVUniforms[ "RTScene" ].value = postprocessing.rtTextureColors; // rob changed from depth
+                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
+
+                postprocessing.godrayBlurHUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur; // rob changed from depth
+                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
+
+                postprocessing.godrayBlurVUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur2; // rob changed from depth
+                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
+
+                postprocessing.godrayBlurHUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur; // rob changed from depth
+                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
+
+                postprocessing.godrayBlurVUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur2; // rob changed from depth
+                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
+
+                postprocessing.godrayBlurHUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur; // rob changed from depth
+                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
+
+                // postprocessing.godrayBlurV2Uniforms[ "tDiffuse" ].value = postprocessing.rtTextureBlur2; // rob changed from depth
+                // postprocessing.godrayBlurV2Uniforms[ "v" ].value = 800.0; // rob changed from depth
+                // postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV2;
+                // renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
+
+                // postprocessing.godrayBlurH2Uniforms[ "tDiffuse" ].value = postprocessing.rtTextureBlur; // rob changed from depth
+                // postprocessing.godrayBlurH2Uniforms[ "h" ].value = 800.0; // rob changed from depth
+                //  postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH2;
+                // renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
+
+
+
+
                 // pass 2 - render into second ping-pong target
+                //
+                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysGenerate;
 
                 pass = 2.0;
                 stepLen = filterLen * Math.pow( TAPS_PER_PASS, -pass );
@@ -424,6 +509,7 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                 // final pass - composite god-rays onto colors
 
                 postprocessing.godrayCombineUniforms["tColors"].value = postprocessing.rtTextureColors;
+                postprocessing.godrayCombineUniforms["tBlur"].value = postprocessing.rtTextureBlur2;
                 postprocessing.godrayCombineUniforms["tGodRays"].value = postprocessing.rtTextureGodRays2;
 
                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysCombine;
