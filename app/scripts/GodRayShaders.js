@@ -201,6 +201,11 @@ THREE.ShaderGodRays = {
                 value: null
             },
 
+            fTick: {
+                type: "f",
+                value: 0.0
+            },
+
             fGodRayIntensity: {
                 type: "f",
                 value: 0.69
@@ -233,6 +238,7 @@ THREE.ShaderGodRays = {
             "uniform sampler2D tColors;",
             "uniform sampler2D tGodRays;",
             "uniform sampler2D tMask;",
+            "uniform float fTick;",
 
             "uniform vec2 vSunPositionScreenSpace;",
             "uniform float fGodRayIntensity;",
@@ -245,7 +251,10 @@ THREE.ShaderGodRays = {
             //
                 "vec4 cColors = texture2D(tColors, vUv);",
                 "vec4 cGodRays = texture2D(tGodRays, vUv);",
-                "vec4 cMask = texture2D(tMask, vUv);",
+                // "vec4 cMask = texture2D(tMask, vUv);",
+                "float offset = (fTick/30.0 );",
+                // "float offset = tick;",
+                // "float offset = 0.5;",
                 // "vec4 cBlur = texture2D(tBlur, vUv);",
 
                 // "cBlur.a = min(cBlur.a,1.0);",
@@ -273,7 +282,12 @@ THREE.ShaderGodRays = {
                 "  gl_FragColor = cColors;",
                 "}",
 
-                "gl_FragColor.a = gl_FragColor.a - cMask.r;",
+                "gl_FragColor.a = gl_FragColor.a - texture2D(tMask, vec2(mod(vUv.x - offset - .3, 1.0), vUv.y)).r;",
+
+                "if(gl_FragColor.a < 0.1){",
+                "   gl_FragColor.a = 0.0;",
+                " }",
+
 
 
 

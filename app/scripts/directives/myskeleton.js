@@ -368,13 +368,14 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
 
         function render() {
             // console.log(postprocessing);
-            var time = clock.getElapsedTime() - 5;
+            var time = clock.getElapsedTime();
+            // console.log(time);
             scene.children[1].rotation.y -= 0.005;
             scene.children[2].position.x += (Math.sin(time) / 2);
             scene.children[2].position.y += (Math.cos(time) / 2);
             scene.children[2].position.z += (Math.cos(time) / 2);
 
-            Shaders.skeleton.uniforms.currentTime.value = time;
+            Shaders.skeleton.uniforms.currentTime.value = time - 5;
 
             if ( postprocessing.enabled ) {
 
@@ -510,6 +511,7 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                 postprocessing.godrayCombineUniforms["tColors"].value = postprocessing.rtTextureColors;
                 postprocessing.godrayCombineUniforms["tGodRays"].value = postprocessing.rtTextureGodRays2;
                 postprocessing.godrayCombineUniforms["tMask"].value = postprocessing.maskTexture;
+                postprocessing.godrayCombineUniforms["fTick"].value = time;
                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysCombine;
                 renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureGodRays1 );
 
