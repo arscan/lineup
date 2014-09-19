@@ -471,6 +471,7 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                  postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
                 renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
 
+
                 // postprocessing.godrayBlurV2Uniforms[ "tDiffuse" ].value = postprocessing.rtTextureBlur2; // rob changed from depth
                 // postprocessing.godrayBlurV2Uniforms[ "v" ].value = 800.0; // rob changed from depth
                 // postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV2;

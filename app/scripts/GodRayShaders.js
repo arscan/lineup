@@ -246,11 +246,17 @@ THREE.ShaderGodRays = {
                 // "cGodRays.a = max(cGodRays.r + cGodRays.g + cGodRays.b, cBlur.a);",
                 "cGodRays.a = min(cGodRays.r + cGodRays.g + cGodRays.b, 1.0);",
 
-                "cBlur = cBlur / 4.0;",
+                "cBlur.a = cBlur.a / 4.0;",
+                "cGodRays.a = cGodRays.a / 3.0;",
 
                 // "gl_FragColor = (cBlur + cGodRays) / 2.0;", //changed by rscanlon
-                "gl_FragColor =cBlur + cGodRays / 2.0 ;", //changed by rscanlon
-                "gl_FragColor.a = max(cBlur.a, cGodRays.a);",
+                "gl_FragColor =vec4(cBlur.a * cBlur.rgb, cBlur.a) + cGodRays;", //changed by rscanlon
+                // "gl_FragColor.a = max(cBlur.a, cGodRays.a);",
+                //
+
+                // "if(cGodRays.a > cBlur.a){",
+                // "   gl_FragColor = cGodRays;",
+                // "}",
 
 
                 // "if (cBlur.a > 0.1 && cGodRays.a > 0.1){",
@@ -320,7 +326,7 @@ THREE.ShaderGodRays = {
                "sum += texture2D(RTScene, vec2(vUv.x - 3.0*blurSize, vUv.y)) * 0.05;",
                "sum += texture2D(RTScene, vec2(vUv.x - 2.0*blurSize, vUv.y)) * 0.05;",
                "sum += texture2D(RTScene, vec2(vUv.x - blurSize, vUv.y)) * 0.05;",
-               "sum += texture2D(RTScene, vec2(vUv.x, vUv.y)) * 0.15;",
+               "sum += texture2D(RTScene, vec2(vUv.x, vUv.y)) * 0.05;",
                "sum += texture2D(RTScene, vec2(vUv.x + blurSize, vUv.y)) * 0.05;",
                "sum += texture2D(RTScene, vec2(vUv.x + 2.0*blurSize, vUv.y)) * 0.05;",
                "sum += texture2D(RTScene, vec2(vUv.x + 3.0*blurSize, vUv.y)) * 0.05;",
@@ -438,7 +444,7 @@ THREE.ShaderGodRays = {
                "sum += texture2D(RTScene, vec2(vUv.x, vUv.y - 3.0*blurSize)) * 0.05;",
                "sum += texture2D(RTScene, vec2(vUv.x, vUv.y - 2.0*blurSize)) * 0.05;",
                "sum += texture2D(RTScene, vec2(vUv.x, vUv.y - blurSize)) * 0.05;",
-               "sum += texture2D(RTScene, vec2(vUv.x, vUv.y)) * 0.15;",
+               "sum += texture2D(RTScene, vec2(vUv.x, vUv.y)) * 0.05;",
                "sum += texture2D(RTScene, vec2(vUv.x, vUv.y + blurSize)) * 0.05;",
                "sum += texture2D(RTScene, vec2(vUv.x, vUv.y + 2.0*blurSize)) * 0.05;",
                "sum += texture2D(RTScene, vec2(vUv.x, vUv.y + 3.0*blurSize)) * 0.05;",
