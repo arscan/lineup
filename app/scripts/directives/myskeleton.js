@@ -50,6 +50,8 @@
         var buffer = document.createElement('canvas');
         buffer.width = width;
         buffer.height = height;
+
+        // $(".container").append(buffer);
     
         renderFunction(buffer.getContext('2d'));
 
@@ -69,6 +71,7 @@
     function createNameCanvas(name, subject, details){
 
         return renderToCanvas(600, 600, function(ctx){
+            ctx.strokeStyle="#fff";
 
             ctx.font = "bold 12pt Roboto";
             ctx.fillStyle = '#12b7a7';
@@ -240,6 +243,8 @@
 
             postprocessing.scene.add( postprocessing.camera );
 
+            postprocessing.maskTexture = THREE.ImageUtils.loadTexture('models/projectionmap.png');
+
             var pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat };
             postprocessing.rtTextureColors = new THREE.WebGLRenderTarget( width, height, pars );
             postprocessing.rtTextureBlur = new THREE.WebGLRenderTarget( width, height, pars );
@@ -325,6 +330,16 @@
                 uniforms: postprocessing.godrayCombineUniforms,
                 vertexShader: godraysCombineShader.vertexShader,
                 fragmentShader: godraysCombineShader.fragmentShader
+
+            } );
+
+            var godraysCombineBlurShader = THREE.ShaderGodRays[ "godrays_combineblur" ];
+            postprocessing.godrayCombineBlurUniforms = THREE.UniformsUtils.clone( godraysCombineBlurShader.uniforms );
+            postprocessing.materialGodraysCombineBlur = new THREE.ShaderMaterial( {
+
+                uniforms: postprocessing.godrayCombineBlurUniforms,
+                vertexShader: godraysCombineBlurShader.vertexShader,
+                fragmentShader: godraysCombineBlurShader.fragmentShader
 
             } );
 
@@ -443,33 +458,12 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                 var stepLen = filterLen * Math.pow( TAPS_PER_PASS, -pass );
 
                 postprocessing.godrayGenUniforms[ "fStepSize" ].value = stepLen;
-                postprocessing.godrayGenUniforms[ "tInput" ].value = postprocessing.rtTextureColors; // rob changed from depth
+                postprocessing.godrayGenUniforms[ "tInput" ].value = postprocessing.rtTextureColors;
+
                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysGenerate;
+
                 renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureGodRays2 );
 
-                postprocessing.godrayBlurVUniforms[ "RTScene" ].value = postprocessing.rtTextureColors; // rob changed from depth
-                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV;
-                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
-
-                postprocessing.godrayBlurHUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur; // rob changed from depth
-                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
-                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
-
-                postprocessing.godrayBlurVUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur2; // rob changed from depth
-                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV;
-                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
-
-                postprocessing.godrayBlurHUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur; // rob changed from depth
-                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
-                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
-
-                postprocessing.godrayBlurVUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur2; // rob changed from depth
-                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV;
-                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
-
-                postprocessing.godrayBlurHUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur; // rob changed from depth
-                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
-                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
 
 
                 // postprocessing.godrayBlurV2Uniforms[ "tDiffuse" ].value = postprocessing.rtTextureBlur2; // rob changed from depth
@@ -483,6 +477,10 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                 // renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
 
 
+                // postprocessing.godrayGenUniforms[ "fStepSize" ].value = stepLen;
+                // postprocessing.godrayGenUniforms[ "tInput" ].value = postprocessing.rtTextureGodRay; // rob changed from depth
+                // postprocessing.scene.overrideMaterial = postprocessing.materialGodraysGenerate;
+                // renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureGodRays2 );
 
 
                 // pass 2 - render into second ping-pong target
@@ -510,14 +508,65 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                 // final pass - composite god-rays onto colors
 
                 postprocessing.godrayCombineUniforms["tColors"].value = postprocessing.rtTextureColors;
-                postprocessing.godrayCombineUniforms["tBlur"].value = postprocessing.rtTextureBlur2;
                 postprocessing.godrayCombineUniforms["tGodRays"].value = postprocessing.rtTextureGodRays2;
-
+                postprocessing.godrayCombineUniforms["tMask"].value = postprocessing.maskTexture;
                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysCombine;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureGodRays1 );
+
+                // postprocessing.godrayGenUniforms[ "fStepSize" ].value = stepLen;
+                // postprocessing.godrayGenUniforms[ "tInput" ].value = postprocessing.rtTextureGodRays; // rob changed from depth
+                // postprocessing.scene.overrideMaterial = postprocessing.materialGodraysGenerate;
+                // renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureGodRays2 );
+
+                postprocessing.godrayBlurVUniforms[ "RTScene" ].value = postprocessing.rtTextureGodRays1; // rob changed from depth
+                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
+
+                postprocessing.godrayBlurHUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur; // rob changed from depth
+                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
+
+                postprocessing.godrayBlurVUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur2; // rob changed from depth
+                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
+
+                postprocessing.godrayBlurHUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur; // rob changed from depth
+                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
+
+                postprocessing.godrayBlurVUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur2; // rob changed from depth
+                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
+
+                postprocessing.godrayBlurHUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur; // rob changed from depth
+                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
+
+                postprocessing.godrayBlurVUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur2; // rob changed from depth
+                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
+
+                postprocessing.godrayBlurHUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur; // rob changed from depth
+                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
+
+                postprocessing.godrayBlurVUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur2; // rob changed from depth
+                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurV;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur);
+
+                postprocessing.godrayBlurHUniforms[ "RTScene" ].value = postprocessing.rtTextureBlur; // rob changed from depth
+                 postprocessing.scene.overrideMaterial = postprocessing.materialGodraysBlurH;
+                renderer.render( postprocessing.scene, postprocessing.camera, postprocessing.rtTextureBlur2);
+
+                postprocessing.godrayCombineBlurUniforms["tColors"].value = postprocessing.rtTextureColors;
+                postprocessing.godrayCombineBlurUniforms["tGodRays"].value = postprocessing.rtTextureGodRays1;
+                postprocessing.godrayCombineBlurUniforms["tBlur"].value = postprocessing.rtTextureBlur2;
+                postprocessing.scene.overrideMaterial = postprocessing.materialGodraysCombineBlur;
+                renderer.render( postprocessing.scene, postprocessing.camera);
 
 
-                renderer.render( postprocessing.scene, postprocessing.camera );
-                postprocessing.scene.overrideMaterial = null;
+                // renderer.render( postprocessing.scene, postprocessing.camera );
+                // postprocessing.scene.overrideMaterial = null;
 
             } else {
 

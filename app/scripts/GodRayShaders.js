@@ -186,12 +186,17 @@ THREE.ShaderGodRays = {
                 value: null
             },
 
-            tBlur: {
+            // tBlur: {
+            //     type: "t",
+            //     value: null
+            // },
+
+            tGodRays: {
                 type: "t",
                 value: null
             },
 
-            tGodRays: {
+            tMask: {
                 type: "t",
                 value: null
             },
@@ -227,7 +232,7 @@ THREE.ShaderGodRays = {
 
             "uniform sampler2D tColors;",
             "uniform sampler2D tGodRays;",
-            "uniform sampler2D tBlur;",
+            "uniform sampler2D tMask;",
 
             "uniform vec2 vSunPositionScreenSpace;",
             "uniform float fGodRayIntensity;",
@@ -240,17 +245,18 @@ THREE.ShaderGodRays = {
             //
                 "vec4 cColors = texture2D(tColors, vUv);",
                 "vec4 cGodRays = texture2D(tGodRays, vUv);",
-                "vec4 cBlur = texture2D(tBlur, vUv);",
+                "vec4 cMask = texture2D(tMask, vUv);",
+                // "vec4 cBlur = texture2D(tBlur, vUv);",
 
-                "cBlur.a = min(cBlur.a,1.0);",
+                // "cBlur.a = min(cBlur.a,1.0);",
                 // "cGodRays.a = max(cGodRays.r + cGodRays.g + cGodRays.b, cBlur.a);",
                 "cGodRays.a = min(cGodRays.r + cGodRays.g + cGodRays.b, 1.0);",
 
-                "cBlur.a = cBlur.a / 4.0;",
+                // "cBlur.a = cBlur.a / 8.0;",
                 "cGodRays.a = cGodRays.a / 3.0;",
 
                 // "gl_FragColor = (cBlur + cGodRays) / 2.0;", //changed by rscanlon
-                "gl_FragColor =vec4(cBlur.a * cBlur.rgb, cBlur.a) + cGodRays;", //changed by rscanlon
+                "gl_FragColor =cGodRays;", //changed by rscanlon
                 // "gl_FragColor.a = max(cBlur.a, cGodRays.a);",
                 //
 
@@ -267,6 +273,9 @@ THREE.ShaderGodRays = {
                 "  gl_FragColor = cColors;",
                 "}",
 
+                "gl_FragColor.a = gl_FragColor.a - cMask.r;",
+
+
 
                 // "gl_FragColor.a = (texture2D(tGodRays, vUv).r + texture2D(tGodRays,vUv).g + texture2D(tGodRays, vUv).b + texture2D(tColors, vUv).a / 2.0 + texture2D(tBlur,vUv).a);",
                 // "gl_FragColor.a = (texture2D(tGodRays, vUv).r + texture2D(tGodRays,vUv).g + texture2D(tGodRays, vUv).b + texture2D(tColors, vUv).a / 2.0 + texture2D(tBlur,vUv).a);",
@@ -274,6 +283,67 @@ THREE.ShaderGodRays = {
 
                 // "gl_FragColor = texture2D( tBlur, vUv );", //changed by rscanlon
 
+
+            "}"
+
+        ].join("\n")
+
+    },
+    'godrays_combineblur': {
+
+        uniforms: {
+
+            tColors: {
+                type: "t",
+                value: null
+            },
+            tGodRays: {
+                type: "t",
+                value: null
+            },
+            tBlur: {
+                type: "t",
+                value: null
+            },
+
+        },
+
+        vertexShader: [
+
+            "varying vec2 vUv;",
+
+            "void main() {",
+
+                "vUv = uv;",
+                "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+
+            "}"
+
+            ].join("\n"),
+
+        fragmentShader: [
+
+            "varying vec2 vUv;",
+
+            "uniform sampler2D tColors;",
+            "uniform sampler2D tBlur;",
+            "uniform sampler2D tGodRays;",
+
+            "void main() {",
+
+                "vec4 cColors = texture2D(tColors, vUv);",
+                "vec4 cBlur = texture2D(tBlur, vUv);",
+                "vec4 cGodRays = texture2D(tGodRays, vUv);",
+                "cBlur.a = min(cBlur.r + cBlur.g + cBlur.b, 1.0);",
+
+                // "cBlur.a = cBlur.a / 8.0;",
+                // "cGodRays.a = cGodRays.a / 3.0;",
+
+                "gl_FragColor = vec4(cBlur.rgb * cBlur.a, cBlur.a) + cGodRays;", //changed by rscanlon
+
+                "if (cColors.a > 0.1){",
+                "  gl_FragColor = cColors;",
+                "}",
 
             "}"
 
@@ -376,18 +446,19 @@ THREE.ShaderGodRays = {
                // "sum =max(texture2D(RTScene, vec2(vUv.x + 15.0*blurSize, vUv.y)), sum);",
  
 
-            // "sum += texture2D( RTScene, vec2( vUv.x - 4.0 * blurSize, vUv.y ) ) * 0.051;",
-            // "sum += texture2D( RTScene, vec2( vUv.x - 3.0 * blurSize, vUv.y ) ) * 0.0918;",
-            // "sum += texture2D( RTScene, vec2( vUv.x - 2.0 * blurSize, vUv.y ) ) * 0.12245;",
-            // "sum += texture2D( RTScene, vec2( vUv.x - 1.0 * blurSize, vUv.y ) ) * 0.1531;",
-            // "sum += texture2D( RTScene, vec2( vUv.x, vUv.y ) ) * 0.1633;",
-            // "sum += texture2D( RTScene, vec2( vUv.x + 1.0 * blurSize, vUv.y ) ) * 0.1531;",
-            // "sum += texture2D( RTScene, vec2( vUv.x + 2.0 * blurSize, vUv.y ) ) * 0.12245;",
-            // "sum += texture2D( RTScene, vec2( vUv.x + 3.0 * blurSize, vUv.y ) ) * 0.0918;",
-            // "sum += texture2D( RTScene, vec2( vUv.x + 4.0 * blurSize, vUv.y ) ) * 0.051;",
+            "sum = texture2D( RTScene, vec2( vUv.x - 4.0 * blurSize, vUv.y ) ) * 0.051;",
+            "sum += texture2D( RTScene, vec2( vUv.x - 3.0 * blurSize, vUv.y ) ) * 0.0918;",
+            "sum += texture2D( RTScene, vec2( vUv.x - 2.0 * blurSize, vUv.y ) ) * 0.12245;",
+            "sum += texture2D( RTScene, vec2( vUv.x - 1.0 * blurSize, vUv.y ) ) * 0.1531;",
+            "sum += texture2D( RTScene, vec2( vUv.x, vUv.y ) ) * 0.1633;",
+            "sum += texture2D( RTScene, vec2( vUv.x + 1.0 * blurSize, vUv.y ) ) * 0.1531;",
+            "sum += texture2D( RTScene, vec2( vUv.x + 2.0 * blurSize, vUv.y ) ) * 0.12245;",
+            "sum += texture2D( RTScene, vec2( vUv.x + 3.0 * blurSize, vUv.y ) ) * 0.0918;",
+            "sum += texture2D( RTScene, vec2( vUv.x + 4.0 * blurSize, vUv.y ) ) * 0.051;",
 
-               // "gl_FragColor = sum;",
-               "gl_FragColor = max(sum, texture2D(RTScene, vUv));",
+               "gl_FragColor = sum;",
+               "gl_FragColor.a = 1.0;",
+               // "gl_FragColor = max(sum, texture2D(RTScene, vUv));",
                // "gl_FragColor.a = (sum.r + sum.g + sum.b)/3.0;",
                // "gl_FragColor.a = 1.0;",
                 // "  gl_FragColor = texture2D(tColors, vUv);",
@@ -494,18 +565,21 @@ THREE.ShaderGodRays = {
                // "sum = max(texture2D(RTScene, vec2(vUv.x, vUv.y + 14.0*blurSize)) , sum);",
                // "sum = max(texture2D(RTScene, vec2(vUv.x, vUv.y + 15.0*blurSize)) , sum);",
 
-            // "sum += texture2D( RTScene, vec2( vUv.x, vUv.y - 4.0 * blurSize ) ) * 0.051;",
-            // "sum += texture2D( RTScene, vec2( vUv.x, vUv.y - 3.0 * blurSize ) ) * 0.0918;",
-            // "sum += texture2D( RTScene, vec2( vUv.x, vUv.y - 2.0 * blurSize ) ) * 0.12245;",
-            // "sum += texture2D( RTScene, vec2( vUv.x, vUv.y - 1.0 * blurSize ) ) * 0.1531;",
-            // "sum += texture2D( RTScene, vec2( vUv.x, vUv.y ) ) * 0.1633;",
-            // "sum += texture2D( RTScene, vec2( vUv.x, vUv.y + 1.0 * blurSize ) ) * 0.1531;",
-            // "sum += texture2D( RTScene, vec2( vUv.x, vUv.y + 2.0 * blurSize ) ) * 0.12245;",
-            // "sum += texture2D( RTScene, vec2( vUv.x, vUv.y + 3.0 * blurSize ) ) * 0.0918;",
-            // "sum += texture2D( RTScene, vec2( vUv.x, vUv.y + 4.0 * blurSize ) ) * 0.051;",
+            "sum = texture2D( RTScene, vec2( vUv.x, vUv.y - 4.0 * blurSize ) ) * 0.051;",
+            "sum += texture2D( RTScene, vec2( vUv.x, vUv.y - 3.0 * blurSize ) ) * 0.0918;",
+            "sum += texture2D( RTScene, vec2( vUv.x, vUv.y - 2.0 * blurSize ) ) * 0.12245;",
+            "sum += texture2D( RTScene, vec2( vUv.x, vUv.y - 1.0 * blurSize ) ) * 0.1531;",
+            "sum += texture2D( RTScene, vec2( vUv.x, vUv.y ) ) * 0.1633;",
+            "sum += texture2D( RTScene, vec2( vUv.x, vUv.y + 1.0 * blurSize ) ) * 0.1531;",
+            "sum += texture2D( RTScene, vec2( vUv.x, vUv.y + 2.0 * blurSize ) ) * 0.12245;",
+            "sum += texture2D( RTScene, vec2( vUv.x, vUv.y + 3.0 * blurSize ) ) * 0.0918;",
+            "sum += texture2D( RTScene, vec2( vUv.x, vUv.y + 4.0 * blurSize ) ) * 0.051;",
 
  
-               "gl_FragColor = max(sum, texture2D(RTScene, vUv));",
+               "gl_FragColor = sum;",//(sum.r + sum.g + sum.b)/3.0;",
+               "gl_FragColor.a = 1.0;",
+
+               // "gl_FragColor = max(sum, texture2D(RTScene, vUv));",
                // "gl_FragColor.a = (sum.r + sum.g + sum.b)/3.0;",
                 // "  gl_FragColor = texture2D(tColors, vUv);",
                 // "  gl_FragColor.r = 0.0;",
