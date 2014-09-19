@@ -284,12 +284,6 @@ THREE.ShaderGodRays = {
 
                 "gl_FragColor.a = gl_FragColor.a - texture2D(tMask, vec2(mod(vUv.x - offset - .3, 1.0), vUv.y)).r;",
 
-                "if(gl_FragColor.a < 0.1){",
-                "   gl_FragColor.a = 0.0;",
-                " }",
-
-
-
 
                 // "gl_FragColor.a = (texture2D(tGodRays, vUv).r + texture2D(tGodRays,vUv).g + texture2D(tGodRays, vUv).b + texture2D(tColors, vUv).a / 2.0 + texture2D(tBlur,vUv).a);",
                 // "gl_FragColor.a = (texture2D(tGodRays, vUv).r + texture2D(tGodRays,vUv).g + texture2D(tGodRays, vUv).b + texture2D(tColors, vUv).a / 2.0 + texture2D(tBlur,vUv).a);",
