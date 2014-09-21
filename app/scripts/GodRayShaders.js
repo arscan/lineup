@@ -252,7 +252,7 @@ THREE.ShaderGodRays = {
                 "vec4 cColors = texture2D(tColors, vUv);",
                 "vec4 cGodRays = texture2D(tGodRays, vUv);",
                 // "vec4 cMask = texture2D(tMask, vUv);",
-                "float offset = (fTick/30.0 );",
+                "float offset = (fTick/40.0 );",
                 // "float offset = tick;",
                 // "float offset = 0.5;",
                 // "vec4 cBlur = texture2D(tBlur, vUv);",
@@ -282,7 +282,7 @@ THREE.ShaderGodRays = {
                 "  gl_FragColor = cColors;",
                 "}",
 
-                "gl_FragColor.a = gl_FragColor.a - texture2D(tMask, vec2(mod(vUv.x - offset - .3, 1.0), vUv.y)).r;",
+                "gl_FragColor.a = gl_FragColor.a - texture2D(tMask, vec2(mod(vUv.x - offset, 1.0), vUv.y)).r;",
 
 
                 // "gl_FragColor.a = (texture2D(tGodRays, vUv).r + texture2D(tGodRays,vUv).g + texture2D(tGodRays, vUv).b + texture2D(tColors, vUv).a / 2.0 + texture2D(tBlur,vUv).a);",
