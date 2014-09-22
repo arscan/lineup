@@ -48,13 +48,13 @@
             uniforms : {
                 name1: {type: 't'},
                 currentTime: {type: 'f', value: 10.0},
-                bulletStartTime: {type: 'f', value: 1.0},
+                bulletStartTime: {type: 'f', value: 2.0},
                 bulletDuration: {type: 'f', value:0.6},
                 headerInStartTime: {type: 'f', value: 0.5},
-                headerInDuration: {type: 'f', value:1.0},
+                headerInDuration: {type: 'f', value:2.0},
                 textInStartTime: {type: 'f', value: 1.0},
-                textInDuration: {type: 'f', value:1.0},
-                textOutStartTime: {type: 'f', value: 5.0},
+                textInDuration: {type: 'f', value:3.0},
+                textOutStartTime: {type: 'f', value: 6.0},
                 textOutDuration: {type: 'f', value:1.0},
             },
             vertexShader: [
@@ -230,7 +230,17 @@
         camera.position.set(0, 0, 600);
         scene.add(camera);
 
-        var nameCanvas = createNameCanvas("Scanlon", "Robert Scanlon", ["education", 
+        var nameCanvas1= createNameCanvas("Scanlon", "Robert Scanlon", ["Alias: \"ARSCAN\"", 
+                                          "species: terran", 
+                                          "origin: Boston, MA",
+                                          "legs: 2",
+                                          "arms: 2"
+                                          ]);
+
+        var nameTexture1 = new THREE.Texture(nameCanvas1)
+        nameTexture1.needsUpdate = true;
+
+        var nameCanvas2 = createNameCanvas("Scanlon", "Robert Scanlon", ["education", 
                                           "cornell: bs computer science", 
                                           "mit: Ms engineering & management", 
                                           "", 
@@ -238,8 +248,8 @@
                                           "software engineer",
                                           "web, data viz"]);
 
-        var nameTexture = new THREE.Texture(nameCanvas)
-        nameTexture.needsUpdate = true;
+        var nameTexture2 = new THREE.Texture(nameCanvas2)
+        nameTexture2.needsUpdate = true;
 
         /*
         var parameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, stencilBuffer: false };
@@ -271,22 +281,25 @@
             fragmentShader: Shaders.skeleton.fragmentShader
         });
 
+        skeletonMaterial.transparent = true;
+
         var nameBoxMaterial = new THREE.ShaderMaterial({
             uniforms: Shaders.nameBox.uniforms,
             vertexShader: Shaders.nameBox.vertexShader,
             fragmentShader: Shaders.nameBox.fragmentShader
         });
 
-        nameBoxMaterial.uniforms.name1.value = nameTexture;
+        nameBoxMaterial.uniforms.name1.value = nameTexture1;
         nameBoxMaterial.transparent = true;
 
         loader.load( 'models/skeleton.json', skeletonMaterial, function ( skeletonObject ) {
 
-            skeletonObject.scale.x = skeletonObject.scale.y = skeletonObject.scale.z = 1.4;
+            skeletonObject.scale.x = skeletonObject.scale.y = skeletonObject.scale.z = 1.2;
             skeletonObject.updateMatrix();
             skeletonObject.rotation.y = Math.PI/2;
             skeletonObject.position.x = 160;
-            skeletonObject.position.y = 80;
+            skeletonObject.position.y = 50;
+            skeletonObject.position.z = 50;
 
 
             scene.add(skeletonObject);
@@ -296,10 +309,35 @@
 
   
             var plane = new THREE.Mesh( planegeometry, nameBoxMaterial );
-            plane.position.x = -50;
-            plane.position.y = -50;
-            plane.position.z = 0;
+            plane.position.x = 100;
+            plane.position.y = -100;
+            plane.position.z = -530;
             scene.add( plane );
+
+            var nameTween1 = new TWEEN.Tween(plane.position)
+               .to({x: -50}, 3000);
+            var nameTween2 = new TWEEN.Tween(plane.position)
+                      .to({x: -10}, 5000)
+                      .chain(nameTween1);
+
+            nameTween1.chain(nameTween2);
+
+            new TWEEN.Tween(plane.position)
+                .easing( TWEEN.Easing.Cubic.Out )
+                .to({x: 150, y: -150, z: -30}, 300)
+                .chain(new TWEEN.Tween(plane.position)
+                .easing( TWEEN.Easing.Cubic.In )
+                .to({x: -20}, 500)
+                .delay(6200)
+                .onComplete(function(){
+                    nameBoxMaterial.uniforms.name1.value = nameTexture2;
+                    nameBoxMaterial.uniforms.textInStartTime.value = 7.0,
+                    nameBoxMaterial.uniforms.textOutStartTime.value = 0.0
+                    nameTween1.start();
+                })).start();
+
+
+
             initPostprocessing();
             // requestAnimationFrame(render);
              render();
@@ -443,9 +481,8 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
             var time = clock.getElapsedTime();
             // console.log(time);
             scene.children[1].rotation.y -= 0.005;
-            scene.children[2].position.x += (Math.sin(time) / 2);
-            scene.children[2].position.y += (Math.cos(time) / 2);
-            scene.children[2].position.z += (Math.cos(time) / 2);
+
+            TWEEN.update();
 
             Shaders.skeleton.uniforms.currentTime.value = time - 5;
             Shaders.nameBox.uniforms.currentTime.value = time;
@@ -690,7 +727,7 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
 
                     // skeletonDiv.velocity({height: height}, {duration:  3000, delay: delay});
                     // skeletonCanvas.velocity({top: 0}, {duration: 3000, delay: delay});
-                }, 700);
+                }, 50);
 
             }
         };
