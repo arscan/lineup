@@ -19,7 +19,7 @@
     var Shaders = {
         skeleton: {
             uniforms : {
-                currentTime: {type: 'f', value: 0.0}
+                currentTime: {type: 'f', value: 0.0},
             },
             vertexShader: [
                 '#define INTRODURATION 5.0',
@@ -34,11 +34,35 @@
                 'varying vec3 vNormal;',
                 'uniform float currentTime;',
                 'void main() {',
-                '  if(gl_FragCoord.y > currentTime * 150.0){',
-                '    gl_FragColor = vec4(0.0,0.0,0.0,0.0);',
-                '  } else {',
+                '  if(gl_FragCoord.y < currentTime * 150.0){',
                 '    float intensity = 1.30 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
                 '    vec3 outline = vec3( 0.0708, 0.714, 0.652 ) * pow( intensity, 1.0 );',
+                '    gl_FragColor = vec4(outline, intensity);',
+                ' } ',
+                '}'
+            ].join('\n')
+        },
+        organs: {
+            uniforms : {
+                currentTime: {type: 'f', value: 0.0},
+            },
+            vertexShader: [
+                '#define INTRODURATION 5.0',
+                'varying vec3 vNormal;',
+                'uniform float currentTime;',
+                'void main() {',
+                '  vNormal = normalize( normalMatrix * normal );',
+                '  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+                '}'
+            ].join('\n'),
+            fragmentShader: [
+                'varying vec3 vNormal;',
+                'uniform float currentTime;',
+                'uniform vec3 vMyColor;',
+                'void main() {',
+                '  if(gl_FragCoord.y < currentTime * 150.0){',
+                '    float intensity = 1.30 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
+                '    vec3 outline = vec3( 0.5708, 0.314, 0.252 ) * pow( intensity, 1.0 );',
                 '    gl_FragColor = vec4(outline, intensity);',
                 ' } ',
                 '}'
@@ -203,7 +227,9 @@
         var screenSpacePosition = new THREE.Vector3();
 
 
-        var loader = new THREE.AssimpJSONLoader();
+        // var loader = new THREE.AssimpJSONLoader();
+        var loader = new THREE.OBJLoader();
+
 
 
         VIEW_ANGLE = 45;
@@ -281,26 +307,37 @@
             fragmentShader: Shaders.skeleton.fragmentShader
         });
 
+        var organMaterial = new THREE.ShaderMaterial({
+            uniforms: Shaders.organs.uniforms,
+            vertexShader: Shaders.organs.vertexShader,
+            fragmentShader: Shaders.organs.fragmentShader,
+            depthTest: false
+        });
+
+
         skeletonMaterial.transparent = true;
+        organMaterial.transparent = true;
 
         var nameBoxMaterial = new THREE.ShaderMaterial({
             uniforms: Shaders.nameBox.uniforms,
             vertexShader: Shaders.nameBox.vertexShader,
-            fragmentShader: Shaders.nameBox.fragmentShader
+            fragmentShader: Shaders.nameBox.fragmentShader,
         });
 
         nameBoxMaterial.uniforms.name1.value = nameTexture1;
         nameBoxMaterial.transparent = true;
 
-        loader.load( 'models/skeleton.json', skeletonMaterial, function ( skeletonObject ) {
+        loader.load( 'models/skeleton_and_organs.obj', function ( skeletonObject ) {
 
-            skeletonObject.scale.x = skeletonObject.scale.y = skeletonObject.scale.z = 1.2;
+            skeletonObject.scale.x = skeletonObject.scale.y = skeletonObject.scale.z = 1.3;
             skeletonObject.updateMatrix();
             skeletonObject.rotation.y = Math.PI/2;
             skeletonObject.position.x = 160;
             skeletonObject.position.y = 50;
             skeletonObject.position.z = 50;
 
+            skeletonObject.children[0].material = skeletonMaterial;
+            skeletonObject.children[1].material = organMaterial;
 
             scene.add(skeletonObject);
 
@@ -485,6 +522,7 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
             TWEEN.update();
 
             Shaders.skeleton.uniforms.currentTime.value = time - 5;
+            Shaders.organs.uniforms.currentTime.value = time - 7;
             Shaders.nameBox.uniforms.currentTime.value = time;
 
             if ( postprocessing.enabled ) {
