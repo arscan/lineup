@@ -757,7 +757,8 @@ postprocessing.godraysFakeSunUniforms.sunColor.value.setHex( sunColor );
                         width: width,
                         bottom:-10,
                         left: -20,
-                        height: height
+                        height: height,
+                        'z-index': 5
                         // '-webkit-filter': 'blur(1px)'
 
                     });

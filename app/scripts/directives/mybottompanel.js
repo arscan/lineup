@@ -24,6 +24,7 @@ angular.module('lineupApp')
             'bottom': 0,
             'margin': 0,
             'padding': 0,
+            'z-index': 100,
             'width': '100%',
         });
 
