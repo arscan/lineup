@@ -101,7 +101,7 @@
 
         renderer = new THREE.WebGLRenderer( { antialias: false } );
         // renderer.setClearColor( 0x111111, 1 );
-        renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.setSize( window.innerWidth/1.5, window.innerHeight/1.5 );
 
         var canvas = renderer.domElement;
         element[0].appendChild(canvas);
@@ -177,7 +177,7 @@
                         height: '100%',
                         top: 0,
                         left: 0,
-                        // '-webkit-filter': 'blur(1px)'
+                        //'-webkit-filter': 'blur(2px)'
 
                     });
 
