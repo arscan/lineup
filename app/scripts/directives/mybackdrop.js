@@ -85,7 +85,7 @@
 
         var spacerMesh = new THREE.Mesh( spacerGeometry, spacerMaterial );
 
-        spacerMesh.position.z = -500;
+        spacerMesh.position.z = -499;
         spacerMesh.position.x = -524;
         spacerMesh.position.y = -300;
 
@@ -98,6 +98,75 @@
         createPanel(geometry, {x:700,y:-300}, material);
         createPanel(geometry, {x:-940,y:-300}, material);
 
+        var number1 = new THREE.Mesh(new THREE.PlaneGeometry(35, 35), 
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("models/number1.png")}));
+        number1.position.set(-510, 340, -460);
+        scene.add(number1);
+
+        var number2 = new THREE.Mesh(new THREE.PlaneGeometry(35, 35), 
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("models/number2.png")}));
+        number2.position.set(-510, 145, -460);
+        scene.add(number2);
+
+        var number3 = new THREE.Mesh(new THREE.PlaneGeometry(35, 35), 
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("models/number3.png")}));
+        number3.position.set(-510, -45, -460);
+        scene.add(number3);
+
+        var number4 = new THREE.Mesh(new THREE.PlaneGeometry(35, 35), 
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("models/number4.png")}));
+        number4.position.set(-510, -243, -460);
+        scene.add(number4);
+        
+        var horizTexture = new THREE.MeshBasicMaterial({transparent: true, opacity: .8, map: THREE.ImageUtils.loadTexture("models/horizontal_lights.png")});
+
+        var horizLight1 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight1.position.set(0, 350, -500);
+        scene.add(horizLight1);
+
+        var horizLight2 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight2.position.set(1024, 350, -500);
+        scene.add(horizLight2);
+
+        var horizLight3 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight3.position.set(-1024, 350, -500);
+        scene.add(horizLight3);
+
+        var horizLight4 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight4.position.set(0, 148, -500);
+        scene.add(horizLight4);
+
+        var horizLight5 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight5.position.set(1024, 148, -500);
+        scene.add(horizLight5);
+
+        var horizLight6 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight6.position.set(-1024, 148, -500);
+        scene.add(horizLight6);
+
+        var horizLight7 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight7.position.set(0, -47, -500);
+        scene.add(horizLight7);
+
+        var horizLight8 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight8.position.set(1024, -47, -500);
+        scene.add(horizLight8);
+
+        var horizLight9 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight9.position.set(-1024, -47, -500);
+        scene.add(horizLight9);
+
+        var horizLight10 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight10.position.set(1024, -250, -500);
+        scene.add(horizLight10);
+
+        var horizLight11 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight11.position.set(-1024, -250, -500);
+        scene.add(horizLight11);
+
+        var horizLight12 = new THREE.Mesh(new THREE.PlaneGeometry(1024, 18), horizTexture); 
+        horizLight12.position.set(0, -250, -500);
+        scene.add(horizLight12);
 
         renderer = new THREE.WebGLRenderer( { antialias: false } );
         // renderer.setClearColor( 0x111111, 1 );
