@@ -1,0 +1,74 @@
+function createProjectorPanel(renderer, width, height, elements){
+
+   var renderScene,
+       renderComposer,
+       renderCamera,
+       clock,
+       mainComposer,
+       projectorComposer,
+       blurComposer,
+       glowComposer;
+
+    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
+    var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
+    var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true}));
+    quad.material.blending = THREE.AdditiveBlending;
+    quad.position.set(width/2,height/2,1);
+
+
+    function createRenderTarget(width, height){
+        var params = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat};
+        return new THREE.WebGLRenderTarget(width, height, params);
+    }
+
+    function init(){
+        clock = new THREE.Clock();
+
+        renderCamera = new THREE.OrthographicCamera(0, width, height, 0, 0, 100);
+        renderScene = new THREE.Scene();
+
+        for(var i = 0; i< elements.length; i++){
+            renderScene.add(elements[i].quad);
+        }
+
+
+        renderComposer = new THREE.EffectComposer(renderer, renderTarget);
+        renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
+        
+        var renderScenePass = new THREE.TexturePass(renderComposer.renderTarget2);
+        projectorComposer = new THREE.EffectComposer(renderer, createRenderTarget(width/2.8, height/2.8));
+        projectorComposer.addPass(renderScenePass);
+        projectorComposer.addPass(new THREE.ProjectorPass(renderer, new THREE.Vector2(-.04, 0.05)));
+
+        renderComposer.addPass(new THREE.ShaderPass(THREE.AdditiveBlendShader, {tAdd: projectorComposer.renderTarget1, fOpacity: .5}));
+    }
+
+    function render(){
+        // renderer.render(mainScene, camera);
+        var time = clock.getElapsedTime();
+
+
+        renderComposer.render();
+        projectorComposer.render();
+        /*
+        projectorComposer.render();
+        blurComposer.render();
+        blurComposer.render();
+        glowComposer.render();
+
+        mainComposer.render();
+       */
+
+    }
+
+    init();
+
+    return Object.freeze({
+        render: render,
+        renderTarget: renderTarget,
+        quad: quad,
+        width: width,
+        height: height
+    });
+}
+
