@@ -167,14 +167,21 @@ function createProjectsPanel(renderer, width, height, x, y){
 
     }
 
+    function checkBounds(x, y){
+        return (x > quad.position.x - width / 2 && x < quad.position.x + width/2) 
+               && (y > quad.position.y - height / 2 && y < quad.position.y + height/2);
+    }
+
     init();
 
     return Object.freeze({
+        toString: function(){return "ProjectsPanel"},
         render: render,
         renderTarget: renderTarget,
         width: width,
         height: height,
-        quad: quad
+        quad: quad,
+        checkBounds: checkBounds
     });
 }
 

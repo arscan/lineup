@@ -29,6 +29,18 @@
 
         }
 
+        .grab {
+            cursor: -webkit-grab;
+            cursor: -moz-grab;
+            cursor: grab;
+        }
+
+        .grabbing {
+            cursor: -webkit-grabbing;
+            cursor: -moz-grabbing;
+            cursor: grabbing;
+        }
+
         #stats {
             position: absolute;
             top: 0;
@@ -41,9 +53,9 @@
 </head>
 <body style="background-color: black">
 
-    <div id="reference-image" style="background-image: url(reference.jpg); width: 1280px; height:530px; position: absolute; background-color: #fff; opacity: 0; z-index:600"></div>
+    <div id="reference-image" style="background-image: url(reference.jpg); width: 1280px; height:530px; position: absolute; background-color: #fff; opacity: 0; z-index:000; display: none;"></div>
     <div id="bottom-panel" style="width:1280px; height: 100px;position:absolute;top:530;z-index:500;opacity:1;"></div>
-    <div id="show-reference" style="top: 5; left: 5; position: absolute; z-index: 800; color: white; font-weight: bold; background-color: #333; padding: 10px; opacity: .5; border: 1px solid #aaa; border-radius: 10px;">Show Reference</div>
+    <div id="show-reference" style="top: 5; left: 5; position: absolute; z-index: 800; color: white; font-weight: bold; background-color: #333; padding: 10px; opacity: .5; border: 1px solid #aaa; border-radius: 10px; display:none;">Show Reference</div>
 
 </body>
 <script src="BottomPanel.js"></script>

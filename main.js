@@ -2,6 +2,8 @@
 var container = document.createElement( 'div' ),
     stats = new Stats(), 
     renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } ), 
+    renderWidth = 1280,
+    renderHeight = 580,
     camera = new THREE.OrthographicCamera(0, 1280, 580, 0, -1000, 1000),
     scene = new THREE.Scene(),
 
@@ -11,8 +13,12 @@ var container = document.createElement( 'div' ),
     projectorPanel = createProjectorPanel(renderer, 1280, 580, [namePanel, skeletonPanel, projectsPanel]),
     backgroundPanel = createBackgroundPanel(renderer, 1280, 580),
     bottomPanel = createBottomPanel($("#bottom-panel")),
-    clock = new THREE.Clock();
 
+    interactivePanels = [namePanel, projectsPanel],
+    grabbedPanel = null,
+    grabStart = null,
+
+    clock = new THREE.Clock();
 
 // scene.add(leftQuad);
 scene.add(projectorPanel.quad);
@@ -43,8 +49,53 @@ function render(){
 
 render();
 
-$(document).on("click",function(event){
-    namePanel.quad.position.set(event.clientX, 580-event.clientY - namePanel.height / 2, 0);
+$(document).on("mousedown","canvas", function(event){
+    
+    // Do Dragging
+    //
+    // namePanel.quad.position.set(event.clientX, 580-event.clientY - namePanel.height / 2, 0);
+
+    for(var i = 0; i< interactivePanels.length; i++){
+        var panel = interactivePanels[i];
+        if(panel.checkBounds(event.clientX,renderHeight - event.clientY)){
+            grabbedPanel = panel;
+            grabStart = {x: event.clientX, y: renderHeight - event.clientY};
+            return;
+        }
+    }
 
 });
 
+$(document).on("mouseup","canvas", function(event){
+    grabbedPanel = null;
+    grabStart = null;
+});
+
+
+
+$(document).on("mousemove","canvas", function(event){
+    // check to see what object i'm in...
+    
+    if(grabbedPanel){
+
+        console.log("WE ARE GRABBED FOR " + grabbedPanel);
+
+        grabbedPanel.quad.position.x = grabbedPanel.quad.position.x - (grabStart.x - event.clientX); 
+        grabbedPanel.quad.position.y = grabbedPanel.quad.position.y + (grabStart.y - event.clientY); 
+
+        grabStart.x = event.clientX;
+        grabStart.y = event.clientY;
+
+        return;
+    }
+    for(var i = 0; i< interactivePanels.length; i++){
+        var panel = interactivePanels[i];
+        if(panel.checkBounds(event.clientX,renderHeight - event.clientY)){
+            $(event.target).addClass("grab");
+            return;
+        }
+    }
+    $(event.target).removeClass("grab");
+    // $(event.target).css("cursor", "inherit")
+
+});
