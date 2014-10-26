@@ -59,7 +59,8 @@ $(document).on("mousedown","canvas", function(event){
         var panel = interactivePanels[i];
         if(panel.checkBounds(event.clientX,renderHeight - event.clientY)){
             grabbedPanel = panel;
-            grabStart = {x: event.clientX, y: renderHeight - event.clientY};
+            grabStart = {x: event.clientX, y: event.clientY};
+            $(event.target).addClass("grabbing");
             return;
         }
     }
@@ -69,6 +70,13 @@ $(document).on("mousedown","canvas", function(event){
 $(document).on("mouseup","canvas", function(event){
     grabbedPanel = null;
     grabStart = null;
+    $(event.target).removeClass("grabbing");
+});
+
+$(document).on("mouseout","canvas", function(event){
+    grabbedPanel = null;
+    grabStart = null;
+    $(event.target).removeClass("grabbing");
 });
 
 
