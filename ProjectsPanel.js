@@ -18,7 +18,9 @@ function createProjectsPanel(renderer, width, height, x, y){
    var BLURINESS = 3.9;
 
    var encomSphere,
-       encomBoardroom;
+       encomBoardroom,
+       hexasphere,
+       streamed;
 
 
    var projectsShaders =  {
@@ -50,7 +52,7 @@ function createProjectsPanel(renderer, width, height, x, y){
 
            ctx.font = "bold 14pt Roboto";
            ctx.fillStyle = '#ff8d07';
-           ctx.fillText("NEW PROJECTS", 25, 15);
+           ctx.fillText("OPEN SOURCE", 25, 15);
 
            ctx.lineWidth = 1.5;
            ctx.strokeStyle="#fd2616";
@@ -83,7 +85,7 @@ function createProjectsPanel(renderer, width, height, x, y){
    };
 
     function createRenderTarget(width, height){
-        var params = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat};
+        var params = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
         return new THREE.WebGLRenderTarget(width, height, params);
     }
 
@@ -116,6 +118,12 @@ function createProjectsPanel(renderer, width, height, x, y){
                                     new THREE.MeshBasicMaterial({color: 0x00FF00, opacity: .2, transparent: true}));
         encomBoardroom.position.set(80, 50, 0);
         renderScene.add(encomBoardroom);
+
+        streamed = new THREE.Mesh(new THREE.PlaneBufferGeometry(300,80),
+        // streamed = new THREE.Mesh(new THREE.PlaneBufferGeometry(1000,1000),
+                                    new THREE.MeshBasicMaterial({color: 0x00FFFF, opacity: .2, transparent: true}));
+        streamed.position.set(150, -80, 0);
+        renderScene.add(streamed);
 
         renderComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
