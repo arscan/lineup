@@ -117,7 +117,7 @@ $(document).on("mousemove","canvas", function(event){
         grabStart.x = event.clientX;
         grabStart.y = event.clientY;
 
-        console.log(carouselLocation);
+        // console.log(carouselLocation);
 
         for(var i = 0; i< carouselPanels.length; i++){
             var panel = carouselPanels[i];
