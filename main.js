@@ -7,15 +7,17 @@ var container = document.createElement( 'div' ),
     camera = new THREE.OrthographicCamera(0, 1280, 580, 0, -1000, 1000),
     scene = new THREE.Scene(),
 
-    skeletonPanel = createSkeletonPanel(renderer, 250, 400, 512/2+ 500, 512/2+ 60),
-    namePanel = createNamePanel(renderer, 256, 256, 300, 512/2 + 60),
+    skeletonPanel = createSkeletonPanel(renderer, 250, 400, 512/2+ 300, 512/2+ 60),
+    namePanel = createNamePanel(renderer, 256, 256, 200, 512/2 - 80),
     projectsPanel = createProjectsPanel(renderer, 256, 256, 1000, 200),
     aboutPanel = createAboutPanel(renderer, 256, 256, 1000, 400),
-    projectorPanel = createProjectorPanel(renderer, 1280, 580, [namePanel, skeletonPanel, projectsPanel, aboutPanel]),
+    bioPanel = createBioPanel(renderer, 256, 256, 1000, 400),
+    linksPanel = createLinksPanel(renderer, 256, 256, 1000, 400),
+    projectorPanel = createProjectorPanel(renderer, 1280, 580, [namePanel, skeletonPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
     backgroundPanel = createBackgroundPanel(renderer, 1280, 580),
     bottomPanel = createBottomPanel($("#bottom-panel")),
 
-    carouselPanels = [projectsPanel, aboutPanel],
+    carouselPanels = [projectsPanel, aboutPanel, bioPanel, linksPanel],
     carouselLocation = 0,
     carouselGrabbed = false,
 
@@ -25,6 +27,7 @@ var container = document.createElement( 'div' ),
 
     clock = new THREE.Clock();
 
+namePanel.quad.scale.set(1.2,1.2,1.2);
 scene.add(projectorPanel.quad);
 scene.add(backgroundPanel.quad);
 
@@ -32,6 +35,12 @@ container.appendChild( stats.domElement );
 document.body.appendChild( container );
 renderer.setSize( 1280, 580 );
 container.appendChild( renderer.domElement );
+
+for(var i = 0; i< carouselPanels.length; i++){
+    var panel = carouselPanels[i];
+    panel.quad.position.y = Math.max(300 + 200 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * carouselLocation), 250);
+    panel.quad.position.x = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * carouselLocation);
+}
 
 function render(){
     var time = clock.getElapsedTime();
@@ -43,6 +52,8 @@ function render(){
     projectsPanel.render();
     namePanel.render();
     aboutPanel.render();
+    bioPanel.render();
+    linksPanel.render();
     projectorPanel.render();
 
     renderer.render(scene, camera);
@@ -95,6 +106,15 @@ $(document).on("mouseout","canvas", function(event){
 });
 
 
+function getScale(y){
+    return 1 - (y-250)/400;
+}
+
+function getBlur(y){
+    return 1-(y-250)/200;
+}
+
+
 
 $(document).on("mousemove","canvas", function(event){
     // check to see what object i'm in...
@@ -117,13 +137,16 @@ $(document).on("mousemove","canvas", function(event){
         grabStart.x = event.clientX;
         grabStart.y = event.clientY;
 
-        // console.log(carouselLocation);
-
         for(var i = 0; i< carouselPanels.length; i++){
             var panel = carouselPanels[i];
-            panel.quad.position.y = 300 + 150 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * carouselLocation);
-            panel.quad.position.x = 1200 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * carouselLocation);
+            panel.quad.position.y = Math.max(300 + 200 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * carouselLocation), 250);
+            panel.quad.position.x = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * carouselLocation);
 
+            var scale = getScale(panel.quad.position.y);
+
+            panel.quad.scale.set(scale, scale, scale, scale);
+
+            panel.setBlur(getBlur(panel.quad.position.y));
         }
 
         return;

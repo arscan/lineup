@@ -6,7 +6,9 @@ function createProjectsPanel(renderer, width, height, x, y){
        clock,
        mainComposer,
        blurComposer,
-       glowComposer;
+       glowComposer,
+       blurLevel = 1,
+       finalBlurPass;
 
    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
    var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
@@ -148,9 +150,9 @@ function createProjectsPanel(renderer, width, height, x, y){
         glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 1/width} ));
         glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 1/height}));
 
-        var addPass2 = new THREE.ShaderPass(THREE.AdditiveBlendShader);
-        addPass2.uniforms['tAdd'].value = glowComposer.writeBuffer;
-        mainComposer.addPass(addPass2);
+        finalBlurPass  = new THREE.ShaderPass(THREE.AdditiveBlendShader);
+        finalBlurPass.uniforms['tAdd'].value = glowComposer.writeBuffer;
+        mainComposer.addPass(finalBlurPass);
 
     }
 
@@ -159,9 +161,12 @@ function createProjectsPanel(renderer, width, height, x, y){
         // renderer.render(renderScene, renderCamera, renderTarget);
         renderComposer.render();
 
-        blurComposer.render();
-        blurComposer.render();
+        finalBlurPass.uniforms['fOpacitySource'].value = blurLevel;
+
+        // blurComposer.render();
+        // blurComposer.render();
         glowComposer.render();
+
 
         mainComposer.render();
 
@@ -170,6 +175,10 @@ function createProjectsPanel(renderer, width, height, x, y){
     function checkBounds(x, y){
         return (x > quad.position.x - width / 2 && x < quad.position.x + width/2) 
                && (y > quad.position.y - height / 2 && y < quad.position.y + height/2);
+    }
+
+    function setBlur(blur){
+        blurLevel = Math.max(0,Math.min(1,blur));
     }
 
     init();
@@ -181,7 +190,8 @@ function createProjectsPanel(renderer, width, height, x, y){
         width: width,
         height: height,
         quad: quad,
-        checkBounds: checkBounds
+        checkBounds: checkBounds,
+        setBlur: setBlur
     });
 }
 

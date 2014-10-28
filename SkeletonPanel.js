@@ -213,7 +213,8 @@ function createSkeletonPanel(renderer, width, height, x, y){
         width: width,
         height: height,
         quad: quad,
-        checkBounds: checkBounds
+        checkBounds: checkBounds,
+        setBlur: function(){ }
     });
 }
 

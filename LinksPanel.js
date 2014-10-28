@@ -1,4 +1,4 @@
-function createAboutPanel(renderer, width, height, x, y){
+function createLinksPanel(renderer, width, height, x, y){
 
    var renderScene,
        renderComposer,
@@ -54,7 +54,7 @@ function createAboutPanel(renderer, width, height, x, y){
 
            ctx.font = "bold 14pt Roboto";
            ctx.fillStyle = '#ff8d07';
-           ctx.fillText("ABOUT", 25, 15);
+           ctx.fillText("LINKS", 25, 15);
 
            ctx.lineWidth = 1.5;
            ctx.strokeStyle="#fd2616";
@@ -185,7 +185,7 @@ function createAboutPanel(renderer, width, height, x, y){
     init();
 
     return Object.freeze({
-        toString: function(){return "AboutPanel"},
+        toString: function(){return "LinksPanel"},
         render: render,
         renderTarget: renderTarget,
         width: width,

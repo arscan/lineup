@@ -10,7 +10,8 @@ THREE.AdditiveBlendShader = {
     
         "tDiffuse": { type: "t", value: null },
         "tAdd": { type: "t", value: null },
-        "fOpacity": { type: "f", value: 1.0 }
+        "fOpacity": { type: "f", value: 1.0 },
+        "fOpacitySource": { type: "f", value: 1.0 },
     },
 
     vertexShader: [
@@ -31,14 +32,15 @@ THREE.AdditiveBlendShader = {
         "uniform sampler2D tDiffuse;",
         "uniform sampler2D tAdd;",
         "uniform float fOpacity;",
+        "uniform float fOpacitySource;",
 
         "varying vec2 vUv;",
 
         "void main() {",
 
             "vec4 texel1 = texture2D( tDiffuse, vUv );",
-            "vec4 texel2 = texture2D( tAdd, vUv ) * fOpacity;",
-            "gl_FragColor = texel1 + texel2;",
+            "vec4 texel2 = texture2D( tAdd, vUv ) ;",
+            "gl_FragColor = texel1 * fOpacitySource + texel2 * fOpacity;",
         "}"
 
     ].join("\n")
