@@ -1,0 +1,1 @@
+ffmpeg -vf scale=580:-1,transpose=1 -ss 3 -t 9 -i test_vid.mp4 -qmax 25 -threads 4 test_vid2.webm

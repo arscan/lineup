@@ -7,7 +7,7 @@ var container = document.createElement( 'div' ),
     camera = new THREE.OrthographicCamera(0, 1280, 580, 0, -1000, 1000),
     scene = new THREE.Scene(),
 
-    skeletonPanel = createSkeletonPanel(renderer, 250, 400, 512/2+ 300, 512/2+ 60),
+    skeletonPanel = createSkeletonPanel(renderer, 250, 400, 512/2+ 200, 512/2+ 60),
     namePanel = createNamePanel(renderer, 256, 256, 200, 512/2 - 80),
     projectsPanel = createProjectsPanel(renderer, 256, 256, 1000, 200),
     aboutPanel = createAboutPanel(renderer, 256, 256, 1000, 400),
@@ -15,6 +15,7 @@ var container = document.createElement( 'div' ),
     linksPanel = createLinksPanel(renderer, 256, 256, 1000, 400),
     projectorPanel = createProjectorPanel(renderer, 1280, 580, [namePanel, skeletonPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
     backgroundPanel = createBackgroundPanel(renderer, 1280, 580),
+    subjectPanel = createSubjectPanel(renderer, 326, 580, 470 + 326/2, 580/2 - 50 ),
     bottomPanel = createBottomPanel($("#bottom-panel")),
 
     carouselPanels = [projectsPanel, aboutPanel, bioPanel, linksPanel],
@@ -29,6 +30,7 @@ var container = document.createElement( 'div' ),
 
 namePanel.quad.scale.set(1.2,1.2,1.2);
 scene.add(projectorPanel.quad);
+scene.add(subjectPanel.quad);
 scene.add(backgroundPanel.quad);
 
 container.appendChild( stats.domElement );
@@ -55,6 +57,7 @@ function render(){
     bioPanel.render();
     linksPanel.render();
     projectorPanel.render();
+    subjectPanel.render();
 
     renderer.render(scene, camera);
 

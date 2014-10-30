@@ -1,7 +1,8 @@
 <head>
     <link href='http://fonts.googleapis.com/css?family=Roboto:500' rel='stylesheet' type='text/css'>
     <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="three.min.js"></script>
+    <!-- <script src="three.min.js"></script> -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r69/three.js"></script>
     <script src="http://mrdoob.github.com/three.js/examples/js/shaders/CopyShader.js"></script>
     <script src="http://mrdoob.github.com/three.js/examples/js/shaders/HorizontalBlurShader.js"></script>
     <script src="http://mrdoob.github.com/three.js/examples/js/shaders/VerticalBlurShader.js"></script>
@@ -52,6 +53,7 @@
             position: absolute;
             opacity: .5;
             left: 500px;
+            display: none;
         }
 
     </style>
@@ -63,7 +65,8 @@
     <div id="bottom-panel" style="width:1280px; height: 100px;position:absolute;top:530;z-index:500;opacity:1;"></div>
     <div id="show-reference" style="top: 5; left: 5; position: absolute; z-index: 800; color: white; font-weight: bold; background-color: #333; padding: 10px; opacity: .5; border: 1px solid #aaa; border-radius: 10px; display:none;">Show Reference</div>
 
-    <video src="test_vid.webm" autoplay loop controls>
+    <video id="video" autoplay loop="true">
+        <source src="test_vid.webm">
     </video>
 
 </body>
@@ -77,6 +80,7 @@
 <script src="AboutPanel.js"></script>
 <script src="BioPanel.js"></script>
 <script src="LinksPanel.js"></script>
+<script src="SubjectPanel.js"></script>
 <script src="main.js"></script>
 
 <script>
