@@ -12,6 +12,8 @@ function createSubjectPanel(renderer, width, height, x, y){
    var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true}));
 
    quad.position.set(x, y, 0);
+   quad.scale.set(1.34,1.34,1.34);
+   // console.log(quad.scale);
 
    var subjectShader =  {
        uniforms : {
@@ -76,8 +78,9 @@ function createSubjectPanel(renderer, width, height, x, y){
         "    texel.a = texel.a * 0.6;",
         " }",
         // "   texel.a  = step(.08, distance(toYUV(cMaskColor), toYUV(texel.rgb)) / 1.7);",
-        // "   texel.a = 1.0;",
-        "texel.rgb = texel.rgb * vec3(.3);",
+        "   texel.b += .05;",
+        "   texel.r -= .1;",
+        "   texel.g -= .1;",
         "   gl_FragColor = texel;",
         "}"
        ].join('\n')
@@ -132,10 +135,17 @@ function createSubjectPanel(renderer, width, height, x, y){
         plane.position.set(width/2, height/2, 0);
         renderScene.add( plane );
 
+        renderComposer = new THREE.EffectComposer(renderer, renderTarget);
+        renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
+        renderComposer.addPass(new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: .5, brightness: -.1}));
+        renderComposer.addPass(new THREE.ShaderPass(THREE.HueSaturationShader, {hue: .05, saturation: -.6}));
+        renderComposer.addPass(new THREE.ShaderPass(THREE.CopyShader)); // to line them up right
+
     }
 
     function render(){
-        renderer.render(renderScene, renderCamera, renderTarget);
+        // renderer.render(renderScene, renderCamera, renderTarget);
+        renderComposer.render();
 
     }
 
