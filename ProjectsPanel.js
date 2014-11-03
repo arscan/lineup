@@ -19,7 +19,7 @@ function createProjectsPanel(renderer, width, height, x, y){
 
    var BLURINESS = 3.9;
 
-   var encomSphere,
+   var encomGlobe,
        encomBoardroom,
        hexasphere,
        streamed;
@@ -109,10 +109,13 @@ function createProjectsPanel(renderer, width, height, x, y){
         plane.position.set(0, 90, 0);
         renderScene.add( plane );
 
-        encomSphere = new THREE.Mesh(new THREE.PlaneBufferGeometry(100,100),
+        encomGlobe = createEncomGlobe(renderScene);
+        /*
+        encomGlobe = new THREE.Mesh(new THREE.PlaneBufferGeometry(100,100),
                                     new THREE.MeshBasicMaterial({color: 0xFF0000, opacity: .2, transparent: true}));
-        encomSphere.position.set(-70, -80, 0);
-        renderScene.add(encomSphere);
+        encomGlobe.position.set(-70, -80, 0);
+        renderScene.add(encomGlobe);
+       */
 
         // encomBoardroom = new THREE.Mesh(new THREE.PlaneBufferGeometry(100,60),
         //                             new THREE.MeshBasicMaterial({color: 0x00FF00, opacity: .2, transparent: true}));
@@ -168,7 +171,7 @@ function createProjectsPanel(renderer, width, height, x, y){
         glowComposer.render();
 
         encomBoardroom.render();
-
+        encomGlobe.render();
 
         mainComposer.render();
 

@@ -15,9 +15,9 @@ function createEncomBoardroom(scene){
        return renderToCanvas(200, 40, function(ctx){
            ctx.strokeStyle="#fff";
 
-           ctx.font = "bold 12pt Roboto";
+           ctx.font = "12pt Roboto";
            ctx.fillStyle = '#ffcc00';
-           ctx.fillText("Encom Boardroom", 25, 15);
+           ctx.fillText("Tron Boardroom", 25, 15);
 
        });
 
@@ -37,7 +37,7 @@ function createEncomBoardroom(scene){
         transparent: true
     });
 
-    var offset = {x: -50, y: 40, z: 0};
+    var offset = {x: -20, y: 50, z: 0};
     var drift = {x: 0, y: 0, z: 0};
 
     lastRenderDate = new Date();
@@ -103,19 +103,18 @@ function createEncomBoardroom(scene){
                 splineMaterial.opacity = 1;
             }
 
+            backdropMaterial.opacity = 0;
+
             splineLine.rotation.x += .05;
             splineLine.position.set(offset.x + drift.x, offset.y + drift.y, offset.z + drift.z);
             backdropLine.position.set(offset.x + drift.x, offset.y + drift.y, offset.z + drift.z);
-            titlePlane.position.set(offset.x + drift.x, offset.y + drift.y - 60, offset.z + drift.z + 10);
+            titlePlane.position.set(offset.x + drift.x + 10, offset.y + drift.y - 50, offset.z + drift.z + 10);
 
             drift.x = Math.sin(timeSinceStart / 1000) * 5;
             drift.y = Math.cos(timeSinceStart / 1000) * 5;
             drift.z = Math.cos(timeSinceStart / 1000) * 5;
 
         }, 
-        reset: function(){
-            firstRun = null;
-        }
     };
 
 }
