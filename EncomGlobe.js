@@ -9,7 +9,7 @@ var createEncomGlobe = function(scene){
         firstRenderDate = Date.now(), 
         index_values;
 
-    var offset = {x: -60, y: -60, z: 0};
+    var offset = {x: -80, y: -40, z: 0};
     var drift = {x: 0, y: 0, z: 0};
 
     var pointVertexShader = [
@@ -96,7 +96,7 @@ var createEncomGlobe = function(scene){
         return renderToCanvas(200, 40, function(ctx){
             ctx.strokeStyle="#fff";
 
-            ctx.font = "12pt Roboto";
+            ctx.font = "10pt Roboto";
             ctx.fillStyle = '#ffcc00';
             ctx.fillText("Encom Globe", 25, 15);
 
@@ -201,12 +201,12 @@ var createEncomGlobe = function(scene){
 
         hexGrid.rotateY(rotateBy);
 
-        drift.x = Math.sin(totalRunTime / 1000) * 5;
-        drift.y = Math.cos(totalRunTime / 1000) * 5;
-        drift.z = Math.cos(totalRunTime / 1000) * 5;
+        drift.x = Math.sin(totalRunTime / 1000) * 3;
+        drift.y = Math.cos(totalRunTime / 1000) * 3;
+        drift.z = Math.cos(totalRunTime / 1000) * 3;
 
         hexGrid.position.set(offset.x + drift.x,offset.y + drift.y,offset.z + drift.z);
-        titlePlane.position.set(offset.x + drift.x + 20, offset.y + drift.y - 55, offset.z + drift.z + 10);
+        titlePlane.position.set(offset.x + drift.x + 30, offset.y + drift.y - 55, offset.z + drift.z + 10);
 
         pointUniforms.currentTime.value = totalRunTime;
     }

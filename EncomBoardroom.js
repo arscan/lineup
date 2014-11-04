@@ -15,7 +15,7 @@ function createEncomBoardroom(scene){
        return renderToCanvas(200, 40, function(ctx){
            ctx.strokeStyle="#fff";
 
-           ctx.font = "12pt Roboto";
+           ctx.font = "10pt Roboto";
            ctx.fillStyle = '#ffcc00';
            ctx.fillText("Tron Boardroom", 25, 15);
 
@@ -37,7 +37,7 @@ function createEncomBoardroom(scene){
         transparent: true
     });
 
-    var offset = {x: -20, y: 50, z: 0};
+    var offset = {x: 0, y: 60, z: 0};
     var drift = {x: 0, y: 0, z: 0};
 
     lastRenderDate = new Date();

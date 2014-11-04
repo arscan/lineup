@@ -22,7 +22,7 @@ function createProjectsPanel(renderer, width, height, x, y){
    var encomGlobe,
        encomBoardroom,
        hexasphere,
-       streamed;
+       githubWargames;
 
 
    var projectsShaders =  {
@@ -52,13 +52,13 @@ function createProjectsPanel(renderer, width, height, x, y){
 
            ctx.font = "bold 14pt Roboto";
            ctx.fillStyle = '#ff8d07';
-           ctx.fillText("Projects", 25, 15);
+           ctx.fillText("Recent Projects", 25, 15);
 
            ctx.lineWidth = 1.5;
            ctx.strokeStyle="#fd2616";
            ctx.moveTo(2,2);
            ctx.lineTo(2,25);
-           ctx.lineTo(220,25);
+           ctx.lineTo(240,25);
            ctx.stroke();
 
            ctx.beginPath();
@@ -71,11 +71,11 @@ function createProjectsPanel(renderer, width, height, x, y){
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(200, 25, 2, 0, 2 * Math.PI);
+           ctx.arc(210, 25, 2, 0, 2 * Math.PI);
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(220, 25, 2, 0, 2 * Math.PI);
+           ctx.arc(240, 25, 2, 0, 2 * Math.PI);
            ctx.fill();
 
 
@@ -124,11 +124,7 @@ function createProjectsPanel(renderer, width, height, x, y){
         
         encomBoardroom = createEncomBoardroom(renderScene);
 
-        streamed = new THREE.Mesh(new THREE.PlaneBufferGeometry(300,80),
-        // streamed = new THREE.Mesh(new THREE.PlaneBufferGeometry(1000,1000),
-                                    new THREE.MeshBasicMaterial({color: 0x00FFFF, opacity: .2, transparent: true}));
-        streamed.position.set(150, -80, 0);
-        renderScene.add(streamed);
+        githubWargames = createGithubWargames(renderScene);
 
         renderComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
@@ -172,6 +168,7 @@ function createProjectsPanel(renderer, width, height, x, y){
 
         encomBoardroom.render();
         encomGlobe.render();
+        githubWargames.render();
 
         mainComposer.render();
 
