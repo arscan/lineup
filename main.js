@@ -19,7 +19,7 @@ var container = document.createElement( 'div' ),
     bottomPanel = createBottomPanel($("#bottom-panel")),
 
     carouselPanels = [projectsPanel, aboutPanel, bioPanel, linksPanel],
-    carouselLocation = 0.6,
+    carouselLocation = 0,
     carouselGrabbed = false,
 
     interactivePanels = [namePanel, skeletonPanel],
@@ -37,12 +37,6 @@ container.appendChild( stats.domElement );
 document.body.appendChild( container );
 renderer.setSize( 1280, 580 );
 container.appendChild( renderer.domElement );
-
-for(var i = 0; i< carouselPanels.length; i++){
-    var panel = carouselPanels[i];
-    panel.quad.position.y = Math.max(300 + 200 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * carouselLocation), 250);
-    panel.quad.position.x = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * carouselLocation);
-}
 
 function render(){
     var time = clock.getElapsedTime();
@@ -117,6 +111,13 @@ $(document).on("mouseout","canvas", function(event){
     $(event.target).removeClass("grabbing");
 });
 
+$(document).on("scroll", function(){
+    carouselLocation = $(document).scrollTop() /  ($(document).height() - window.innerHeight);
+    setPanelPositions();
+
+
+});
+
 
 function getScale(y){
     return 1 - (y-250)/400;
@@ -130,8 +131,8 @@ function setPanelPositions(){
 
     for(var i = 0; i< carouselPanels.length; i++){
         var panel = carouselPanels[i];
-        panel.quad.position.y = Math.max(300 + 200 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * carouselLocation), 250);
-        panel.quad.position.x = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * carouselLocation);
+        panel.quad.position.y = Math.max(300 + 200 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58)), 250);
+        panel.quad.position.x = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
 
         var scale = getScale(panel.quad.position.y);
 
@@ -188,3 +189,14 @@ $(document).on("mousemove","canvas", function(event){
     // $(event.target).css("cursor", "inherit")
 
 });
+
+new TWEEN.Tween({loc: -.5})
+            .delay(1000)
+
+            .to({loc: 0}, 5000)
+            .onUpdate(function(){
+                carouselLocation = this.loc;
+                setPanelPositions();
+            })
+            .easing(TWEEN.Easing.Elastic.Out)
+            .start();
