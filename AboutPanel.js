@@ -19,11 +19,8 @@ function createAboutPanel(renderer, width, height, x, y){
 
    var BLURINESS = 3.9;
 
-   var encomSphere,
-       encomBoardroom,
-       hexasphere,
-       streamed;
-
+   var bodyPlane,
+       scrollPlane;
 
    var projectsShaders =  {
        uniforms : {
@@ -54,7 +51,7 @@ function createAboutPanel(renderer, width, height, x, y){
 
            ctx.font = "bold 14pt Roboto";
            ctx.fillStyle = '#ff8d07';
-           ctx.fillText("ABOUT", 25, 15);
+           ctx.fillText("WELCOME", 25, 15);
 
            ctx.lineWidth = 1.5;
            ctx.strokeStyle="#fd2616";
@@ -80,8 +77,57 @@ function createAboutPanel(renderer, width, height, x, y){
            ctx.arc(220, 25, 2, 0, 2 * Math.PI);
            ctx.fill();
 
+       });
 
+   };
 
+   function createBodyCanvas(){
+       var text = ["Thanks for stopping by.",
+                   "This is a project by Rob Scanlon using THREE.js, and a ",
+                   "long list of other open source projects.",
+                   "Try scrolling down to continue.",
+       ];
+
+       return renderToCanvas(256, 200, function(ctx){
+           ctx.strokeStyle="#fff";
+
+           ctx.font = "10pt Roboto";
+           ctx.fillStyle = '#ffffff';
+
+           for(var i = 0; i < text.length; i++){
+               ctx.fillText(text[i], 0, 20 + i*20);
+           }
+       });
+
+   };
+
+   function createScrollCanvas(){
+       return renderToCanvas(256, 25, function(ctx){
+
+           ctx.font = "12pt Roboto";
+           ctx.fillStyle = '#6Fc0BA';
+
+           ctx.fillText("SCROLL DOWN", 50, 18);
+           ctx.fillStyle = '#996699';
+
+           function drawTriangles(x){
+               ctx.moveTo(x, 10);
+               ctx.lineTo(x+5, 5);
+               ctx.lineTo(x-5, 5);
+               ctx.lineTo(x, 10);
+               ctx.moveTo(x, 15);
+               ctx.lineTo(x+5, 10);
+               ctx.lineTo(x-5, 10);
+               ctx.lineTo(x, 15);
+               ctx.moveTo(x, 20);
+               ctx.lineTo(x+5, 15);
+               ctx.lineTo(x-5, 15);
+               ctx.lineTo(x, 20);
+               ctx.fill();
+           }
+
+           drawTriangles(40);
+           drawTriangles(180);
        });
 
    };
@@ -100,7 +146,6 @@ function createAboutPanel(renderer, width, height, x, y){
         renderScene = new THREE.Scene();
 
         var titleCanvas= createTitleCanvas(); 
-
         var titleTexture = new THREE.Texture(titleCanvas)
         titleTexture.needsUpdate = true;
 
@@ -111,21 +156,27 @@ function createAboutPanel(renderer, width, height, x, y){
         plane.position.set(0, 90, 0);
         renderScene.add( plane );
 
-        encomSphere = new THREE.Mesh(new THREE.PlaneBufferGeometry(100,100),
-                                    new THREE.MeshBasicMaterial({color: 0xFF0000, opacity: .2, transparent: true}));
-        encomSphere.position.set(-70, 20, 0);
-        renderScene.add(encomSphere);
+        var bodyCanvas= createBodyCanvas(); 
+        var bodyTexture = new THREE.Texture(bodyCanvas)
+        bodyTexture.needsUpdate = true;
 
-        encomBoardroom = new THREE.Mesh(new THREE.PlaneBufferGeometry(100,60),
-                                    new THREE.MeshBasicMaterial({color: 0x00FF00, opacity: .2, transparent: true}));
-        encomBoardroom.position.set(80, 50, 0);
-        renderScene.add(encomBoardroom);
+        var bodyMaterial = new THREE.MeshBasicMaterial({map: bodyTexture, transparent: true});
+        var bodyGeometry = new THREE.PlaneBufferGeometry( 256, 200 );
 
-        streamed = new THREE.Mesh(new THREE.PlaneBufferGeometry(300,80),
-        // streamed = new THREE.Mesh(new THREE.PlaneBufferGeometry(1000,1000),
-                                    new THREE.MeshBasicMaterial({color: 0x00FFFF, opacity: .2, transparent: true}));
-        streamed.position.set(150, -80, 0);
-        renderScene.add(streamed);
+        bodyPlane = new THREE.Mesh( bodyGeometry, bodyMaterial );
+        bodyPlane.position.set(0, 0, 0);
+        renderScene.add( bodyPlane );
+
+        var scrollCanvas= createScrollCanvas(); 
+        var scrollTexture = new THREE.Texture(scrollCanvas)
+        scrollTexture.needsUpdate = true;
+
+        var scrollMaterial = new THREE.MeshBasicMaterial({map: scrollTexture, transparent: true});
+        var scrollGeometry = new THREE.PlaneBufferGeometry( 256, 25 );
+
+        scrollPlane = new THREE.Mesh( scrollGeometry, scrollMaterial );
+        scrollPlane.position.set(0, -100, 0);
+        renderScene.add( scrollPlane );
 
         renderComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));

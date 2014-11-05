@@ -18,7 +18,7 @@ var container = document.createElement( 'div' ),
     //subjectPanel = createSubjectPanel(renderer, 326, 580, 500 + 326/2, 580/2 - 120 ),
     bottomPanel = createBottomPanel($("#bottom-panel")),
 
-    carouselPanels = [projectsPanel, aboutPanel, bioPanel, linksPanel],
+    carouselPanels = [aboutPanel, linksPanel, bioPanel, projectsPanel],
     carouselLocation = 0,
     carouselGrabbed = false,
 
@@ -48,13 +48,9 @@ function render(){
     namePanel.render();
 
     for(var i = 0; i < carouselPanels.length; i++){
-        carouselPanels[i].render();
-        /*
-        aboutPanel.render();
-        bioPanel.render();
-        linksPanel.render();
-        projectsPanel.render();
-       */
+        if(carouselPanels[i].quad.position.x < 1280 + 200){
+            carouselPanels[i].render();
+        }
     }
 
     projectorPanel.render();
@@ -131,7 +127,9 @@ function setPanelPositions(){
 
     for(var i = 0; i< carouselPanels.length; i++){
         var panel = carouselPanels[i];
-        panel.quad.position.y = Math.max(300 + 200 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58)), 250);
+        panel.quad.position.y = Math.max(300 + 200 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58)), 230);
+        panel.quad.position.x = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
+        
         panel.quad.position.x = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
 
         var scale = getScale(panel.quad.position.y);
@@ -190,10 +188,10 @@ $(document).on("mousemove","canvas", function(event){
 
 });
 
-new TWEEN.Tween({loc: -.5})
+new TWEEN.Tween({loc: -.1})
             .delay(1000)
 
-            .to({loc: 0}, 5000)
+            .to({loc: 0}, 2000)
             .onUpdate(function(){
                 carouselLocation = this.loc;
                 setPanelPositions();
