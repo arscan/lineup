@@ -180,21 +180,16 @@ function createSkeletonPanel(renderer, width, height, x, y){
     function render(){
         // renderer.render(mainScene, camera);
         var time = clock.getElapsedTime();
-
-        if(renderScene.children.length > 0){
-            renderScene.children[0].rotation.y -= .005;
-        }
-
         TWEEN.update();
 
+        if(renderScene.children.length > 0){
+            renderScene.children[0].rotation.y = -time/2;
+        }
         Shaders.skeleton.uniforms.currentTime.value = time -6;
         Shaders.organs.uniforms.currentTime.value = time -7;
         renderComposer.render();
-
         blurComposer.render();
         blurComposer.render();
-        // glowComposer.render();
-
         mainComposer.render();
 
     }
