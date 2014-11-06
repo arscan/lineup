@@ -7,7 +7,8 @@ function createProjectorPanel(renderer, width, height, elements){
        mainComposer,
        projectorComposer,
        blurComposer,
-       glowComposer;
+       glowComposer,
+       glareMaterial;
 
     var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
     var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
@@ -31,6 +32,16 @@ function createProjectorPanel(renderer, width, height, elements){
             renderScene.add(elements[i].quad);
         }
 
+        var glareTexture = THREE.ImageUtils.loadTexture('projector_glare.png');
+        glareMaterial = new THREE.MeshBasicMaterial({map: glareTexture, transparent: true, blend: THREE.AdditiveBlending});
+        var glareGeometry = new THREE.PlaneBufferGeometry( 64, 64 );
+        var glareLeft = new THREE.Mesh(glareGeometry, glareMaterial );
+        var glareRight = new THREE.Mesh(glareGeometry, glareMaterial );
+        glareLeft.position.set(0, 40, 0);
+        glareRight.position.set(width, 40, 0);
+        renderScene.add(glareLeft);
+        renderScene.add(glareRight);
+
 
         renderComposer = new THREE.EffectComposer(renderer, renderTarget);
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
@@ -38,7 +49,7 @@ function createProjectorPanel(renderer, width, height, elements){
         var renderScenePass = new THREE.TexturePass(renderComposer.renderTarget2);
         projectorComposer = new THREE.EffectComposer(renderer, createRenderTarget(width/2.8, height/2.8));
         projectorComposer.addPass(renderScenePass);
-        projectorComposer.addPass(new THREE.ProjectorPass(renderer, new THREE.Vector2(-.04, 0.05)));
+        projectorComposer.addPass(new THREE.ProjectorPass(renderer, new THREE.Vector2(-.01, 0.05)));
 
         renderComposer.addPass(new THREE.ShaderPass(THREE.AdditiveBlendShader, {tAdd: projectorComposer.renderTarget1, fOpacity: .5}));
     }
@@ -47,6 +58,8 @@ function createProjectorPanel(renderer, width, height, elements){
         // renderer.render(mainScene, camera);
         var time = clock.getElapsedTime();
 
+
+        glareMaterial.opacity = Math.sin(time/2)/4 + .5;
 
         renderComposer.render();
         projectorComposer.render();

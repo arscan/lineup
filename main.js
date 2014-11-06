@@ -9,12 +9,13 @@ var container = document.createElement( 'div' ),
 
     skeletonPanel = createSkeletonPanel(renderer, 250, 400, 512/2+ 200, 512/2+ 60),
     namePanel = createNamePanel(renderer, 256, 256, 200, 512/2 - 80),
+    sharePanel = createSharePanel(renderer, 256, 256, 256/2 + 10, 512),
     projectsPanel = createProjectsPanel(renderer, 256, 256, 1000, 200),
     aboutPanel = createAboutPanel(renderer, 256, 256, 1000, 400),
     bioPanel = createBioPanel(renderer, 256, 256, 1000, 400),
     linksPanel = createLinksPanel(renderer, 256, 256, 1000, 400),
     backgroundPanel = createBackgroundPanel(renderer, 1280, 580),
-    projectorPanel = createProjectorPanel(renderer, 1280, 580, [namePanel, skeletonPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
+    projectorPanel = createProjectorPanel(renderer, 1280, 580, [namePanel, skeletonPanel, sharePanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
     //subjectPanel = createSubjectPanel(renderer, 326, 580, 500 + 326/2, 580/2 - 120 ),
     bottomPanel = createBottomPanel($("#bottom-panel")),
 
@@ -22,7 +23,7 @@ var container = document.createElement( 'div' ),
     carouselLocation = 0,
     carouselGrabbed = false,
 
-    interactivePanels = [namePanel, skeletonPanel],
+    interactivePanels = [namePanel, skeletonPanel, sharePanel],
     grabbedPanel = null,
     grabStart = null,
 
@@ -46,6 +47,7 @@ function render(){
     // skeletonPanel.quad.position.x = projectorPanel.width / 2 + Math.sin(time/2) * 300;
     skeletonPanel.render();
     namePanel.render();
+    sharePanel.render();
 
     for(var i = 0; i < carouselPanels.length; i++){
         if(carouselPanels[i].quad.position.x < 1280 + 200){
@@ -83,9 +85,15 @@ $(document).on("mousedown","canvas", function(event){
 
     for(var i = 0; i< interactivePanels.length; i++){
         var panel = interactivePanels[i];
-        if(panel.checkBounds(event.clientX,renderHeight - event.clientY)){
+        var boundRes = panel.checkBounds(event.clientX,renderHeight - event.clientY);
+        if(typeof boundRes == "string"){
+            location.href=boundRes;
+            return;
+
+        } else if(boundRes){
             grabbedPanel = panel;
             grabStart = {x: event.clientX, y: event.clientY};
+            $(event.target).removeClass("pointing");
             $(event.target).addClass("grabbing");
             return;
         }
@@ -97,6 +105,7 @@ $(document).on("mouseup","canvas", function(event){
     carouselGrabbed = false;
     grabbedPanel = null;
     grabStart = null;
+    $(event.target).removeClass("pointing");
     $(event.target).removeClass("grabbing");
 });
 
@@ -104,6 +113,7 @@ $(document).on("mouseout","canvas", function(event){
     carouselGrabbed = false;
     grabbedPanel = null;
     grabStart = null;
+    $(event.target).removeClass("pointing");
     $(event.target).removeClass("grabbing");
 });
 
@@ -178,11 +188,20 @@ $(document).on("mousemove","canvas", function(event){
 
     for(var i = 0; i< interactivePanels.length; i++){
         var panel = interactivePanels[i];
-        if(panel.checkBounds(event.clientX,renderHeight - event.clientY)){
+        var boundRes = panel.checkBounds(event.clientX,renderHeight - event.clientY);
+        if(typeof boundRes == "string"){
+            $(event.target).removeClass("grab");
+            $(event.target).addClass("pointing");
+            clickStart = boundRes;
+            return;
+
+        } else if(boundRes){
             $(event.target).addClass("grab");
+            $(event.target).removeClass("pointing");
             return;
         }
     }
+    $(event.target).removeClass("pointing");
     $(event.target).removeClass("grab");
     // $(event.target).css("cursor", "inherit")
 
@@ -198,3 +217,24 @@ new TWEEN.Tween({loc: -.1})
             })
             .easing(TWEEN.Easing.Elastic.Out)
             .start();
+
+function setTwitter(){
+
+    $.getJSON('http://cdn.api.twitter.com/1/urls/count.json?url=' + encodeURIComponent(document.URL) + '&callback=?', null, function (results) {
+        if(typeof results.count == "number"){
+            sharePanel.setTweets(results.count);
+        }
+    });
+}
+
+function setGithub(){
+
+    $.getJSON('https://api.github.com/repos/arscan/lineup', null, function (results) {
+        if(typeof results.stargazers_count == "number"){
+            sharePanel.setStars(results.stargazers_count);
+        }
+    });
+}
+
+setTwitter();
+setGithub();
