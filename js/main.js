@@ -1,4 +1,15 @@
+
+/* globally register the webfontconfig */
+
 $(function(){
+
+WebFont.load({
+    google: {
+        families: ['Roboto:500']
+    },
+    active: function(){
+        
+
 
 /* standard things */
 
@@ -264,6 +275,9 @@ $("#bottom-panel").css({"top": renderHeight - 50});
 
 setTwitter();
 setGithub();
+LOADSYNC.start();
 
 
-});
+}}); /* end webfontloader */
+
+}); /* end jquery */
