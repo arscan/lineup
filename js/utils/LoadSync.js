@@ -9,7 +9,6 @@ var LOADSYNC = (function(){
 
     function register(callback){
         count++;
-        console.log('up to ' + count);
         return function(){
 
             if(typeof(callback) == "function"){
@@ -17,10 +16,8 @@ var LOADSYNC = (function(){
             }
 
             count--;
-            console.log('down to ' + count);
             if(count === 0 && started){
                 runWhenFinished();
-                console.log('running finished normal way');
             }
         };
     }
@@ -32,7 +29,6 @@ var LOADSYNC = (function(){
     function start(){
         if(count === 0){
             runWhenFinished();
-            console.log('running finished deffered');
         }
         started = true;
     }

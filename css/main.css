@@ -65,4 +65,5 @@ video {
     text-align: center;
     z-index: 30;
     background-color: #000;
+    display: none;
 }
