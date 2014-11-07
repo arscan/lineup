@@ -111,7 +111,7 @@ function createSkeletonPanel(renderer, width, height, x, y){
         skeletonMaterial.blending = THREE.AdditiveBlending;
         organMaterial.blending = THREE.AdditiveBlending;
 
-        loader.load( '../models/skeleton.obj', function ( skeletonObject ) {
+        loader.load( '../models/skeleton.obj', LOADSYNC.register(function ( skeletonObject ) {
 
             skeletonObject.children[0].geometry.mergeVertices();
             skeletonObject.children[0].geometry.computeVertexNormals();
@@ -126,7 +126,7 @@ function createSkeletonPanel(renderer, width, height, x, y){
 
             renderScene.add(skeletonObject);
 
-        });
+        }));
 
         renderComposer = new THREE.EffectComposer(renderer, renderTarget);
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));

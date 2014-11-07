@@ -1,15 +1,23 @@
 $(function(){
 
+/* standard things */
 
 var container = document.createElement( 'div' ),
     stats = new Stats(), 
-    renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } ), 
+    renderer = new THREE.WebGLRenderer( { antialias: false, alpha: true } ), 
+    /* screen size */
+    screenRatio = 23/9;
+    standardWidth = 1024,
     renderWidth = 1280,
-    renderHeight = 580,
-    camera = new THREE.OrthographicCamera(0, 1280, 580, 0, -1000, 1000),
-    scene = new THREE.Scene(),
+    screenScale = renderWidth / standardWidth,
+    renderHeight = renderWidth/screenRatio,
+    standardPanelSize = screenScale * 256,
 
-    skeletonPanel = createSkeletonPanel(renderer, 250, 400, 512/2+ 200, 512/2+ 60),
+    camera = new THREE.OrthographicCamera(0, 1280, 580, 0, -1000, 1000),
+    scene = new THREE.Scene();
+
+/* panels and such */
+var skeletonPanel = createSkeletonPanel(renderer, 250, 400, 512/2+ 200, 512/2+ 60),
     namePanel = createNamePanel(renderer, 256, 256, 200, 512/2 - 80),
     sharePanel = createSharePanel(renderer, 256, 256, 256/2 + 10, 512),
     projectsPanel = createProjectsPanel(renderer, 256, 256, 1000, 200),
@@ -31,15 +39,29 @@ var container = document.createElement( 'div' ),
 
     clock = new THREE.Clock();
 
-namePanel.quad.scale.set(1.2,1.2,1.2);
+/* add the main panels */
+// namePanel.quad.scale.set(1.2,1.2,1.2);
 scene.add(projectorPanel.quad);
 // scene.add(subjectPanel.quad);
 scene.add(backgroundPanel.quad);
 
+/* add the elements */
 container.appendChild( stats.domElement );
 document.body.appendChild( container );
-renderer.setSize( 1280, 580 );
+// renderer.setSize( 1280, 580 );
+renderer.setSize( renderWidth, renderHeight );
 container.appendChild( renderer.domElement );
+
+LOADSYNC.onComplete(function(){
+    /* probably should be earlier... assuming that things aren't loaded instantaniously */
+    $("#loading-graphic").velocity({color: "#000", opacity: 0},{"display":"none"});
+});
+
+function rotateComplete(){
+    /* to do when the rotation is done */
+    $("#please-rotate").css({display: "none"});
+}
+rotateComplete();
 
 function render(){
     var time = clock.getElapsedTime();
@@ -237,6 +259,8 @@ function setGithub(){
         }
     });
 }
+
+$("#bottom-panel").css({"top": renderHeight - 50});
 
 setTwitter();
 setGithub();

@@ -9,7 +9,11 @@ canvas {
 
 #bottom-panel {
     position: fixed;
-
+    width:1280px; 
+    height: 100px;
+    top:530;
+    z-index:10;
+    opacity:1;
 }
 
 .grab {
@@ -40,4 +44,25 @@ video {
     opacity: .5;
     left: 500px;
     display: none;
+}
+
+
+#loading-graphic {
+    position:fixed;
+    z-index: 20;
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background-color: #000;
+}
+
+#please-rotate {
+    position:fixed;
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    z-index: 30;
+    background-color: #000;
 }

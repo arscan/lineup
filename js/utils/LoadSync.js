@@ -1,22 +1,28 @@
 // a simple lightweight synchronization class
+// kinda hacky
 // author: @arscan
 
 var LOADSYNC = (function(){
     var count = 0,
-        cb = function(){};
+        runWhenFinished = function(){};
 
-    function register(){
+    function register(callback){
         count++;
         return function(){
+
+            if(typeof(callback) == "function"){
+                callback.apply(this, arguments);
+            }
+
             count--;
             if(count === 0){
-                cb();
+                runWhenFinished();
             }
         };
     }
 
     function onComplete(_cb){
-        cb = _cb;
+        runWhenFinished = _cb;
     }
 
     return {
