@@ -1,31 +1,29 @@
 
-/* globally register the webfontconfig */
-
-function main(){
+function main(renderWidth){
 
     var container = document.createElement( 'div' ),
         stats = new Stats(), 
         renderer = new THREE.WebGLRenderer( { antialias: false, alpha: true } ), 
         /* screen size */
         screenRatio = 23/9;
-        standardWidth = 1024,
-        renderWidth = 1280,
+        standardWidth = 1280,
         screenScale = renderWidth / standardWidth,
         renderHeight = renderWidth/screenRatio,
+        standardHeight = standardWidth/screenRatio,
         standardPanelSize = screenScale * 256,
 
-        camera = new THREE.OrthographicCamera(0, 1280, 580, 0, -1000, 1000),
+        camera = new THREE.OrthographicCamera(0, renderWidth, renderHeight, 0, -1000, 1000),
         scene = new THREE.Scene();
 
     /* panels and such */
     var skeletonPanel = createSkeletonPanel(renderer, 250, 400, 512/2+ 200, 512/2+ 60),
         namePanel = createNamePanel(renderer, 256, 256, 200, 512/2 - 80),
-        sharePanel = createSharePanel(renderer, 256, 256, 256/2 + 10, 512),
+        sharePanel = createSharePanel(renderer, screenScale),
         projectsPanel = createProjectsPanel(renderer, 256, 256, 1000, 200),
         aboutPanel = createAboutPanel(renderer, 256, 256, 1000, 400),
         bioPanel = createBioPanel(renderer, 256, 256, 1000, 400),
         linksPanel = createLinksPanel(renderer, 256, 256, 1000, 400),
-        backgroundPanel = createBackgroundPanel(renderer, 1280, 580),
+        backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
         projectorPanel = createProjectorPanel(renderer, 1280, 580, [namePanel, skeletonPanel, sharePanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
         //subjectPanel = createSubjectPanel(renderer, 326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel")),
@@ -45,6 +43,8 @@ function main(){
     scene.add(projectorPanel.quad);
     // scene.add(subjectPanel.quad);
     scene.add(backgroundPanel.quad);
+
+    sharePanel.setPosition(20, renderHeight - 20);
 
     /* add the elements */
     container.appendChild( stats.domElement );
@@ -275,7 +275,7 @@ $(function(){
         google: {
             families: ['Roboto:500']
         },
-        active: main
+        active: main.bind(this,1280) // TODO: FIGURE OUT THE WIDTH?
     }); 
 
 });

@@ -1,10 +1,6 @@
 
 function createBackgroundPanel(renderer, width, height){
 
-    var renderScene,
-        renderComposer,
-        renderCamera;
-
     var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
     var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
     var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget}));
@@ -17,7 +13,7 @@ function createBackgroundPanel(renderer, width, height){
     var startTime = Date.now();
 
 
-    function init(element, width, height){
+    function init(){
 
         camera = new THREE.PerspectiveCamera( 27, renderTarget.width / renderTarget.height, 1, 10000 );
         camera.position.x = 70;
