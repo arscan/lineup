@@ -37,7 +37,7 @@ function createGithubWargames(scene){
 
     scene.add( titlePlane );
 
-    var wargamesTexture = THREE.ImageUtils.loadTexture('github-wargames.png');
+    var wargamesTexture = THREE.ImageUtils.loadTexture('../images/github-wargames.png');
     var wargamesMaterial = new THREE.MeshBasicMaterial({map: wargamesTexture, transparent: true});
     var wargamesGeometry = new THREE.PlaneBufferGeometry( 120, 83 );
     var wargamesPlane = new THREE.Mesh( wargamesGeometry, wargamesMaterial );

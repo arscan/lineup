@@ -40,13 +40,13 @@ function createBackgroundPanel(renderer, width, height){
         pointLight3.position.y = 850;
         pointLight3.position.z = -420;
 
-        pointLight4 = new THREE.PointLight( 0xfd5f00, 0.75, 1500 );
-        pointLight4.position.z = -480;
+        // pointLight4 = new THREE.PointLight( 0xfd5f00, 0.75, 1500 );
+        // pointLight4.position.z = -480;
 
         scene.add( pointLight1 );
         scene.add( pointLight2 );
         scene.add( pointLight3 );
-        scene.add( pointLight4 );
+        // scene.add( pointLight4 );
 
 
 
@@ -55,10 +55,10 @@ function createBackgroundPanel(renderer, width, height){
         var shader = THREE.ShaderLib[ "normalmap" ];
         var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
-        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "normal_map3.png" );
+        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "../images/background_normal.png" );
         uniforms[ "uNormalScale" ].value.set( 0.8, 0.8 );
 
-        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "diffuse_map.png" );
+        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "../images/background_diffuse.png" );
         // uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "obj/leeperrysmith/Map-SPEC.jpg" );
 
         uniforms[ "enableAO" ].value = false;
@@ -105,26 +105,26 @@ function createBackgroundPanel(renderer, width, height){
         createPanel(geometry, {x:-940,y:-300}, material);
 
         var number1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("number1.png")}));
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("../images/number1.png")}));
         number1.position.set(-510, 340, -460);
         scene.add(number1);
 
         var number2 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("number2.png")}));
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("../images/number2.png")}));
         number2.position.set(-510, 145, -460);
         scene.add(number2);
 
         var number3 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("number3.png")}));
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("../images/number3.png")}));
         number3.position.set(-510, -45, -460);
         scene.add(number3);
 
         var number4 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("number4.png")}));
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("../images/number4.png")}));
         number4.position.set(-510, -243, -460);
         scene.add(number4);
         
-        var horizTexture = new THREE.MeshBasicMaterial({transparent: true, opacity: .8, map: THREE.ImageUtils.loadTexture("horizontal_lights.png")});
+        var horizTexture = new THREE.MeshBasicMaterial({transparent: true, opacity: .8, map: THREE.ImageUtils.loadTexture("../images/horizontal_lights.png")});
 
         var horizLight1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(1024, 18), horizTexture); 
         horizLight1.position.set(0, 350, -500);
@@ -206,8 +206,8 @@ function createBackgroundPanel(renderer, width, height){
         pointLight3.position.x = 50 + Math.cos(diff/2000.0) * 120;
         pointLight3.position.y = 850 + Math.sin(diff/745) * 120;
         
-        pointLight4.position.x = 100 + Math.cos(diff/1500.0) * 800;
-        pointLight4.position.y = -50 + Math.sin(diff/845) * 200;
+        // pointLight4.position.x = 100 + Math.cos(diff/1500.0) * 800;
+        // pointLight4.position.y = -50 + Math.sin(diff/845) * 200;
 
         renderer.render( scene, camera, renderTarget );
 

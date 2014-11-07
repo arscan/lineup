@@ -1,3 +1,5 @@
+$(function(){
+
 
 var container = document.createElement( 'div' ),
     stats = new Stats(), 
@@ -238,3 +240,6 @@ function setGithub(){
 
 setTwitter();
 setGithub();
+
+
+});

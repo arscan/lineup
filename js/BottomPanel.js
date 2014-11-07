@@ -4,8 +4,6 @@
 function createBottomPanel(elem){
     var scale = elem.width()/1920;
 
-    console.log(scale);
-
     var PANEL_COLORS = {
         BLUE: '#12b7a7', 
         RED: '#eac7df', 

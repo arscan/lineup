@@ -1,0 +1,43 @@
+body {
+    height: 4000px;
+    width: 1280px;
+}
+
+canvas {
+    position: fixed;
+}
+
+#bottom-panel {
+    position: fixed;
+
+}
+
+.grab {
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+    cursor: grab;
+}
+
+.grabbing {
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+    cursor: grabbing;
+}
+
+.pointing {
+    cursor: pointer;
+}
+
+#stats {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+}
+
+video {
+    position: absolute;
+    opacity: .5;
+    left: 500px;
+    display: none;
+}

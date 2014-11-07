@@ -1,125 +1,82 @@
 <head>
+    <!-- font -->
     <link href='http://fonts.googleapis.com/css?family=Roboto:500' rel='stylesheet' type='text/css'>
+
+    <!-- common vendor scripts -->
     <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-    <!-- <script src="three.min.js"></script> -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r69/three.js"></script>
-    <script src="http://mrdoob.github.com/three.js/examples/js/shaders/CopyShader.js"></script>
-    <script src="http://mrdoob.github.com/three.js/examples/js/shaders/HorizontalBlurShader.js"></script>
-    <script src="http://mrdoob.github.com/three.js/examples/js/shaders/VerticalBlurShader.js"></script>
-    <script src="http://mrdoob.github.com/three.js/examples/js/shaders/ConvolutionShader.js"></script>
-    <script src="http://mrdoob.github.com/three.js/examples/js/shaders/FXAAShader.js"></script>
-    <script src="http://mrdoob.github.com/three.js/examples/js/postprocessing/EffectComposer.js"></script>
-    <script src="http://mrdoob.github.com/three.js/examples/js/postprocessing/RenderPass.js"></script>
-    <script src="http://mrdoob.github.com/three.js/examples/js/postprocessing/MaskPass.js"></script>
-    <script src="http://mrdoob.github.com/three.js/examples/js/postprocessing/TexturePass.js"></script>
-    <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
 
-    <script src="ShaderPass.js"></script>
-    <script src="BrightnessContrastShader.js"></script>
-    <script src="HueSaturationShader.js"></script>
-    <script src="ProjectorPass.js"></script>
-    <script src="BloomPass.js"></script>
-    <script src="LeftPanelShaders.js"></script>
-    <script src="OBJLoader.js"></script>
-    <script src="AdditiveBlendShader.js"></script>
-    <script src="Godrays.js"></script>
-    <script src="tween.min.js"></script>
-    <script src="raphael-min.js"></script>
-    <script src="velocity.min.js"></script>
+    <!-- vendor code -->
+    <script src="vendor/tween.min.js"></script>
+    <script src="vendor/raphael-min.js"></script>
+    <script src="vendor/velocity.min.js"></script>
 
-    <style>
-        body {
-            height: 4000px;
-            width: 1280px;
-        }
+    <!-- Post Processessing -->
+    <script src="js/post/ShaderPass.js"></script>
+    <script src="js/post/BrightnessContrastShader.js"></script>
+    <script src="js/post/HueSaturationShader.js"></script>
+    <script src="js/post/ProjectorPass.js"></script>
+    <script src="js/post/AdditiveBlendShader.js"></script>
+    <script src="js/post/CopyShader.js"></script>
+    <script src="js/post/HorizontalBlurShader.js"></script>
+    <script src="js/post/VerticalBlurShader.js"></script>
+    <script src="js/post/FXAAShader.js"></script>
+    <script src="js/post/EffectComposer.js"></script>
+    <script src="js/post/RenderPass.js"></script>
+    <script src="js/post/MaskPass.js"></script>
+    <script src="js/post/TexturePass.js"></script>
 
-        canvas {
-            position: fixed;
-        }
+    <!-- Utils -->
+    <script src="js/utils/OBJLoader.js"></script>
+    <script src="js/utils/LoadSync.js"></script>
+    <script src="js/utils/stats.min.js"></script>
+    
+    <!-- Models -->
+    <script src="models/encom_globe_grid.js"></script>
 
-        #bottom-panel {
-            position: fixed;
+    <!-- //////////////////////// -->
+    <!-- APP CODE -->
 
-        }
+    <!-- bottom svg -->
+    <script src="js/BottomPanel.js"></script>
 
-        .grab {
-            cursor: -webkit-grab;
-            cursor: -moz-grab;
-            cursor: grab;
-        }
+    <!-- background layer -->
+    <script src="js/BackgroundPanel.js"></script>
 
-        .grabbing {
-            cursor: -webkit-grabbing;
-            cursor: -moz-grabbing;
-            cursor: grabbing;
-        }
+    <!-- projector layer -->
+    <script src="js/ProjectorPanel.js"></script>
 
-        .pointing {
-            cursor: pointer;
-        }
+    <!-- main panels (put in projection) -->
+    <script src="js/SkeletonPanel.js"></script>
+    <script src="js/NamePanel.js"></script>
+    <script src="js/SharePanel.js"></script>
 
-        #stats {
-            position: fixed;
-            top: 0;
-            right: 0;
+    <!-- carousel panels -->
+    <script src="js/EncomBoardroom.js"></script>
+    <script src="js/EncomGlobe.js"></script>
+    <script src="js/GithubWargames.js"></script>
+    <script src="js/ProjectsPanel.js"></script>
+    <script src="js/AboutPanel.js"></script>
+    <script src="js/BioPanel.js"></script>
+    <script src="js/LinksPanel.js"></script>
+    <script src="js/SubjectPanel.js"></script>
 
-        }
+    <!-- finally, the main function -->
+    <script src="js/main.js"></script>
 
-        video {
-            position: absolute;
-            opacity: .5;
-            left: 500px;
-            display: none;
-        }
+    <!-- END APP CODE -->
+    <!-- //////////////////////// -->
 
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
 
 </head>
 <body style="background-color: black">
 
-    <div id="reference-image" style="background-image: url(reference.jpg); width: 1280px; height:530px; position: absolute; background-color: #fff; opacity: 0; z-index:000; display: none;"></div>
     <div id="bottom-panel" style="width:1280px; height: 100px;position:fixed;top:530;z-index:500;opacity:1;"></div>
-    <div id="show-reference" style="top: 5; left: 5; position: absolute; z-index: 800; color: white; font-weight: bold; background-color: #333; padding: 10px; opacity: .5; border: 1px solid #aaa; border-radius: 10px; display:none;">Show Reference</div>
 
     <video id="video" autoplay loop="true">
-        <source src="test_vid.webm">
+        <source src="videos/test_vid.webm">
     </video>
 
 </body>
-<script src="models/grid.js"></script>
-
-<script src="BottomPanel.js"></script>
-<script src="BackgroundPanel.js"></script>
-<script src="LeftPanel.js"></script>
-<script src="SkeletonPanel.js"></script>
-<script src="NamePanel.js"></script>
-<script src="SharePanel.js"></script>
-<script src="ProjectorPanel.js"></script>
-<script src="EncomBoardroom.js"></script>
-<script src="EncomGlobe.js"></script>
-<script src="GithubWargames.js"></script>
-<script src="ProjectsPanel.js"></script>
-<script src="AboutPanel.js"></script>
-<script src="BioPanel.js"></script>
-<script src="LinksPanel.js"></script>
-<script src="SubjectPanel.js"></script>
-<script src="main.js"></script>
-
-<script>
-    $(function(){
-    $("#show-reference").click(function(){
-        $("#reference-image").velocity({opacity: 1}, 500).delay(3000).velocity({opacity: 0}, 500);
-        setInterval(function(){
-            $("#reference-image").velocity({opacity: 1}, 500).delay(3000).velocity({opacity: 0}, 500);
-
-        }, 5000);
-
-    });
-
-    
-
-});
-
-</script>
-
 

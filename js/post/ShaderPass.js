@@ -1,7 +1,7 @@
 
 /**
  * @author alteredq / http://alteredqualia.com/
- * @author rscanlon / http://www.robscanlon.com/
+ * @author rscanlon / updated to accept some args to make code less cumbersome / http://www.robscanlon.com/
  */
 
 THREE.ShaderPass = function ( shader, uniformArgs ) {
