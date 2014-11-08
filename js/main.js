@@ -16,7 +16,7 @@ function main(renderWidth){
         scene = new THREE.Scene();
 
     /* panels and such */
-    var skeletonPanel = createSkeletonPanel(renderer, 250, 400, 512/2+ 200, 512/2+ 60),
+    var skeletonPanel = createSkeletonPanel(renderer, screenScale),
         namePanel = createNamePanel(renderer, 256, 256, 200, 512/2 - 80),
         sharePanel = createSharePanel(renderer, screenScale),
         projectsPanel = createProjectsPanel(renderer, 256, 256, 1000, 200),
@@ -44,7 +44,8 @@ function main(renderWidth){
     // scene.add(subjectPanel.quad);
     scene.add(backgroundPanel.quad);
 
-    sharePanel.setPosition(20, renderHeight - 20);
+    sharePanel.setPosition(20, renderHeight - 20 * screenScale, 1);
+    skeletonPanel.setPosition(350, renderHeight - 20 * screenScale, 1);
 
     /* add the elements */
     container.appendChild( stats.domElement );
@@ -67,20 +68,20 @@ function main(renderWidth){
     function render(){
         var time = clock.getElapsedTime();
         stats.update();
-        backgroundPanel.render();
+        backgroundPanel.render(time);
 
         // skeletonPanel.quad.position.x = projectorPanel.width / 2 + Math.sin(time/2) * 300;
-        skeletonPanel.render();
+        skeletonPanel.render(time);
         namePanel.render();
-        sharePanel.render();
+        sharePanel.render(time);
 
         for(var i = 0; i < carouselPanels.length; i++){
             if(carouselPanels[i].quad.position.x < 1280 + 200){
-                carouselPanels[i].render();
+                carouselPanels[i].render(time);
             }
         }
 
-        projectorPanel.render();
+        projectorPanel.render(time);
         // subjectPanel.render();
 
         renderer.render(scene, camera);

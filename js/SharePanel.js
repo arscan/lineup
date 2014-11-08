@@ -1,16 +1,14 @@
 function createSharePanel(renderer, scale){
 
-   var STANDARD_DIMENSIONS = {width: 256, height:30};
-   var BLURINESS = 3.9;
+   var STANDARD_DIMENSIONS = {width: 255, height:30},
+       BLURINESS = 3.9;
 
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale,
        renderScene,
        renderComposer,
        renderCamera,
-       clock,
        mainComposer,
-       blurComposer,
        glowComposer,
        twitterPlane,
        githubPlane,
@@ -23,10 +21,7 @@ function createSharePanel(renderer, scale){
 
    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
    var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
-   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true}));
-
-   quad.material.blending = THREE.AdditiveBlending;
-
+   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true, blending: THREE.AdditiveBlending}));
 
    var bodyPlane,
        scrollPlane;
@@ -45,8 +40,6 @@ function createSharePanel(renderer, scale){
        var buffer = document.createElement('canvas');
        buffer.width = width;
        buffer.height = height;
-
-       // $(".container").append(buffer);
 
        renderFunction(buffer.getContext('2d'));
 
@@ -82,7 +75,6 @@ function createSharePanel(renderer, scale){
     }
 
     function init(){
-        clock = new THREE.Clock();
 
         renderCamera = new THREE.OrthographicCamera(0, width, height, 0, -1000, 1000),
         renderScene = new THREE.Scene();
@@ -118,13 +110,6 @@ function createSharePanel(renderer, scale){
 
         var renderScenePass = new THREE.TexturePass(renderComposer.renderTarget2);
 
-        blurComposer = new THREE.EffectComposer(renderer, createRenderTarget(width/4, height/4));
-        blurComposer.addPass(renderScenePass);
-        blurComposer.addPass(new THREE.ShaderPass(THREE.HorizontalBlurShader, {h: BLURINESS / (width/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: BLURINESS / (height/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.HorizontalBlurShader, {h: (BLURINESS/4) / (width/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: (BLURINESS/4) / (height/4)}));
-
         mainComposer = new THREE.EffectComposer(renderer, renderTarget);
         mainComposer.addPass(renderScenePass);
 
@@ -142,18 +127,11 @@ function createSharePanel(renderer, scale){
 
     }
 
-    function render(){
+    function render(time){
 
-        // renderer.render(renderScene, renderCamera, renderTarget);
         renderComposer.render();
-
-
-        // blurComposer.render();
-        // blurComposer.render();
         glowComposer.render();
-
         finalBlurPass.uniforms['fOpacitySource'].value = blurLevel;
-
         mainComposer.render();
 
     }
@@ -165,10 +143,6 @@ function createSharePanel(renderer, scale){
             return "http://github.com/arscan/lineup";
         }
 
-        /*
-        return (x > quad.position.x - width / 2 && x < quad.position.x + width/2) 
-               && (y > quad.position.y - height / 2 && y < quad.position.y + height/2);
-              */
         return false;
     }
 
@@ -192,7 +166,14 @@ function createSharePanel(renderer, scale){
         githubPlane.material.map = githubTexture;
     }
 
-    function setPosition(x,y){
+    function setPosition(x, y, z){
+        if(typeof z == "number"){
+            z = Math.max(0, Math.min(1, z));
+            setBlur(z);
+            quad.scale.set(z/2 + .5, z/2 + .5, z/2 + .5);
+        }
+
+
         quad.position.set(x + width/2, y-height/2, 0);
     }
 

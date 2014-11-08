@@ -1,23 +1,21 @@
-function createSkeletonPanel(renderer, width, height, x, y){
+function createSkeletonPanel(renderer, scale){
 
-   var renderScene,
+   var STANDARD_DIMENSIONS = {width: 170, height:300},
+       BLURINESS = 3.9;
+
+   var width = STANDARD_DIMENSIONS.width * scale,
+       height = STANDARD_DIMENSIONS.height * scale,
+       renderScene,
        renderCamera,
-       clock,
+       blurLevel = 1,
        renderComposer,
        mainComposer,
        projectorComposer,
        blurComposer;
-       // glowComposer;
 
     var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
     var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
-    var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true}));
-
-    quad.material.blending = THREE.AdditiveBlending;
-    quad.position.set(x, y, 0);
-
-   var width = renderTarget.width;
-   var height = renderTarget.height;
+    var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget,/*color: 0xff0000,*/ transparent: true, blending: THREE.AdditiveBlending}));
 
     var Shaders = {
         skeleton: {
@@ -74,18 +72,13 @@ function createSkeletonPanel(renderer, width, height, x, y){
     };
 
 
-
-    var BLURINESS = 3.9;
-
     function createRenderTarget(width, height){
         var params = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat};
         return new THREE.WebGLRenderTarget(width, height, params);
     }
 
     function init(){
-        clock = new THREE.Clock();
 
-        // renderCamera = new THREE.PerspectiveCamera( 70, width / height, 1, 1000 );
         renderCamera = new THREE.OrthographicCamera(0, width, height, 0, -1000, 1000),
         renderScene = new THREE.Scene();
 
@@ -115,14 +108,14 @@ function createSkeletonPanel(renderer, width, height, x, y){
 
             skeletonObject.children[0].geometry.mergeVertices();
             skeletonObject.children[0].geometry.computeVertexNormals();
-            skeletonObject.children[0].scale.set(1.3,1.3,1.3);
+            skeletonObject.children[0].scale.set(1.1,1.1,1.1);
             skeletonObject.children[1].geometry.computeVertexNormals();
-            skeletonObject.children[1].scale.set(1.3,1.3,1.3);
+            skeletonObject.children[1].scale.set(1.1,1.1,1.1);
 
             skeletonObject.children[0].material = skeletonMaterial;
             skeletonObject.children[1].material = organMaterial;
 
-            skeletonObject.position.set(width/2, height/8, 0);
+            skeletonObject.position.set(width/2, 15, 0);
 
             renderScene.add(skeletonObject);
 
@@ -147,19 +140,9 @@ function createSkeletonPanel(renderer, width, height, x, y){
         blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: (BLURINESS/4) / (height/4)}));
         blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: (BLURINESS/4) / (height/4)}));
 
-
-        // mainComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
         mainComposer = new THREE.EffectComposer(renderer, renderTarget);
         mainComposer.addPass(renderScenePass);
         mainComposer.addPass(new THREE.ShaderPass(THREE.FXAAShader, {resolution: new THREE.Vector2(1/width, 1/height)}));
-
-        // glowComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
-        // glowComposer.addPass(renderScenePass);
-
-        // glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 2/width} ));
-        // glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 2/height}));
-        // glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 1/width} ));
-        // glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 1/height}));
 
         var addPass = new THREE.ShaderPass(THREE.AdditiveBlendShader);
         addPass.uniforms['tAdd'].value = blurComposer.writeBuffer;
@@ -169,18 +152,9 @@ function createSkeletonPanel(renderer, width, height, x, y){
         addPass2.uniforms['tAdd'].value = blurComposer.writeBuffer;
         mainComposer.addPass(addPass2);
 
-
-        // setInterval(function(){
-        //     addPass3.enabled = !addPass3.enabled;
-        // }, 1000);
-
-        // renderScenePass.uniforms[ "tDiffuse" ].value = fullResolutionComposer.renderTarget2;
     }
 
-    function render(){
-        // renderer.render(mainScene, camera);
-        var time = clock.getElapsedTime();
-        TWEEN.update();
+    function render(time){
 
         if(renderScene.children.length > 0){
             renderScene.children[0].rotation.y = -time/2;
@@ -194,9 +168,22 @@ function createSkeletonPanel(renderer, width, height, x, y){
 
     }
 
+    function setBlur(blur){
+        blurLevel = Math.max(0,Math.min(1,blur));
+    }
+
     function checkBounds(x, y){
         return (x > quad.position.x - width / 2 && x < quad.position.x + width/2) 
                && (y > quad.position.y - height / 2 && y < quad.position.y + height/2);
+    }
+
+    function setPosition(x, y, z){
+        if(typeof z == "number"){
+            z = Math.max(0, Math.min(1, z));
+            setBlur(z);
+            quad.scale.set(z/2 + .5, z/2 + .5, z/2 + .5);
+        }
+        quad.position.set(x + width/2, y-height/2, 0);
     }
 
     init();
@@ -208,8 +195,10 @@ function createSkeletonPanel(renderer, width, height, x, y){
         width: width,
         height: height,
         quad: quad,
+        setBlur: setBlur,
         checkBounds: checkBounds,
-        setBlur: function(){ }
+        setBlur: function(){ },
+        setPosition: setPosition
     });
 }
 
