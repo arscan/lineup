@@ -1,6 +1,7 @@
 body {
     height: 4000px;
     width: 1280px;
+    margin: 0;
 }
 
 canvas {
@@ -38,6 +39,7 @@ canvas {
     position: fixed;
     top: 0;
     right: 0;
+    z-index: 5;
 
 }
 

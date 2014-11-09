@@ -2,7 +2,7 @@
 /* scale based on real image size */
 
 function createBottomPanel(elem){
-    var scale = elem.width()/1920;
+    var scale = elem.width()/1920; /* everything on this is against 1920, which is what it was originally developed at */
 
     var PANEL_COLORS = {
         BLUE: '#12b7a7', 

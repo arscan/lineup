@@ -17,7 +17,7 @@ function main(renderWidth){
 
     /* panels and such */
     var skeletonPanel = createSkeletonPanel(renderer, screenScale),
-        namePanel = createNamePanel(renderer, 256, 256, 200, 512/2 - 80),
+        namePanel = createNamePanel(renderer, screenScale),
         sharePanel = createSharePanel(renderer, screenScale),
         projectsPanel = createProjectsPanel(renderer, 256, 256, 1000, 200),
         aboutPanel = createAboutPanel(renderer, 256, 256, 1000, 400),
@@ -26,7 +26,7 @@ function main(renderWidth){
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
         projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, sharePanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
         //subjectPanel = createSubjectPanel(renderer, 326, 580, 500 + 326/2, 580/2 - 120 ),
-        bottomPanel = createBottomPanel($("#bottom-panel")),
+        bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale), "width": renderWidth})),
 
         carouselPanels = [aboutPanel, linksPanel, bioPanel, projectsPanel],
         carouselLocation = 0,
@@ -44,8 +44,9 @@ function main(renderWidth){
     // scene.add(subjectPanel.quad);
     scene.add(backgroundPanel.quad);
 
-    sharePanel.setPosition(20, renderHeight - 20 * screenScale, 1);
-    skeletonPanel.setPosition(350, renderHeight - 20 * screenScale, 1);
+    skeletonPanel.setPosition(350 * screenScale, renderHeight - 20 * screenScale, 1);
+    namePanel.setPosition(50 * screenScale, 358*screenScale, 1);
+    sharePanel.setPosition(20 * screenScale, renderHeight - 20 * screenScale, 1);
 
     /* add the elements */
     container.appendChild( stats.domElement );
@@ -72,7 +73,7 @@ function main(renderWidth){
 
         // skeletonPanel.quad.position.x = projectorPanel.width / 2 + Math.sin(time/2) * 300;
         skeletonPanel.render(time);
-        namePanel.render();
+        namePanel.render(time);
         sharePanel.render(time);
 
         for(var i = 0; i < carouselPanels.length; i++){
@@ -262,7 +263,6 @@ function main(renderWidth){
         });
     }
 
-    $("#bottom-panel").css({"top": renderHeight - 50});
 
     setTwitter();
     setGithub();
@@ -276,7 +276,7 @@ $(function(){
         google: {
             families: ['Roboto:500']
         },
-        active: main.bind(this,1280) // TODO: FIGURE OUT THE WIDTH?
+        active: main.bind(this,1800) // TODO: FIGURE OUT THE WIDTH?
     }); 
 
 });

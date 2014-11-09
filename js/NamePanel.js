@@ -1,31 +1,62 @@
-function createNamePanel(renderer, width, height, x, y){
+function createNamePanel(renderer, scale){
 
-   var renderScene,
+   var STANDARD_DIMENSIONS = {width: 400, height:400},
+       BLURINESS = 3.9,
+       ROTATE_TIME = 10.0;
+
+   var width = STANDARD_DIMENSIONS.width * scale,
+       height = STANDARD_DIMENSIONS.height * scale,
+       renderScene,
+       blurLevel = 1,
+       nameBoxMaterial,
        renderComposer,
        renderCamera,
-       clock,
        mainComposer,
-       blurComposer,
-       glowComposer;
+       glowComposer,
+       finalBlurPass,
+       textures = [],
+       textureIndex = 0,
+       lastTextStartTime = 0;
 
    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
    var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
-   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true}));
+   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true, blending: THREE.AdditiveBlending}));
 
-   quad.material.blending = THREE.AdditiveBlending;
-   quad.position.set(x, y, 0);
+   var textHeader = "SCANLON";
+   var textSubject = "ROB SCANLON";
+   var textValues = [
+                     ["Alias: \"ARSCAN\"", 
+                       "species: terran", 
+                       "origin: Boston, MA",
+                       "legs: 2",
+                       "arms: 2"],
+                     ["education", 
+                       "something", 
+                       "something else something", 
+                       "", 
+                       "Occupation",
+                       "software engineer",
+                       "something something something"],
+                     ["another panelxyz", 
+                       "something", 
+                       "something else something", 
+                       "", 
+                       "Occupation",
+                       "software engineer",
+                       "something something something"]
+                     ];
 
    var nameBoxShader =  {
        uniforms : {
-           name1: {type: 't'},
-           currentTime: {type: 'f', value: 10.0},
+           tDiffuse: {type: 't'},
+           currentTime: {type: 'f', value: 0.0},
            bulletStartTime: {type: 'f', value: 2.0},
            bulletDuration: {type: 'f', value:0.6},
            headerInStartTime: {type: 'f', value: 0.5},
            headerInDuration: {type: 'f', value:2.0},
            textInStartTime: {type: 'f', value: 1.0},
            textInDuration: {type: 'f', value:3.0},
-           textOutStartTime: {type: 'f', value: 6.0},
+           textOutStartTime: {type: 'f', value: ROTATE_TIME-2},
            textOutDuration: {type: 'f', value:1.0},
        },
        vertexShader: [
@@ -47,14 +78,14 @@ function createNamePanel(renderer, width, height, x, y){
            'uniform float textOutDuration;',
            'uniform float headerInStartTime;',
            'uniform float headerInDuration;',
-           'uniform sampler2D name1;',
+           'uniform sampler2D tDiffuse;',
 
            'void main() {',
            '  float mid = 0.61;',
            '  float textStart = 0.76;',
 
            '  float lineHeight = 0.036;',
-           '  gl_FragColor = texture2D(name1, vUv);',
+           '  gl_FragColor = texture2D(tDiffuse, vUv);',
            // '  float bulletPercent = bulletEndTime;',
            '  float bulletPercent = clamp((currentTime - bulletStartTime) / bulletDuration, 0.0, 1.0);',
            '  float textInPercent = clamp((currentTime - textInStartTime) / textInDuration, 0.0, 1.0);',
@@ -65,10 +96,10 @@ function createNamePanel(renderer, width, height, x, y){
            '  if(vUv.x < .15 && abs(vUv.y - mid)*4.0 > bulletPercent ){',
            '    gl_FragColor.a = 0.0;',
            '  }',
-           '  if(textInStartTime > 0.0 && vUv.x > .15 && vUv.y < textStart && vUv.x > (textInPercent - myFloorNum * .12 + .10 )){',
+           '  if(textInStartTime > 0.0 && vUv.x > .15 && vUv.y < textStart && vUv.x > (textInPercent - myFloorNum * .05 + .10 )){',
            '    gl_FragColor.a = 0.0;',
            '  }',
-           '  if(textOutStartTime > 0.0 && vUv.x > .15 && vUv.y < textStart && vUv.x > 1.0-textOutPercent){',
+           '  if(textOutStartTime > 0.0 && vUv.x > .15 && vUv.y < textStart && vUv.x > (1.0-textOutPercent)){',
            '    gl_FragColor.a = 0.0;',
            '  }',
            '  if(headerInStartTime > 0.0 && vUv.x > .15 && vUv.y > textStart && vUv.y < textStart + .1 && vUv.x > headerInPercent){',
@@ -143,7 +174,7 @@ function createNamePanel(renderer, width, height, x, y){
             for(var i = 0; i< details.length; i++){
                 ctx.font = "11pt Roboto";
                 ctx.fillStyle = '#eac7df';
-                ctx.fillText(details[i].toUpperCase(), 76, 138 + i*18);
+                ctx.fillText(details[i].toUpperCase(), 80, 138 + i*18);
 
             }
 
@@ -203,68 +234,55 @@ function createNamePanel(renderer, width, height, x, y){
     }
 
     function init(){
-        clock = new THREE.Clock();
 
-        renderCamera = new THREE.PerspectiveCamera( 70, width / height, 1, 1000 );
-        renderCamera.position.set(0, 50, 120);
+        renderCamera = new THREE.OrthographicCamera(0, width-1, height, 0, -1000, 1000),
         renderScene = new THREE.Scene();
 
-        var nameCanvas1= createNameCanvas("Scanlon", "Rob Scanlon hasdfasdfasdfasdf", ["Alias: \"ARSCAN\"", 
-                                          "species: terran", 
-                                          "origin: Boston, MA",
-                                          "legs: 2",
-                                          "arms: 2"
-        ]);
+        for(var i = 0; i< textValues.length; i++){
+            textures.push(new THREE.Texture(createNameCanvas(textHeader, textSubject, textValues[i])));
+            textures[textures.length - 1].needsUpdate = true;
+        }
 
-        var nameTexture1 = new THREE.Texture(nameCanvas1)
-        nameTexture1.needsUpdate = true;
-
-        var nameCanvas2 = createNameCanvas("Scanlon", "Rob Scanlon", ["education", 
-                                           "something", 
-                                           "something else something", 
-                                           "", 
-                                           "Occupation",
-                                           "software engineer",
-                                           "something something something"]);
-
-        var nameTexture2 = new THREE.Texture(nameCanvas2)
-        nameTexture2.needsUpdate = true;
-
-        var nameBoxMaterial = new THREE.ShaderMaterial({
+        nameBoxMaterial = new THREE.ShaderMaterial({
             uniforms: nameBoxShader.uniforms,
             vertexShader: nameBoxShader.vertexShader,
             fragmentShader: nameBoxShader.fragmentShader,
         });
 
 
-        nameBoxMaterial.uniforms.name1.value = nameTexture1;
+        nameBoxMaterial.uniforms.tDiffuse.value = textures[textureIndex];
         nameBoxMaterial.transparent = true;
         var planegeometry = new THREE.PlaneBufferGeometry( width, height );
-        // var planematerial = new THREE.MeshBasicMaterial( {map: nameTexture, transparent: true} );
-
 
         var plane = new THREE.Mesh( planegeometry, nameBoxMaterial );
-        plane.position.set(50, 0, 0);
+        plane.position.set(height/2, width/2, 0);
         renderScene.add( plane );
 
+        /*
+        setInterval(function(){
+           textureIndex = (textureIndex + 1) % textures.length;
+
+           nameBoxMaterial.uniforms.tDiffuse.value = textures[textureIndex];
+           nameBoxMaterial.uniforms.textInStartTime.value = 7.0,
+           nameBoxMaterial.uniforms.textOutStartTime.value = 0.0
+
+
+        }, ROTATE_TIME);
+       */
+
+        /*
         setTimeout(function(){
            nameBoxMaterial.uniforms.name1.value = nameTexture2;
            nameBoxMaterial.uniforms.textInStartTime.value = 7.0,
            nameBoxMaterial.uniforms.textOutStartTime.value = 0.0
         }, 7500);
+       */
 
 
         renderComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
 
         var renderScenePass = new THREE.TexturePass(renderComposer.renderTarget2);
-
-        blurComposer = new THREE.EffectComposer(renderer, createRenderTarget(width/4, height/4));
-        blurComposer.addPass(renderScenePass);
-        blurComposer.addPass(new THREE.ShaderPass(THREE.HorizontalBlurShader, {h: BLURINESS / (width/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: BLURINESS / (height/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.HorizontalBlurShader, {h: (BLURINESS/4) / (width/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: (BLURINESS/4) / (height/4)}));
 
         mainComposer = new THREE.EffectComposer(renderer, renderTarget);
         mainComposer.addPass(renderScenePass);
@@ -277,26 +295,28 @@ function createNamePanel(renderer, width, height, x, y){
         glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 1/width} ));
         glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 1/height}));
 
-        var addPass2 = new THREE.ShaderPass(THREE.AdditiveBlendShader);
-        addPass2.uniforms['tAdd'].value = glowComposer.writeBuffer;
-        mainComposer.addPass(addPass2);
+        finalBlurPass = new THREE.ShaderPass(THREE.AdditiveBlendShader);
+        finalBlurPass.uniforms['tAdd'].value = glowComposer.writeBuffer;
+        mainComposer.addPass(finalBlurPass);
 
     }
 
-    function render(){
-        // renderer.render(mainScene, camera);
-        var time = clock.getElapsedTime();
+    function render(time){
 
-        if(renderScene.children.length > 1){
-            renderScene.children[1].rotation.y -= .005;
+        if(lastTextStartTime + ROTATE_TIME < time){
+            console.log("SWITCHING");
+           lastTextStartTime = time;
+           textureIndex = (textureIndex + 1) % textures.length;
+
+           nameBoxMaterial.uniforms.tDiffuse.value = textures[textureIndex];
+           nameBoxMaterial.uniforms.textInStartTime.value = time;
+           nameBoxMaterial.uniforms.textOutStartTime.value = time + ROTATE_TIME-2;
         }
 
+        finalBlurPass.uniforms['fOpacitySource'].value = blurLevel;
 
         nameBoxShader.uniforms.currentTime.value = time -1;
         renderComposer.render();
-
-        blurComposer.render();
-        blurComposer.render();
         glowComposer.render();
 
         mainComposer.render();
@@ -308,6 +328,20 @@ function createNamePanel(renderer, width, height, x, y){
                && (y > quad.position.y - height / 2 && y < quad.position.y + height/2);
     }
 
+    function setBlur(blur){
+        blurLevel = Math.max(0,Math.min(1,blur));
+    }
+
+    function setPosition(x, y, z){
+        if(typeof z == "number"){
+            z = Math.max(0, Math.min(1, z));
+            setBlur(z);
+            quad.scale.set(z/2 + .5, z/2 + .5, z/2 + .5);
+        }
+        quad.position.set(x + width/2, y-height/2, 0);
+    }
+
+
     init();
 
     return Object.freeze({
@@ -318,7 +352,8 @@ function createNamePanel(renderer, width, height, x, y){
         height: height,
         quad: quad,
         checkBounds: checkBounds,
-        setBlur: function(){ }
+        setBlur: setBlur,
+        setPosition: setPosition
     });
 }
 
