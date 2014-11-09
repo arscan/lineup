@@ -144,12 +144,12 @@ function main(renderWidth){
         $(event.target).removeClass("grabbing");
     });
 
-    $(document).on("scroll", function(){
-        carouselLocation = $(document).scrollTop() /  ($(document).height() - window.innerHeight);
-        setPanelPositions();
+    // $(document).on("scroll", function(){
+    //     carouselLocation = $(document).scrollTop() /  ($(document).height() - window.innerHeight);
+    //     setPanelPositions();
 
 
-    });
+    // });
 
 
     function getScale(y){
@@ -271,6 +271,7 @@ function main(renderWidth){
 }
 
 $(function(){
+    var bgHeight = 1600;
 
     WebFont.load({
         google: {
@@ -279,4 +280,19 @@ $(function(){
         active: main.bind(this,1800) // TODO: FIGURE OUT THE WIDTH?
     }); 
 
+    $('body').height( bgHeight + $(window).height() );
+    $(window).scrollTop(500);
+    $(window).scroll(function() {
+        if ( $(window).scrollTop() >= ($('body').height() - $(window).height()) ) {
+            $(window).scrollTop(1);
+        }
+        else if ( $(window).scrollTop() == 0 ) {
+            $(window).scrollTop($('body').height() - $(window).height() -1);
+        }    
+    });
+
+});
+
+$(window).resize(function() {
+    $('body').height( bgHeight + $(window).height() );
 });

@@ -82,24 +82,23 @@ function createNamePanel(renderer, scale){
 
            'void main() {',
            '  float mid = 0.61;',
-           '  float textStart = 0.76;',
+           '  float textStart = 0.70;',
 
-           '  float lineHeight = 0.036;',
+           '  float lineHeight = 0.045;',
            '  gl_FragColor = texture2D(tDiffuse, vUv);',
-           // '  float bulletPercent = bulletEndTime;',
            '  float bulletPercent = clamp((currentTime - bulletStartTime) / bulletDuration, 0.0, 1.0);',
            '  float textInPercent = clamp((currentTime - textInStartTime) / textInDuration, 0.0, 1.0);',
            '  float textOutPercent = clamp((currentTime - textOutStartTime) / textOutDuration, 0.0, 1.0);',
            '  float headerInPercent = clamp((currentTime - headerInStartTime) / headerInDuration, 0.0, 1.0);',
            '  float floorNum = floor(textInPercent * 10.0);',
            '  float myFloorNum = floor((textStart - vUv.y)/lineHeight);',
-           '  if(vUv.x < .15 && abs(vUv.y - mid)*4.0 > bulletPercent ){',
+           '  if(vUv.x < .18 && abs(vUv.y - mid)*4.0 > bulletPercent ){',
            '    gl_FragColor.a = 0.0;',
            '  }',
-           '  if(textInStartTime > 0.0 && vUv.x > .15 && vUv.y < textStart && vUv.x > (textInPercent - myFloorNum * .05 + .10 )){',
+           '  if(textInStartTime > 0.0 && vUv.x > .18 && vUv.y < textStart && vUv.x > (textInPercent - myFloorNum * .04 + .10 )){',
            '    gl_FragColor.a = 0.0;',
            '  }',
-           '  if(textOutStartTime > 0.0 && vUv.x > .15 && vUv.y < textStart && vUv.x > (1.0-textOutPercent)){',
+           '  if(textOutStartTime > 0.0 && vUv.x > .18 && vUv.y < textStart && vUv.x > (1.0-textOutPercent)){',
            '    gl_FragColor.a = 0.0;',
            '  }',
            '  if(headerInStartTime > 0.0 && vUv.x > .15 && vUv.y > textStart && vUv.y < textStart + .1 && vUv.x > headerInPercent){',
@@ -107,10 +106,7 @@ function createNamePanel(renderer, scale){
            '  }',
            '}',
        ].join('\n')
-   };
-
-
-    var BLURINESS = 3.9;
+    };
 
 
     function renderToCanvas(width, height, renderFunction) {
@@ -155,7 +151,7 @@ function createNamePanel(renderer, scale){
 
     function createNameCanvas(name, subject, details){
 
-        return renderToCanvas(512, 512, function(ctx){
+        return renderToCanvas(400, 400, function(ctx){
             ctx.strokeStyle="#fff";
 
             ctx.font = "bold 12pt Roboto";
@@ -304,7 +300,6 @@ function createNamePanel(renderer, scale){
     function render(time){
 
         if(lastTextStartTime + ROTATE_TIME < time){
-            console.log("SWITCHING");
            lastTextStartTime = time;
            textureIndex = (textureIndex + 1) % textures.length;
 
