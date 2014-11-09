@@ -24,7 +24,7 @@ function main(renderWidth){
         bioPanel = createBioPanel(renderer, 256, 256, 1000, 400),
         linksPanel = createLinksPanel(renderer, 256, 256, 1000, 400),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
-        projectorPanel = createProjectorPanel(renderer, 1280, 580, [namePanel, skeletonPanel, sharePanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
+        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, sharePanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
         //subjectPanel = createSubjectPanel(renderer, 326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel")),
 

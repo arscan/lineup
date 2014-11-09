@@ -108,9 +108,9 @@ function createSkeletonPanel(renderer, scale){
 
             skeletonObject.children[0].geometry.mergeVertices();
             skeletonObject.children[0].geometry.computeVertexNormals();
-            skeletonObject.children[0].scale.set(1.1,1.1,1.1);
+            skeletonObject.children[0].scale.set(scale,scale,scale);
             skeletonObject.children[1].geometry.computeVertexNormals();
-            skeletonObject.children[1].scale.set(1.1,1.1,1.1);
+            skeletonObject.children[1].scale.set(scale,scale,scale);
 
             skeletonObject.children[0].material = skeletonMaterial;
             skeletonObject.children[1].material = organMaterial;
