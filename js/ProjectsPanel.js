@@ -1,6 +1,11 @@
-function createProjectsPanel(renderer, width, height, x, y){
+function createProjectsPanel(renderer, scale){
 
-   var renderScene,
+   var STANDARD_DIMENSIONS = {width: 256, height:256},
+       BLURINESS = 3.9;
+
+   var width = STANDARD_DIMENSIONS.width * scale,
+       height = STANDARD_DIMENSIONS.height * scale,
+       renderScene,
        renderComposer,
        renderCamera,
        clock,
@@ -12,28 +17,12 @@ function createProjectsPanel(renderer, width, height, x, y){
 
    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
    var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
-   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true}));
-
-   quad.material.blending = THREE.AdditiveBlending;
-   quad.position.set(x, y, 0);
-
-   var BLURINESS = 3.9;
+   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true, blending: THREE.AdditiveBlending}));
 
    var encomGlobe,
        encomBoardroom,
        hexasphere,
        githubWargames;
-
-
-   var projectsShaders =  {
-       uniforms : {
-       },
-       vertexShader: [
-       ].join('\n'),
-       fragmentShader: [
-       ].join('\n')
-   };
-
 
    function renderToCanvas(width, height, renderFunction) {
        var buffer = document.createElement('canvas');
@@ -44,41 +33,38 @@ function createProjectsPanel(renderer, width, height, x, y){
 
        return buffer;
    };
-
    function createTitleCanvas(){
 
-       return renderToCanvas(256, 80, function(ctx){
+       return renderToCanvas(512, 160, function(ctx){
            ctx.strokeStyle="#fff";
 
-           ctx.font = "bold 14pt Roboto";
+           ctx.font = "bold 28pt Roboto";
            ctx.fillStyle = '#ff8d07';
-           ctx.fillText("Recent Projects", 25, 15);
+           ctx.fillText("RECENT PROJECTS", 25, 35);
 
-           ctx.lineWidth = 1.5;
+           ctx.lineWidth = 2.5;
            ctx.strokeStyle="#fd2616";
-           ctx.moveTo(2,2);
-           ctx.lineTo(2,25);
-           ctx.lineTo(240,25);
+           ctx.moveTo(4,2);
+           ctx.lineTo(4,50);
+           ctx.lineTo(440,50);
            ctx.stroke();
 
            ctx.beginPath();
            ctx.fillStyle='#ff8d07';
-           ctx.arc(2, 2, 2, 0, 2 * Math.PI);
+           ctx.arc(4, 4, 4, 0, 2 * Math.PI);
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(2, 25, 2, 0, 2 * Math.PI);
+           ctx.arc(4, 50, 4, 0, 2 * Math.PI);
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(210, 25, 2, 0, 2 * Math.PI);
+           ctx.arc(380, 50, 4, 0, 2 * Math.PI);
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(240, 25, 2, 0, 2 * Math.PI);
+           ctx.arc(440, 50, 4, 0, 2 * Math.PI);
            ctx.fill();
-
-
 
        });
 
@@ -103,7 +89,7 @@ function createProjectsPanel(renderer, width, height, x, y){
         titleTexture.needsUpdate = true;
 
         var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
-        var titleGeometry = new THREE.PlaneBufferGeometry( 256, 80 );
+        var titleGeometry = new THREE.PlaneBufferGeometry( 256, 80);
 
         var plane = new THREE.Mesh( titleGeometry, titleMaterial );
         plane.position.set(0, 90, 0);
@@ -174,6 +160,17 @@ function createProjectsPanel(renderer, width, height, x, y){
 
     }
 
+    function setPosition(x, y, z){
+        if(typeof z == "number"){
+            z = Math.max(0, Math.min(1, z));
+            setBlur(z);
+            quad.scale.set(z/2 + .5, z/2 + .5, z/2 + .5);
+        }
+
+
+        quad.position.set(x + width/2, y-height/2, 0);
+    }
+
     function checkBounds(x, y){
         return (x > quad.position.x - width / 2 && x < quad.position.x + width/2) 
                && (y > quad.position.y - height / 2 && y < quad.position.y + height/2);
@@ -193,7 +190,8 @@ function createProjectsPanel(renderer, width, height, x, y){
         height: height,
         quad: quad,
         checkBounds: checkBounds,
-        setBlur: setBlur
+        setBlur: setBlur,
+        setPosition: setPosition
     });
 }
 

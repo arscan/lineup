@@ -95,10 +95,7 @@ function createSubjectPanel(renderer, width, height, x, y){
     function init(){
         clock = new THREE.Clock();
 
-        // renderCamera = new THREE.PerspectiveCamera( 70, width / height, 1, 1000 );
-        // renderCamera = new THREE.OrthographicCamera(0, 0, width, height, 0, 1000);
         renderCamera = new THREE.OrthographicCamera(0, width-1, height, 0, -1000, 1000),
-        // renderCamera.position.set(0, 50, 120);
         renderScene = new THREE.Scene();
 
         video = document.getElementById( 'video' );

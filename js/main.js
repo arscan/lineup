@@ -19,14 +19,14 @@ function main(renderWidth){
     var skeletonPanel = createSkeletonPanel(renderer, screenScale),
         namePanel = createNamePanel(renderer, screenScale),
         sharePanel = createSharePanel(renderer, screenScale),
-        projectsPanel = createProjectsPanel(renderer, 256, 256, 1000, 200),
-        aboutPanel = createAboutPanel(renderer, 256, 256, 1000, 400),
-        bioPanel = createBioPanel(renderer, 256, 256, 1000, 400),
-        linksPanel = createLinksPanel(renderer, 256, 256, 1000, 400),
+        aboutPanel = createAboutPanel(renderer, screenScale),
+        projectsPanel = createProjectsPanel(renderer, screenScale),
+        bioPanel = createBioPanel(renderer, screenScale),
+        linksPanel = createLinksPanel(renderer, screenScale),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
         projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, sharePanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
         //subjectPanel = createSubjectPanel(renderer, 326, 580, 500 + 326/2, 580/2 - 120 ),
-        bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale), "width": renderWidth})),
+        bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + (window.innerHeight - renderHeight)/2, "width": renderWidth})),
 
         carouselPanels = [aboutPanel, linksPanel, bioPanel, projectsPanel],
         carouselLocation = 0,
@@ -48,12 +48,19 @@ function main(renderWidth){
     namePanel.setPosition(50 * screenScale, 358*screenScale, 1);
     sharePanel.setPosition(20 * screenScale, renderHeight - 20 * screenScale, 1);
 
+    aboutPanel.setPosition(500 * screenScale, 400*screenScale, 1);
+    projectsPanel.setPosition(800 * screenScale, 400*screenScale, 1);
+    bioPanel.setPosition(800 * screenScale, 500*screenScale, 1);
+    linksPanel.setPosition(800 * screenScale, 200*screenScale, 1);
+
     /* add the elements */
     container.appendChild( stats.domElement );
     document.body.appendChild( container );
     // renderer.setSize( 1280, 580 );
     renderer.setSize( renderWidth, renderHeight );
     container.appendChild( renderer.domElement );
+
+    $("canvas").css({top: (window.innerHeight - renderHeight)/2});
 
     LOADSYNC.onComplete(function(){
         /* probably should be earlier... assuming that things aren't loaded instantaniously */
@@ -77,7 +84,7 @@ function main(renderWidth){
         sharePanel.render(time);
 
         for(var i = 0; i < carouselPanels.length; i++){
-            if(carouselPanels[i].quad.position.x < 1280 + 200){
+            if(carouselPanels[i].quad.position.x < renderWidth + 200){
                 carouselPanels[i].render(time);
             }
         }
@@ -144,13 +151,10 @@ function main(renderWidth){
         $(event.target).removeClass("grabbing");
     });
 
-    // $(document).on("scroll", function(){
-    //     carouselLocation = $(document).scrollTop() /  ($(document).height() - window.innerHeight);
-    //     setPanelPositions();
-
-
-    // });
-
+    $(document).on("scroll", function(){
+        carouselLocation = $(document).scrollTop() /  ($(document).height() - window.innerHeight);
+        setPanelPositions();
+    });
 
     function getScale(y){
         return 1 - (y-250)/400;
@@ -164,16 +168,19 @@ function main(renderWidth){
 
         for(var i = 0; i< carouselPanels.length; i++){
             var panel = carouselPanels[i];
-            panel.quad.position.y = Math.max(300 + 200 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58)), 230);
-            panel.quad.position.x = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
+            var newY = Math.max(360*screenScale + screenScale*180 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58)), 310 * screenScale);
+            // var newX = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
             
-            panel.quad.position.x = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
+            var newX = renderWidth + (renderWidth/3) * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
+            var newZ = Math.max(0, Math.min(1, 1.1 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation) + 1.2)));
+            carouselPanels[i].setPosition(newX, newY, newZ);
 
-            var scale = getScale(panel.quad.position.y);
 
-            panel.quad.scale.set(scale, scale, scale, scale);
+            // var scale = getScale(panel.quad.position.y);
 
-            panel.setBlur(getBlur(panel.quad.position.y));
+            // panel.quad.scale.set(scale, scale, scale, scale);
+
+            // panel.setBlur(getBlur(panel.quad.position.y));
         }
 
     }
@@ -273,15 +280,16 @@ function main(renderWidth){
 $(function(){
     var bgHeight = 1600;
 
+
     WebFont.load({
         google: {
             families: ['Roboto:500']
         },
-        active: main.bind(this,1800) // TODO: FIGURE OUT THE WIDTH?
+        active: main.bind(this,$(window).width()) // TODO: FIGURE OUT THE WIDTH?
     }); 
 
+/*
     $('body').height( bgHeight + $(window).height() );
-    $(window).scrollTop(500);
     $(window).scroll(function() {
         if ( $(window).scrollTop() >= ($('body').height() - $(window).height()) ) {
             $(window).scrollTop(1);
@@ -290,9 +298,12 @@ $(function(){
             $(window).scrollTop($('body').height() - $(window).height() -1);
         }    
     });
+*/
 
 });
 
+/*
 $(window).resize(function() {
     $('body').height( bgHeight + $(window).height() );
 });
+*/

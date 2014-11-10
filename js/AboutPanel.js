@@ -1,9 +1,13 @@
-function createAboutPanel(renderer, width, height, x, y){
+function createAboutPanel(renderer, scale){
 
-   var renderScene,
+   var STANDARD_DIMENSIONS = {width: 256, height:256},
+       BLURINESS = 3.9;
+
+   var width = STANDARD_DIMENSIONS.width * scale,
+       height = STANDARD_DIMENSIONS.height * scale,
+       renderScene,
        renderComposer,
        renderCamera,
-       clock,
        mainComposer,
        blurComposer,
        glowComposer,
@@ -12,32 +16,16 @@ function createAboutPanel(renderer, width, height, x, y){
 
    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
    var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
-   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true}));
-
-   quad.material.blending = THREE.AdditiveBlending;
-   quad.position.set(x, y, 0);
-
-   var BLURINESS = 3.9;
+   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true, blending: THREE.AdditiveBlending}));
 
    var bodyPlane,
        scrollPlane;
-
-   var projectsShaders =  {
-       uniforms : {
-       },
-       vertexShader: [
-       ].join('\n'),
-       fragmentShader: [
-       ].join('\n')
-   };
 
 
    function renderToCanvas(width, height, renderFunction) {
        var buffer = document.createElement('canvas');
        buffer.width = width;
        buffer.height = height;
-
-       // $(".container").append(buffer);
 
        renderFunction(buffer.getContext('2d'));
 
@@ -46,35 +34,35 @@ function createAboutPanel(renderer, width, height, x, y){
 
    function createTitleCanvas(){
 
-       return renderToCanvas(256, 80, function(ctx){
+       return renderToCanvas(512, 160, function(ctx){
            ctx.strokeStyle="#fff";
 
-           ctx.font = "bold 14pt Roboto";
+           ctx.font = "bold 28pt Roboto";
            ctx.fillStyle = '#ff8d07';
-           ctx.fillText("WELCOME", 25, 15);
+           ctx.fillText("WELCOME", 25, 35);
 
-           ctx.lineWidth = 1.5;
+           ctx.lineWidth = 2.5;
            ctx.strokeStyle="#fd2616";
-           ctx.moveTo(2,2);
-           ctx.lineTo(2,25);
-           ctx.lineTo(220,25);
+           ctx.moveTo(4,2);
+           ctx.lineTo(4,50);
+           ctx.lineTo(440,50);
            ctx.stroke();
 
            ctx.beginPath();
            ctx.fillStyle='#ff8d07';
-           ctx.arc(2, 2, 2, 0, 2 * Math.PI);
+           ctx.arc(4, 4, 4, 0, 2 * Math.PI);
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(2, 25, 2, 0, 2 * Math.PI);
+           ctx.arc(4, 50, 4, 0, 2 * Math.PI);
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(200, 25, 2, 0, 2 * Math.PI);
+           ctx.arc(380, 50, 4, 0, 2 * Math.PI);
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(220, 25, 2, 0, 2 * Math.PI);
+           ctx.arc(440, 50, 4, 0, 2 * Math.PI);
            ctx.fill();
 
        });
@@ -88,21 +76,21 @@ function createAboutPanel(renderer, width, height, x, y){
                    "Try scrolling down to continue.",
        ];
 
-       return renderToCanvas(256, 200, function(ctx){
+       return renderToCanvas(512, 400, function(ctx){
            ctx.strokeStyle="#fff";
 
-           ctx.font = "10pt Roboto";
+           ctx.font = "20pt Roboto";
            ctx.fillStyle = '#ffffff';
 
            for(var i = 0; i < text.length; i++){
-               ctx.fillText(text[i], 0, 20 + i*20);
+               ctx.fillText(text[i], 0, 20 + i*38);
            }
        });
 
    };
 
    function createScrollCanvas(){
-       return renderToCanvas(256, 25, function(ctx){
+       return renderToCanvas(512, 50, function(ctx){
 
            ctx.font = "12pt Roboto";
            ctx.fillStyle = '#6Fc0BA';
@@ -138,11 +126,8 @@ function createAboutPanel(renderer, width, height, x, y){
     }
 
     function init(){
-        clock = new THREE.Clock();
 
-        renderCamera = new THREE.PerspectiveCamera( 70, width / height, 1, 1000 );
-        renderCamera.position.z = 200;
-        renderCamera.position.y = 0;
+        renderCamera = new THREE.OrthographicCamera(0, width, height, 0, -1000, 1000),
         renderScene = new THREE.Scene();
 
         var titleCanvas= createTitleCanvas(); 
@@ -150,10 +135,10 @@ function createAboutPanel(renderer, width, height, x, y){
         titleTexture.needsUpdate = true;
 
         var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
-        var titleGeometry = new THREE.PlaneBufferGeometry( 256, 80 );
+        var titleGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 80 * scale );
 
         var plane = new THREE.Mesh( titleGeometry, titleMaterial );
-        plane.position.set(0, 90, 0);
+        plane.position.set(width/2 + 7, height-40*scale, 0);
         renderScene.add( plane );
 
         var bodyCanvas= createBodyCanvas(); 
@@ -161,22 +146,22 @@ function createAboutPanel(renderer, width, height, x, y){
         bodyTexture.needsUpdate = true;
 
         var bodyMaterial = new THREE.MeshBasicMaterial({map: bodyTexture, transparent: true});
-        var bodyGeometry = new THREE.PlaneBufferGeometry( 256, 200 );
+        var bodyGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 200 * scale );
 
         bodyPlane = new THREE.Mesh( bodyGeometry, bodyMaterial );
-        bodyPlane.position.set(0, 0, 0);
+        bodyPlane.position.set(width/2 + 7, height - 40*scale - (200*scale)/2, 0);
         renderScene.add( bodyPlane );
 
-        var scrollCanvas= createScrollCanvas(); 
-        var scrollTexture = new THREE.Texture(scrollCanvas)
-        scrollTexture.needsUpdate = true;
+        // var scrollCanvas= createScrollCanvas(); 
+        // var scrollTexture = new THREE.Texture(scrollCanvas)
+        // scrollTexture.needsUpdate = true;
 
-        var scrollMaterial = new THREE.MeshBasicMaterial({map: scrollTexture, transparent: true});
-        var scrollGeometry = new THREE.PlaneBufferGeometry( 256, 25 );
+        // var scrollMaterial = new THREE.MeshBasicMaterial({map: scrollTexture, transparent: true});
+        // var scrollGeometry = new THREE.PlaneBufferGeometry( 256, 25 );
 
-        scrollPlane = new THREE.Mesh( scrollGeometry, scrollMaterial );
-        scrollPlane.position.set(0, -100, 0);
-        renderScene.add( scrollPlane );
+        // scrollPlane = new THREE.Mesh( scrollGeometry, scrollMaterial );
+        // scrollPlane.position.set(0, -100, 0);
+        // renderScene.add( scrollPlane );
 
         renderComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
@@ -209,18 +194,25 @@ function createAboutPanel(renderer, width, height, x, y){
 
     function render(){
 
-        // renderer.render(renderScene, renderCamera, renderTarget);
         renderComposer.render();
 
-
-        // blurComposer.render();
-        // blurComposer.render();
         glowComposer.render();
 
         finalBlurPass.uniforms['fOpacitySource'].value = blurLevel;
 
         mainComposer.render();
 
+    }
+
+    function setPosition(x, y, z){
+        if(typeof z == "number"){
+            z = Math.max(0, Math.min(1, z));
+            setBlur(z);
+            quad.scale.set(z/2 + .5, z/2 + .5, z/2 + .5);
+        }
+
+
+        quad.position.set(x + width/2, y-height/2, 0);
     }
 
     function checkBounds(x, y){
@@ -230,7 +222,6 @@ function createAboutPanel(renderer, width, height, x, y){
 
     function setBlur(blur){
         blurLevel = Math.max(0,Math.min(1,blur));
-
     }
 
     init();
@@ -243,7 +234,8 @@ function createAboutPanel(renderer, width, height, x, y){
         height: height,
         quad: quad,
         checkBounds: checkBounds,
-        setBlur: setBlur
+        setBlur: setBlur,
+        setPosition: setPosition
     });
 }
 
