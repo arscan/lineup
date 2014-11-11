@@ -1,40 +1,18 @@
 function createAboutPanel(renderer, scale){
 
-   var STANDARD_DIMENSIONS = {width: 256, height:256},
-       BLURINESS = 3.9;
+   var STANDARD_DIMENSIONS = {width: 256, height:256};
 
    var width = STANDARD_DIMENSIONS.width * scale,
-       height = STANDARD_DIMENSIONS.height * scale,
-       renderScene,
-       renderComposer,
-       renderCamera,
-       mainComposer,
-       blurComposer,
-       glowComposer,
-       blurLevel = 1,
-       finalBlurPass;
+       height = STANDARD_DIMENSIONS.height * scale;
 
-   var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
-   var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
-   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true, blending: THREE.AdditiveBlending}));
+   var panel = createPanel(renderer, width, height);
 
    var bodyPlane,
        scrollPlane;
 
-
-   function renderToCanvas(width, height, renderFunction) {
-       var buffer = document.createElement('canvas');
-       buffer.width = width;
-       buffer.height = height;
-
-       renderFunction(buffer.getContext('2d'));
-
-       return buffer;
-   };
-
    function createTitleCanvas(){
 
-       return renderToCanvas(512, 160, function(ctx){
+       return panel.renderToCanvas(512, 160, function(ctx){
            ctx.strokeStyle="#fff";
 
            ctx.font = "bold 28pt Roboto";
@@ -70,13 +48,13 @@ function createAboutPanel(renderer, scale){
    };
 
    function createBodyCanvas(){
-       var text = ["Thanks for stopping by.",
+       var text = ["Thanks for stopping by!",
                    "This is a project by Rob Scanlon using THREE.js, and a ",
                    "long list of other open source projects.",
                    "Try scrolling down to continue.",
        ];
 
-       return renderToCanvas(512, 400, function(ctx){
+       return panel.renderToCanvas(512, 400, function(ctx){
            ctx.strokeStyle="#fff";
 
            ctx.font = "20pt Roboto";
@@ -90,7 +68,7 @@ function createAboutPanel(renderer, scale){
    };
 
    function createScrollCanvas(){
-       return renderToCanvas(512, 50, function(ctx){
+       return panel.renderToCanvas(512, 50, function(ctx){
 
            ctx.font = "12pt Roboto";
            ctx.fillStyle = '#6Fc0BA';
@@ -120,15 +98,7 @@ function createAboutPanel(renderer, scale){
 
    };
 
-    function createRenderTarget(width, height){
-        var params = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
-        return new THREE.WebGLRenderTarget(width, height, params);
-    }
-
     function init(){
-
-        renderCamera = new THREE.OrthographicCamera(0, width, height, 0, -1000, 1000),
-        renderScene = new THREE.Scene();
 
         var titleCanvas= createTitleCanvas(); 
         var titleTexture = new THREE.Texture(titleCanvas)
@@ -139,7 +109,7 @@ function createAboutPanel(renderer, scale){
 
         var plane = new THREE.Mesh( titleGeometry, titleMaterial );
         plane.position.set(width/2 + 7, height-40*scale, 0);
-        renderScene.add( plane );
+        panel.addToScene( plane );
 
         var bodyCanvas= createBodyCanvas(); 
         var bodyTexture = new THREE.Texture(bodyCanvas)
@@ -150,7 +120,7 @@ function createAboutPanel(renderer, scale){
 
         bodyPlane = new THREE.Mesh( bodyGeometry, bodyMaterial );
         bodyPlane.position.set(width/2 + 7, height - 40*scale - (200*scale)/2, 0);
-        renderScene.add( bodyPlane );
+        panel.addToScene( bodyPlane );
 
         // var scrollCanvas= createScrollCanvas(); 
         // var scrollTexture = new THREE.Texture(scrollCanvas)
@@ -161,67 +131,12 @@ function createAboutPanel(renderer, scale){
 
         // scrollPlane = new THREE.Mesh( scrollGeometry, scrollMaterial );
         // scrollPlane.position.set(0, -100, 0);
-        // renderScene.add( scrollPlane );
-
-        renderComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
-        renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
-
-        var renderScenePass = new THREE.TexturePass(renderComposer.renderTarget2);
-
-        blurComposer = new THREE.EffectComposer(renderer, createRenderTarget(width/4, height/4));
-        blurComposer.addPass(renderScenePass);
-        blurComposer.addPass(new THREE.ShaderPass(THREE.HorizontalBlurShader, {h: BLURINESS / (width/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: BLURINESS / (height/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.HorizontalBlurShader, {h: (BLURINESS/4) / (width/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: (BLURINESS/4) / (height/4)}));
-
-        mainComposer = new THREE.EffectComposer(renderer, renderTarget);
-        mainComposer.addPass(renderScenePass);
-
-        glowComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
-        glowComposer.addPass(renderScenePass);
-
-        glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 2/width} ));
-        glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 2/height}));
-        glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 1/width} ));
-        glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 1/height}));
-
-        finalBlurPass  = new THREE.ShaderPass(THREE.AdditiveBlendShader);
-        finalBlurPass.uniforms['tAdd'].value = glowComposer.writeBuffer;
-        mainComposer.addPass(finalBlurPass);
+        // panel.addToScene( scrollPlane );
 
     }
 
-    function render(){
-
-        renderComposer.render();
-
-        glowComposer.render();
-
-        finalBlurPass.uniforms['fOpacitySource'].value = blurLevel;
-
-        mainComposer.render();
-
-    }
-
-    function setPosition(x, y, z){
-        if(typeof z == "number"){
-            z = Math.max(0, Math.min(1, z));
-            setBlur(z);
-            quad.scale.set(z/2 + .5, z/2 + .5, z/2 + .5);
-        }
-
-
-        quad.position.set(x + width/2, y-height/2, 0);
-    }
-
-    function checkBounds(x, y){
-        return (x > quad.position.x - width / 2 && x < quad.position.x + width/2) 
-               && (y > quad.position.y - height / 2 && y < quad.position.y + height/2);
-    }
-
-    function setBlur(blur){
-        blurLevel = Math.max(0,Math.min(1,blur));
+    function render(time){
+        panel.render(time);
     }
 
     init();
@@ -229,13 +144,13 @@ function createAboutPanel(renderer, scale){
     return Object.freeze({
         toString: function(){return "AboutPanel"},
         render: render,
-        renderTarget: renderTarget,
+        renderTarget: panel.renderTarget,
         width: width,
         height: height,
-        quad: quad,
-        checkBounds: checkBounds,
-        setBlur: setBlur,
-        setPosition: setPosition
+        quad: panel.quad,
+        checkBounds: panel.checkBounds,
+        setBlur: panel.setBlur,
+        setPosition: panel.setPosition
     });
 }
 

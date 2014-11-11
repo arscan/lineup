@@ -1,21 +1,13 @@
 function createSkeletonPanel(renderer, scale){
 
-   var STANDARD_DIMENSIONS = {width: 170, height:300},
-       BLURINESS = 3.9;
+   var STANDARD_DIMENSIONS = {width: 170, height:300};
 
    var width = STANDARD_DIMENSIONS.width * scale,
-       height = STANDARD_DIMENSIONS.height * scale,
-       renderScene,
-       renderCamera,
-       blurLevel = 1,
-       renderComposer,
-       mainComposer,
-       projectorComposer,
-       blurComposer;
+       height = STANDARD_DIMENSIONS.height * scale;
+    
+   var panel = createPanel(renderer, width, height, {fxaa: true, glow: true});
 
-    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
-    var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
-    var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget,/*color: 0xff0000,*/ transparent: true, blending: THREE.AdditiveBlending}));
+   var skeleton = null;
 
     var Shaders = {
         skeleton: {
@@ -72,15 +64,7 @@ function createSkeletonPanel(renderer, scale){
     };
 
 
-    function createRenderTarget(width, height){
-        var params = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat};
-        return new THREE.WebGLRenderTarget(width, height, params);
-    }
-
     function init(){
-
-        renderCamera = new THREE.OrthographicCamera(0, width, height, 0, -1000, 1000),
-        renderScene = new THREE.Scene();
 
         var loader = new THREE.OBJLoader();
 
@@ -88,21 +72,20 @@ function createSkeletonPanel(renderer, scale){
             uniforms: Shaders.skeleton.uniforms,
             vertexShader: Shaders.skeleton.vertexShader,
             fragmentShader: Shaders.skeleton.fragmentShader,
-            shading: THREE.SmoothShading
+            shading: THREE.SmoothShading,
+            blending: THREE.AdditiveBlending,
+            transparent: true
         });
 
         var organMaterial = new THREE.ShaderMaterial({
             uniforms: Shaders.organs.uniforms,
             vertexShader: Shaders.organs.vertexShader,
             fragmentShader: Shaders.organs.fragmentShader,
+            shading: THREE.SmoothShading,
+            blending: THREE.AdditiveBlending,
+            transparent: true
         });
 
-        skeletonMaterial.transparent = true;
-        
-        organMaterial.transparent = true;
-
-        skeletonMaterial.blending = THREE.AdditiveBlending;
-        organMaterial.blending = THREE.AdditiveBlending;
 
         loader.load( '../models/skeleton.obj', LOADSYNC.register(function ( skeletonObject ) {
 
@@ -117,19 +100,13 @@ function createSkeletonPanel(renderer, scale){
 
             skeletonObject.position.set(width/2, 15, 0);
 
-            renderScene.add(skeletonObject);
+            skeleton = skeletonObject;
+            panel.addToScene(skeletonObject);
 
         }));
 
-        renderComposer = new THREE.EffectComposer(renderer, renderTarget);
-        renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
 
-        var renderScenePass = new THREE.TexturePass(renderComposer.renderTarget2);
-
-        // projectorComposer = new THREE.EffectComposer(renderer, createRenderTarget(width/1.5, height/1.5));
-        // projectorComposer.addPass(renderScenePass);
-        // projectorComposer.addPass(new THREE.ProjectorPass(renderer, new THREE.Vector2(-.18, 0)));
-
+        /*
         blurComposer = new THREE.EffectComposer(renderer, createRenderTarget(width/4, height/4));
         blurComposer.addPass(renderScenePass);
         blurComposer.addPass(new THREE.ShaderPass(THREE.HorizontalBlurShader, {h: BLURINESS / (width/4)}));
@@ -139,51 +116,19 @@ function createSkeletonPanel(renderer, scale){
         blurComposer.addPass(new THREE.ShaderPass(THREE.HorizontalBlurShader, {h: (BLURINESS/4) / (width/4)}));
         blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: (BLURINESS/4) / (height/4)}));
         blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: (BLURINESS/4) / (height/4)}));
-
-        mainComposer = new THREE.EffectComposer(renderer, renderTarget);
-        mainComposer.addPass(renderScenePass);
-        mainComposer.addPass(new THREE.ShaderPass(THREE.FXAAShader, {resolution: new THREE.Vector2(1/width, 1/height)}));
-
-        var addPass = new THREE.ShaderPass(THREE.AdditiveBlendShader);
-        addPass.uniforms['tAdd'].value = blurComposer.writeBuffer;
-        mainComposer.addPass(addPass);
-
-        var addPass2 = new THREE.ShaderPass(THREE.AdditiveBlendShader);
-        addPass2.uniforms['tAdd'].value = blurComposer.writeBuffer;
-        mainComposer.addPass(addPass2);
+       */
 
     }
 
     function render(time){
 
-        if(renderScene.children.length > 0){
-            renderScene.children[0].rotation.y = -time/2;
+        if(skeleton){
+            skeleton.rotation.y = -time/2;
         }
         Shaders.skeleton.uniforms.currentTime.value = time -6;
         Shaders.organs.uniforms.currentTime.value = time -7;
-        renderComposer.render();
-        blurComposer.render();
-        blurComposer.render();
-        mainComposer.render();
+        panel.render(time);
 
-    }
-
-    function setBlur(blur){
-        blurLevel = Math.max(0,Math.min(1,blur));
-    }
-
-    function checkBounds(x, y){
-        return (x > quad.position.x - width / 2 && x < quad.position.x + width/2) 
-               && (y > quad.position.y - height / 2 && y < quad.position.y + height/2);
-    }
-
-    function setPosition(x, y, z){
-        if(typeof z == "number"){
-            z = Math.max(0, Math.min(1, z));
-            setBlur(z);
-            quad.scale.set(z/2 + .5, z/2 + .5, z/2 + .5);
-        }
-        quad.position.set(x + width/2, y-height/2, 0);
     }
 
     init();
@@ -191,14 +136,14 @@ function createSkeletonPanel(renderer, scale){
     return Object.freeze({
         toString: function(){return "SkeletonPanel";},
         render: render,
-        renderTarget: renderTarget,
+        renderTarget: panel.renderTarget,
         width: width,
         height: height,
-        quad: quad,
-        setBlur: setBlur,
-        checkBounds: checkBounds,
-        setBlur: function(){ },
-        setPosition: setPosition
+        quad: panel.quad,
+        setBlur: panel.setBlur,
+        checkBounds: panel.checkBounds,
+        setBlur: panel.setBlur,
+        setPosition: panel.setPosition
     });
 }
 

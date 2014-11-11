@@ -4,7 +4,7 @@
  * @author rscanlon / updated to accept some args to make code less cumbersome / http://www.robscanlon.com/
  */
 
-THREE.ShaderPass = function ( shader, uniformArgs ) {
+THREE.ShaderPass = function ( shader, uniformArgs, needsSwap ) {
 
     this.textureID = "tDiffuse";
 
@@ -28,6 +28,11 @@ THREE.ShaderPass = function ( shader, uniformArgs ) {
 
     this.enabled = true;
     this.needsSwap = true;
+
+    if(needsSwap !== undefined){
+        this.needsSwap = needsSwap;
+        console.log(needsSwap);
+    }
     this.clear = false;
 
 

@@ -1,26 +1,16 @@
 function createNamePanel(renderer, scale){
 
    var STANDARD_DIMENSIONS = {width: 400, height:400},
-       BLURINESS = 3.9,
        ROTATE_TIME = 10.0;
 
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale,
-       renderScene,
-       blurLevel = 1,
        nameBoxMaterial,
-       renderComposer,
-       renderCamera,
-       mainComposer,
-       glowComposer,
-       finalBlurPass,
        textures = [],
        textureIndex = 0,
        lastTextStartTime = 0;
 
-   var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
-   var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
-   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true, blending: THREE.AdditiveBlending}));
+   var panel = createPanel(renderer, width, height);
 
    var textHeader = "SCANLON";
    var textSubject = "ROB SCANLON";
@@ -108,19 +98,6 @@ function createNamePanel(renderer, scale){
        ].join('\n')
     };
 
-
-    function renderToCanvas(width, height, renderFunction) {
-        var buffer = document.createElement('canvas');
-        buffer.width = width;
-        buffer.height = height;
-
-        // $(".container").append(buffer);
-
-        renderFunction(buffer.getContext('2d'));
-
-        return buffer;
-    };
-
     function drawBullet(ctx, yStart, dir, smallBox, drawLine){ 
         yStart = yStart + 75;
         var xEnd = 65;
@@ -151,7 +128,7 @@ function createNamePanel(renderer, scale){
 
     function createNameCanvas(name, subject, details){
 
-        return renderToCanvas(400, 400, function(ctx){
+        return panel.renderToCanvas(400, 400, function(ctx){
             ctx.strokeStyle="#fff";
 
             ctx.font = "bold 12pt Roboto";
@@ -224,15 +201,7 @@ function createNamePanel(renderer, scale){
 
     };
 
-    function createRenderTarget(width, height){
-        var params = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat};
-        return new THREE.WebGLRenderTarget(width, height, params);
-    }
-
     function init(){
-
-        renderCamera = new THREE.OrthographicCamera(0, width-1, height, 0, -1000, 1000),
-        renderScene = new THREE.Scene();
 
         for(var i = 0; i< textValues.length; i++){
             textures.push(new THREE.Texture(createNameCanvas(textHeader, textSubject, textValues[i])));
@@ -252,48 +221,7 @@ function createNamePanel(renderer, scale){
 
         var plane = new THREE.Mesh( planegeometry, nameBoxMaterial );
         plane.position.set(height/2, width/2, 0);
-        renderScene.add( plane );
-
-        /*
-        setInterval(function(){
-           textureIndex = (textureIndex + 1) % textures.length;
-
-           nameBoxMaterial.uniforms.tDiffuse.value = textures[textureIndex];
-           nameBoxMaterial.uniforms.textInStartTime.value = 7.0,
-           nameBoxMaterial.uniforms.textOutStartTime.value = 0.0
-
-
-        }, ROTATE_TIME);
-       */
-
-        /*
-        setTimeout(function(){
-           nameBoxMaterial.uniforms.name1.value = nameTexture2;
-           nameBoxMaterial.uniforms.textInStartTime.value = 7.0,
-           nameBoxMaterial.uniforms.textOutStartTime.value = 0.0
-        }, 7500);
-       */
-
-
-        renderComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
-        renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
-
-        var renderScenePass = new THREE.TexturePass(renderComposer.renderTarget2);
-
-        mainComposer = new THREE.EffectComposer(renderer, renderTarget);
-        mainComposer.addPass(renderScenePass);
-
-        glowComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
-        glowComposer.addPass(renderScenePass);
-
-        glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 2/width} ));
-        glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 2/height}));
-        glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 1/width} ));
-        glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 1/height}));
-
-        finalBlurPass = new THREE.ShaderPass(THREE.AdditiveBlendShader);
-        finalBlurPass.uniforms['tAdd'].value = glowComposer.writeBuffer;
-        mainComposer.addPass(finalBlurPass);
+        panel.addToScene( plane );
 
     }
 
@@ -308,47 +236,22 @@ function createNamePanel(renderer, scale){
            nameBoxMaterial.uniforms.textOutStartTime.value = time + ROTATE_TIME-2;
         }
 
-        finalBlurPass.uniforms['fOpacitySource'].value = blurLevel;
-
         nameBoxShader.uniforms.currentTime.value = time -1;
-        renderComposer.render();
-        glowComposer.render();
-
-        mainComposer.render();
-
+        panel.render(time);
     }
-
-    function checkBounds(x, y){
-        return (x > quad.position.x - width / 2 && x < quad.position.x + width/2) 
-               && (y > quad.position.y - height / 2 && y < quad.position.y + height/2);
-    }
-
-    function setBlur(blur){
-        blurLevel = Math.max(0,Math.min(1,blur));
-    }
-
-    function setPosition(x, y, z){
-        if(typeof z == "number"){
-            z = Math.max(0, Math.min(1, z));
-            setBlur(z);
-            quad.scale.set(z/2 + .5, z/2 + .5, z/2 + .5);
-        }
-        quad.position.set(x + width/2, y-height/2, 0);
-    }
-
 
     init();
 
     return Object.freeze({
         toString: function(){return "NamePanel"},
         render: render,
-        renderTarget: renderTarget,
         width: width,
         height: height,
-        quad: quad,
-        checkBounds: checkBounds,
-        setBlur: setBlur,
-        setPosition: setPosition
+        renderTarget: panel.renderTarget,
+        quad: panel.quad,
+        checkBounds: panel.checkBounds,
+        setBlur: panel.setBlur,
+        setPosition: panel.setPosition
     });
 }
 

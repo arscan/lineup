@@ -26,7 +26,7 @@ function main(renderWidth){
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
         projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, sharePanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
         //subjectPanel = createSubjectPanel(renderer, 326, 580, 500 + 326/2, 580/2 - 120 ),
-        bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + (window.innerHeight - renderHeight)/2, "width": renderWidth})),
+        bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
         carouselPanels = [aboutPanel, linksPanel, bioPanel, projectsPanel],
         carouselLocation = 0,
@@ -36,7 +36,10 @@ function main(renderWidth){
         grabbedPanel = null,
         grabStart = null,
 
+        canvasTop = Math.max(0, (window.innerHeight - renderHeight)/2);
+
         clock = new THREE.Clock();
+
 
     /* add the main panels */
     // namePanel.quad.scale.set(1.2,1.2,1.2);
@@ -60,7 +63,7 @@ function main(renderWidth){
     renderer.setSize( renderWidth, renderHeight );
     container.appendChild( renderer.domElement );
 
-    $("canvas").css({top: (window.innerHeight - renderHeight)/2});
+    $("canvas").css({top: canvasTop});
 
     LOADSYNC.onComplete(function(){
         /* probably should be earlier... assuming that things aren't loaded instantaniously */
@@ -119,7 +122,7 @@ function main(renderWidth){
 
         for(var i = 0; i< interactivePanels.length; i++){
             var panel = interactivePanels[i];
-            var boundRes = panel.checkBounds(event.clientX,renderHeight - event.clientY);
+            var boundRes = panel.checkBounds(event.clientX,renderHeight - event.clientY - canvasTop);
             if(typeof boundRes == "string"){
                 location.href=boundRes;
                 return;
@@ -222,7 +225,7 @@ function main(renderWidth){
 
         for(var i = 0; i< interactivePanels.length; i++){
             var panel = interactivePanels[i];
-            var boundRes = panel.checkBounds(event.clientX,renderHeight - event.clientY);
+            var boundRes = panel.checkBounds(event.clientX,renderHeight - event.clientY + canvasTop);
             if(typeof boundRes == "string"){
                 $(event.target).removeClass("grab");
                 $(event.target).addClass("pointing");
