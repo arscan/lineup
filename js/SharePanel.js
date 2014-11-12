@@ -37,7 +37,7 @@ function createSharePanel(renderer, scale){
 
     function init(){
 
-        var twitterIconTexture = THREE.ImageUtils.loadTexture('../images/twitter.png', undefined, LOADSYNC.register() );
+        var twitterIconTexture = THREE.ImageUtils.loadTexture('images/twitter.png', undefined, LOADSYNC.register() );
         var twitterIconMaterial = new THREE.MeshBasicMaterial({map: twitterIconTexture, transparent: true});
         var twitterIconGeometry = new THREE.PlaneBufferGeometry( 24 * scale, 19*scale );
         var twitterIconPlane = new THREE.Mesh(twitterIconGeometry, twitterIconMaterial );
@@ -50,7 +50,7 @@ function createSharePanel(renderer, scale){
         twitterPlane.position.set(24*scale*1.6 + width/4 , 5, 0);
         panel.addToScene( twitterPlane );
 
-        var githubIconTexture = THREE.ImageUtils.loadTexture('../images/github.png', undefined, LOADSYNC.register() );
+        var githubIconTexture = THREE.ImageUtils.loadTexture('images/github.png', undefined, LOADSYNC.register() );
         var githubIconMaterial = new THREE.MeshBasicMaterial({map: githubIconTexture, transparent: true});
         var githubIconGeometry = new THREE.PlaneBufferGeometry( 25 * scale, 25 * scale);
         var githubIconPlane = new THREE.Mesh(githubIconGeometry, githubIconMaterial );

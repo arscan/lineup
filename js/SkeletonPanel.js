@@ -87,7 +87,7 @@ function createSkeletonPanel(renderer, scale){
         });
 
 
-        loader.load( '../models/skeleton.obj', LOADSYNC.register(function ( skeletonObject ) {
+        loader.load( 'models/skeleton.obj', LOADSYNC.register(function ( skeletonObject ) {
 
             skeletonObject.children[0].geometry.mergeVertices();
             skeletonObject.children[0].geometry.computeVertexNormals();

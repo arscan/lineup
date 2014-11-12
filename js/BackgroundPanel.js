@@ -51,10 +51,10 @@ function createBackgroundPanel(renderer, width, height){
         var shader = THREE.ShaderLib[ "normalmap" ];
         var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
-        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "../images/background_normal.png", undefined, LOADSYNC.register() );
+        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "images/background_normal.png", undefined, LOADSYNC.register() );
         uniforms[ "uNormalScale" ].value.set( 0.8, 0.8 );
 
-        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "../images/background_diffuse.png", undefined, LOADSYNC.register() );
+        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "images/background_diffuse.png", undefined, LOADSYNC.register() );
         // uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "obj/leeperrysmith/Map-SPEC.jpg" );
 
         uniforms[ "enableAO" ].value = false;
@@ -101,26 +101,26 @@ function createBackgroundPanel(renderer, width, height){
         createPanel(geometry, {x:-940,y:-300}, material);
 
         var number1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("../images/number1.png", undefined, LOADSYNC.register())}));
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("images/number1.png", undefined, LOADSYNC.register())}));
         number1.position.set(-510, 340, -460);
         scene.add(number1);
 
         var number2 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("../images/number2.png", undefined, LOADSYNC.register())}));
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("images/number2.png", undefined, LOADSYNC.register())}));
         number2.position.set(-510, 145, -460);
         scene.add(number2);
 
         var number3 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("../images/number3.png", undefined, LOADSYNC.register())}));
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("images/number3.png", undefined, LOADSYNC.register())}));
         number3.position.set(-510, -45, -460);
         scene.add(number3);
 
         var number4 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("../images/number4.png", undefined, LOADSYNC.register())}));
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("images/number4.png", undefined, LOADSYNC.register())}));
         number4.position.set(-510, -243, -460);
         scene.add(number4);
         
-        var horizTexture = new THREE.MeshBasicMaterial({transparent: true, opacity: .8, map: THREE.ImageUtils.loadTexture("../images/horizontal_lights.png", undefined, LOADSYNC.register())});
+        var horizTexture = new THREE.MeshBasicMaterial({transparent: true, opacity: .8, map: THREE.ImageUtils.loadTexture("images/horizontal_lights.png", undefined, LOADSYNC.register())});
 
         var horizLight1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(1024, 18), horizTexture); 
         horizLight1.position.set(0, 350, -500);

@@ -32,7 +32,7 @@ function createProjectorPanel(renderer, width, height, elements){
             renderScene.add(elements[i].quad);
         }
 
-        var glareTexture = THREE.ImageUtils.loadTexture('../images/projector_glare.png');
+        var glareTexture = THREE.ImageUtils.loadTexture('images/projector_glare.png', undefined, LOADSYNC.register());
         glareMaterial = new THREE.MeshBasicMaterial({map: glareTexture, transparent: true, blend: THREE.AdditiveBlending});
         var glareGeometry = new THREE.PlaneBufferGeometry( 64, 64 );
         var glareLeft = new THREE.Mesh(glareGeometry, glareMaterial );
@@ -45,11 +45,13 @@ function createProjectorPanel(renderer, width, height, elements){
 
         renderComposer = new THREE.EffectComposer(renderer, renderTarget);
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
+
+        var projectionMaskTexture = THREE.ImageUtils.loadTexture('images/projection_mask.png', undefined, LOADSYNC.register());
         
         var renderScenePass = new THREE.TexturePass(renderComposer.renderTarget2);
         projectorComposer = new THREE.EffectComposer(renderer, createRenderTarget(width/2.8, height/2.8));
         projectorComposer.addPass(renderScenePass);
-        projectorComposer.addPass(new THREE.ProjectorPass(renderer, new THREE.Vector2(-.01, 0.05)));
+        projectorComposer.addPass(new THREE.ProjectorPass(renderer, new THREE.Vector2(-.01, 0.05), projectionMaskTexture));
 
         renderComposer.addPass(new THREE.ShaderPass(THREE.AdditiveBlendShader, {tAdd: projectorComposer.renderTarget1, fOpacity: .5}));
     }
