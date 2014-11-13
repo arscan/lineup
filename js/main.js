@@ -1,7 +1,8 @@
 
 function main(renderWidth){
 
-    var container = document.createElement( 'div' ),
+    var //loadingCirlce = createLoadingCircle($("#loading-graphic")),
+        container = document.createElement( 'div' ),
         stats = new Stats(), 
         renderer = new THREE.WebGLRenderer( { antialias: false, alpha: true } ), 
         /* screen size */
@@ -11,7 +12,6 @@ function main(renderWidth){
         renderHeight = renderWidth/screenRatio,
         standardHeight = standardWidth/screenRatio,
         standardPanelSize = screenScale * 256,
-
         camera = new THREE.OrthographicCamera(0, renderWidth, renderHeight, 0, -1000, 1000),
         scene = new THREE.Scene();
 
@@ -39,6 +39,9 @@ function main(renderWidth){
         canvasTop = Math.max(0, (window.innerHeight - renderHeight)/2);
 
         clock = new THREE.Clock();
+
+    // unhide the laoding graphic
+    $("#loading-graphic div").css({"visibility": "visible", "top": window.innerHeight/2 - 10, "left": window.innerWidth/2 - 100 });
 
 
     /* add the main panels */

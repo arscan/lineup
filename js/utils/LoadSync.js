@@ -17,7 +17,7 @@ var LOADSYNC = (function(){
 
             count--;
             if(count === 0 && started){
-                runWhenFinished();
+                setTimeout(runWhenFinished,1000);
             }
         };
     }
@@ -28,7 +28,7 @@ var LOADSYNC = (function(){
 
     function start(){
         if(count === 0){
-            runWhenFinished();
+            setTimeout(runWhenFinished,1000);
         }
         started = true;
     }
