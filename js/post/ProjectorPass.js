@@ -88,7 +88,9 @@ THREE.ProjectorShaders = {
                 "gl_FragColor = vec4(col / 3.0);",
                 "if(fTick > 0.0){",
                 // "gl_FragColor.rgb = gl_FragColor.rgb * texture2D(tMask, vec2(mod(vUv.x - offset, 1.0), vUv.y)).rgb;",
-                "gl_FragColor.rgb = gl_FragColor.rgb - texture2D(tMask, vUv).rgb;",
+                // "gl_FragColor.rgb = gl_FragColor.rgb - texture2D(tMask, vUv).rgb;",
+                // "gl_FragColor.rgb = gl_FragColor.rgb - texture2D(tMask, vUv).rgb;",
+                "gl_FragColor.a = pow(1.0-dist,2.0);",//length(vUv.x;",//texture2D(tMask, vUv).g;",
                     // "gl_FragColor.rgba = vec4(1.0, 1.0, 1.0, 1.0);",
                 "}",
             "}"
@@ -105,14 +107,16 @@ THREE.ProjectorPass = function ( renderer, projectorLocation, maskTexture) {
     this.textureID = "tDiffuse";
     this.renderer = renderer;
 
-    // this.uniforms = THREE.UniformsUtils.clone( shader.uniforms );
-
     this.generateUniforms = THREE.UniformsUtils.clone(THREE.ProjectorShaders.Generate.uniforms);
     this.generateMaterial = new THREE.ShaderMaterial( {
 
         uniforms: this.generateUniforms,
         vertexShader: THREE.ProjectorShaders.Generate.vertexShader,
-        fragmentShader: THREE.ProjectorShaders.Generate.fragmentShader
+        fragmentShader: THREE.ProjectorShaders.Generate.fragmentShader,
+        transparent: true
+
+ 
+
 
     } );
 
