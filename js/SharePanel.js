@@ -39,9 +39,9 @@ function createSharePanel(renderer, scale){
 
         var twitterIconTexture = THREE.ImageUtils.loadTexture('images/twitter.png', undefined, LOADSYNC.register() );
         var twitterIconMaterial = new THREE.MeshBasicMaterial({map: twitterIconTexture, transparent: true});
-        var twitterIconGeometry = new THREE.PlaneBufferGeometry( 24 * scale, 19*scale );
+        var twitterIconGeometry = new THREE.PlaneBufferGeometry( 25 * scale, 25*scale );
         var twitterIconPlane = new THREE.Mesh(twitterIconGeometry, twitterIconMaterial );
-        twitterIconPlane.position.set(24*scale, 19*scale/2 + 4, 0);
+        twitterIconPlane.position.set(25*scale, 25*scale/2 + 4, 0);
         panel.addToScene(twitterIconPlane);
 
         var twitterTexture = new THREE.Texture(createTwitterCanvas())

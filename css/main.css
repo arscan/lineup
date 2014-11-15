@@ -1,5 +1,4 @@
 body {
-    height: 4000px;
     width: 1280px;
     margin: 0;
 }
@@ -118,12 +117,122 @@ video {
 
 
 #please-rotate {
-    position:fixed;
-    color: #fff;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    z-index: 30;
-    background-color: #000;
+    cursor: pointer;
     display: none;
 }
+
+#rotate-image {
+    background-image: url(../images/rotate.png);
+    position: absolute;
+    z-index: 90;
+    width: 300px;
+    height: 300px;
+    background-size: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+
+    animation: rotateFrames ease 2s;
+    animation-iteration-count: infinite;
+    transform-origin: 50% 50%;
+    -webkit-animation: rotateFrames ease 2s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-transform-origin: 50% 50%;
+    -moz-animation: rotateFrames ease 2s;
+    -moz-animation-iteration-count: infinite;
+    -moz-transform-origin: 50% 50%;
+    -o-animation: rotateFrames ease 2s;
+    -o-animation-iteration-count: infinite;
+    -o-transform-origin: 50% 50%;
+    -ms-animation: rotateFrames ease 2s;
+    -ms-animation-iteration-count: infinite;
+    -ms-transform-origin: 50% 50%;
+}
+
+@keyframes rotateFrames{
+  0% {
+    transform:  rotate(0deg) ;
+  }
+  49% {
+    transform:  rotate(90deg) ;
+  }
+  100% {
+    transform:  rotate(90deg) ;
+  }
+}
+
+@-moz-keyframes rotateFrames{
+  0% {
+    -moz-transform:  rotate(0deg) ;
+  }
+  49% {
+    -moz-transform:  rotate(90deg) ;
+  }
+  100% {
+    -moz-transform:  rotate(90deg) ;
+  }
+}
+
+@-webkit-keyframes rotateFrames {
+  0% {
+    -webkit-transform:  rotate(0deg) ;
+  }
+  49% {
+    -webkit-transform:  rotate(90deg) ;
+  }
+  100% {
+    -webkit-transform:  rotate(90deg) ;
+  }
+}
+
+@-o-keyframes rotateFrames {
+  0% {
+    -o-transform:  rotate(0deg) ;
+  }
+  49% {
+    -o-transform:  rotate(90deg) ;
+  }
+  100% {
+    -o-transform:  rotate(90deg) ;
+  }
+}
+
+@-ms-keyframes rotateFrames {
+  0% {
+    -ms-transform:  rotate(0deg) ;
+  }
+  49% {
+    -ms-transform:  rotate(90deg) ;
+  }
+  100% {
+    -ms-transform:  rotate(90deg) ;
+  }
+}
+
+#rotate-message {
+    font-size: 20pt;
+    text-align: center;
+    font-family: Verdana, Geneva, sans-serif;
+    color: #fff;
+    padding-top: 700px;
+    z-index:500;
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    /* position: absolute; */
+    /* z-index: 40; */
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+#rotate-message small {
+    font-size: 16pt;
+    color: #ffcc00;
+
+}
+

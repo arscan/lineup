@@ -7,8 +7,7 @@ function createLinksPanel(renderer, scale){
 
    var panel = createPanel(renderer, width, height);
 
-   var bodyPlane,
-       scrollPlane;
+   var icons = [];
 
    function createTitleCanvas(){
 
@@ -47,57 +46,6 @@ function createLinksPanel(renderer, scale){
 
    };
 
-   function createBodyCanvas(){
-       var text = ["Thanks for stopping by!",
-                   "This is a project by Rob Scanlon using THREE.js, and a ",
-                   "long list of other open source projects.",
-                   "Try scrolling down to continue.",
-       ];
-
-       return panel.renderToCanvas(512, 400, function(ctx){
-           ctx.strokeStyle="#fff";
-
-           ctx.font = "20pt Roboto";
-           ctx.fillStyle = '#ffffff';
-
-           for(var i = 0; i < text.length; i++){
-               ctx.fillText(text[i], 0, 20 + i*38);
-           }
-       });
-
-   };
-
-   function createScrollCanvas(){
-       return panel.renderToCanvas(512, 50, function(ctx){
-
-           ctx.font = "12pt Roboto";
-           ctx.fillStyle = '#6Fc0BA';
-
-           ctx.fillText("SCROLL DOWN", 50, 18);
-           ctx.fillStyle = '#996699';
-
-           function drawTriangles(x){
-               ctx.moveTo(x, 10);
-               ctx.lineTo(x+5, 5);
-               ctx.lineTo(x-5, 5);
-               ctx.lineTo(x, 10);
-               ctx.moveTo(x, 15);
-               ctx.lineTo(x+5, 10);
-               ctx.lineTo(x-5, 10);
-               ctx.lineTo(x, 15);
-               ctx.moveTo(x, 20);
-               ctx.lineTo(x+5, 15);
-               ctx.lineTo(x-5, 15);
-               ctx.lineTo(x, 20);
-               ctx.fill();
-           }
-
-           drawTriangles(40);
-           drawTriangles(180);
-       });
-
-   };
-
     function init(){
 
         var titleCanvas= createTitleCanvas(); 
@@ -111,32 +59,64 @@ function createLinksPanel(renderer, scale){
         plane.position.set(width/2 + 7, height-40*scale, 0);
         panel.addToScene( plane );
 
-        var bodyCanvas= createBodyCanvas(); 
-        var bodyTexture = new THREE.Texture(bodyCanvas)
-        bodyTexture.needsUpdate = true;
+        var twitterIconTexture = THREE.ImageUtils.loadTexture('images/twitter.png', undefined, LOADSYNC.register() );
+        var twitterIconMaterial = new THREE.MeshBasicMaterial({map: twitterIconTexture, transparent: true});
+        var twitterIconGeometry = new THREE.PlaneBufferGeometry( 50 * scale, 50*scale );
+        var twitterIconPlane = new THREE.Mesh(twitterIconGeometry, twitterIconMaterial );
+        twitterIconPlane.position.set(50*scale, 50*scale/2 + 4, 0);
+        twitterIconPlane._gotg_url = "https://www.twitter.com/arscan/";
+        icons.push(twitterIconPlane);
+        panel.addToScene(twitterIconPlane);
 
-        var bodyMaterial = new THREE.MeshBasicMaterial({map: bodyTexture, transparent: true});
-        var bodyGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 200 * scale );
+        var githubIconTexture = THREE.ImageUtils.loadTexture('images/github.png', undefined, LOADSYNC.register() );
+        var githubIconMaterial = new THREE.MeshBasicMaterial({map: githubIconTexture, transparent: true});
+        var githubIconGeometry = new THREE.PlaneBufferGeometry( 50 * scale, 50 * scale);
+        var githubIconPlane = new THREE.Mesh(githubIconGeometry, githubIconMaterial );
+        githubIconPlane.position.set(width/2 + 50 * scale / 2 + 5, 50*scale/2 + 2, 0);
+        githubIconPlane._gotg_url = "https://www.github.com/arscan/";
+        icons.push(githubIconPlane);
+        panel.addToScene(githubIconPlane);
 
-        bodyPlane = new THREE.Mesh( bodyGeometry, bodyMaterial );
-        bodyPlane.position.set(width/2 + 7, height - 40*scale - (200*scale)/2, 0);
-        panel.addToScene( bodyPlane );
+        var linkedInIconTexture = THREE.ImageUtils.loadTexture('images/linkedin.png', undefined, LOADSYNC.register() );
+        var linkedInIconMaterial = new THREE.MeshBasicMaterial({map: linkedInIconTexture, transparent: true});
+        var linkedInIconGeometry = new THREE.PlaneBufferGeometry( 50 * scale, 50 * scale);
+        var linkedInIconPlane = new THREE.Mesh(linkedInIconGeometry, linkedInIconMaterial );
+        linkedInIconPlane.position.set(width/2 + 50 * scale / 2 + 5, 100 + 50*scale/2 + 2, 0);
+        linkedInIconPlane._gotg_url = "https://www.linkedin.com/robscanlon/";
+        icons.push(linkedInIconPlane);
+        panel.addToScene(linkedInIconPlane);
 
-        // var scrollCanvas= createScrollCanvas(); 
-        // var scrollTexture = new THREE.Texture(scrollCanvas)
-        // scrollTexture.needsUpdate = true;
+        var flickrIconTexture = THREE.ImageUtils.loadTexture('images/flickr.png', undefined, LOADSYNC.register() );
+        var flickrIconMaterial = new THREE.MeshBasicMaterial({map: flickrIconTexture, transparent: true});
+        var flickrIconGeometry = new THREE.PlaneBufferGeometry( 50 * scale, 50 * scale);
+        var flickrIconPlane = new THREE.Mesh(flickrIconGeometry, flickrIconMaterial );
+        flickrIconPlane.position.set(width/4 + 20 * scale / 2 + 5, 100 + 50*scale/2 + 2, 0);
+        flickrIconPlane._gotg_url = "https://www.flickr.com/photos/45001949@N00/";
+        icons.push(flickrIconPlane);
+        panel.addToScene(flickrIconPlane);
 
-        // var scrollMaterial = new THREE.MeshBasicMaterial({map: scrollTexture, transparent: true});
-        // var scrollGeometry = new THREE.PlaneBufferGeometry( 256, 25 );
+        var homeIconTexture = THREE.ImageUtils.loadTexture('images/home.png', undefined, LOADSYNC.register() );
+        var homeIconMaterial = new THREE.MeshBasicMaterial({map: homeIconTexture, transparent: true});
+        var homeIconGeometry = new THREE.PlaneBufferGeometry( 50 * scale, 50 * scale);
+        var homeIconPlane = new THREE.Mesh(homeIconGeometry, homeIconMaterial );
+        homeIconPlane.position.set(width/2 + 20 * scale / 2 + 5, 200 + 50*scale/2 + 2, 0);
+        homeIconPlane._gotg_url = "https://www.robscanlon.com/";
+        icons.push(homeIconPlane);
+        panel.addToScene(homeIconPlane);
 
-        // scrollPlane = new THREE.Mesh( scrollGeometry, scrollMaterial );
-        // scrollPlane.position.set(0, -100, 0);
-        // panel.addToScene( scrollPlane );
+
 
     }
 
     function render(time){
         panel.render(time);
+
+        var center = {x: width / 2, y: height / 2},
+            radius = 100;
+        for(var i = 0; i< icons.length; i++){
+            icons[i].position.set(center.x + radius * Math.sin((i / icons.length) * Math.PI * 2), center.y + radius * Math.cos((i / icons.length) * Math.PI * 2), 1);
+
+        }
     }
 
     init();

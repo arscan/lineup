@@ -1,6 +1,11 @@
-function createSubjectPanel(renderer, width, height, x, y){
+function createSubjectPanel(renderer, scale){
 
-   var renderScene,
+   var STANDARD_DIMENSIONS = {width: 326, height:580},
+       ROTATE_TIME = 10.0;
+
+   var width = STANDARD_DIMENSIONS.width * scale,
+       height = STANDARD_DIMENSIONS.height * scale,
+       renderScene,
        renderComposer,
        renderCamera,
        clock,
@@ -11,8 +16,7 @@ function createSubjectPanel(renderer, width, height, x, y){
    var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
    var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true}));
 
-   quad.position.set(x, y, 0);
-   quad.scale.set(1.34,1.34,1.34);
+   // quad.scale.set(1.34,1.34,1.34);
    // console.log(quad.scale);
 
    var subjectShader =  {
@@ -136,7 +140,9 @@ function createSubjectPanel(renderer, width, height, x, y){
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
         renderComposer.addPass(new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: .5, brightness: -.1}));
         renderComposer.addPass(new THREE.ShaderPass(THREE.HueSaturationShader, {hue: .05, saturation: -.6}));
-        renderComposer.addPass(new THREE.ShaderPass(THREE.CopyShader)); // to line them up right
+        // renderComposer.addPass(new THREE.ShaderPass(THREE.CopyShader)); // to line them up right
+        // renderComposer.addPass(new THREE.ShaderPass(THREE.FXAAShader)); // to line them up right
+        renderComposer.addPass(new THREE.ShaderPass(THREE.FXAAShader, {resolution: new THREE.Vector2(1/width, 1/height)}));
 
     }
 
@@ -145,6 +151,17 @@ function createSubjectPanel(renderer, width, height, x, y){
         renderComposer.render();
 
     }
+
+    function setPosition(x, y, z){
+        if(typeof z == "number"){
+            z = Math.max(0, Math.min(1, z));
+            setBlur(z);
+            quad.scale.set(z/2 + .5, z/2 + .5, z/2 + .5);
+        }
+        quad.position.set(x + width/2, y-height/2, 0);
+    }
+
+    function setBlur(){}
 
     function checkBounds(x, y){
         return (x > quad.position.x - width / 2 && x < quad.position.x + width/2) 
@@ -161,7 +178,8 @@ function createSubjectPanel(renderer, width, height, x, y){
         height: height,
         quad: quad,
         checkBounds: checkBounds,
-        setBlur: function(){ }
+        setBlur: setBlur,
+        setPosition: setPosition
     });
 }
 
