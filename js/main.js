@@ -26,7 +26,7 @@ function main(renderWidth){
         linksPanel = createLinksPanel(renderer, screenScale),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
         projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, sharePanel, photosPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
-        // subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
+        subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
         carouselPanels = [aboutPanel, linksPanel, bioPanel, photosPanel, projectsPanel],
@@ -37,50 +37,119 @@ function main(renderWidth){
         grabbedPanel = null,
         grabStart = null,
 
-        canvasTop = Math.max(0, (window.innerHeight - renderHeight)/2);
+        canvasTop = Math.max(0, (window.innerHeight - renderHeight)/2),
 
-        clock = new THREE.Clock();
+        clock = new THREE.Clock(false);
+
+    // hide the rotation graphic 
+    $("#please-rotate").css({display: "none"});
 
     // unhide the laoding graphic
     $("#loading-graphic div").css({"visibility": "visible", "top": window.innerHeight/2 - 10, "left": window.innerWidth/2 - 100 });
 
-
-    /* add the main panels */
-    // namePanel.quad.scale.set(1.2,1.2,1.2);
+    /* add add position the main panels */
     scene.add(projectorPanel.quad);
-    // scene.add(subjectPanel.quad);
+    scene.add(subjectPanel.quad);
     scene.add(backgroundPanel.quad);
 
     skeletonPanel.setPosition(350 * screenScale, renderHeight - 20 * screenScale, 1);
     namePanel.setPosition(50 * screenScale, 358*screenScale, 1);
     sharePanel.setPosition(20 * screenScale, renderHeight - 20 * screenScale, 1);
+    subjectPanel.setPosition(500 * screenScale, 450 * screenScale, 1);
 
-    // subjectPanel.setPosition(500 * screenScale, 450 * screenScale, 1);
-
-    // aboutPanel.setPosition(500 * screenScale, 400*screenScale, 1);
-    // projectsPanel.setPosition(800 * screenScale, 400*screenScale, 1);
-    // bioPanel.setPosition(800 * screenScale, 500*screenScale, 1);
-    // linksPanel.setPosition(800 * screenScale, 200*screenScale, 1);
-
-    /* add the elements */
+    /* place and position the rendering canvas */
     container.appendChild( stats.domElement );
     document.body.appendChild( container );
-    // renderer.setSize( 1280, 580 );
     renderer.setSize( renderWidth, renderHeight );
     container.appendChild( renderer.domElement );
+    $(renderer.domElement).css({top: canvasTop});
 
-    $("canvas").css({top: canvasTop});
+    function createChainedTween(element, commands){
+       if(commands.length < 2){
+           return;
+       }
+       var tweens = [];
+        
+       tweens[0] = new TWEEN.Tween(commands[0].position)
+           .delay(commands[1].delay)
+           .to(commands[1].position, commands[1].duration)
+            .onUpdate(function(){
+                element.setPosition(this.x, this.y, this.z);
+            })
+           .easing(commands[1].easing);
 
+       for(var i = 2; i< commands.length; i++){
+           tweens[i-1] = new TWEEN.Tween(commands[i-1].position)
+               .delay(commands[i].delay)
+               .to(commands[i].position, commands[i].duration)
+                .onUpdate(function(){
+                    element.setPosition(this.x, this.y, this.z);
+                })
+               .easing(commands[i].easing);
+           tweens[i-2].chain(tweens[i-1]);
+       }
+       return tweens[0];
+    }
+
+    function runIntroAnimation(){
+
+        createChainedTween(namePanel, [
+            {position: {x: renderWidth * 2, y: renderHeight*2, z:0}},
+            {   delay: 0, 
+                duration: 2000, 
+                easing: TWEEN.Easing.Back.InOut,
+                position: {x: 500 * screenScale, y: 340 * screenScale, z:.2}
+            },
+            {   delay: 0, 
+                duration: 1000, 
+                easing: TWEEN.Easing.Back.Out,
+                position: {x: 500 * screenScale, y: 350 * screenScale, z:1}
+            },
+            {   delay: 2000, 
+                duration: 2000, 
+                easing: TWEEN.Easing.Back.Out,
+                position: {x: 200 * screenScale, y: 360 * screenScale, z:1}
+            },
+            {   delay: 4000, 
+                duration: 2000, 
+                easing: TWEEN.Easing.Quintic.InOut,
+                position: {x: 50 * screenScale, y: 360 * screenScale, z:1}
+            },
+        ]
+        ).start();
+
+        setTimeout(function(){clock.start()}, 6000);
+
+
+        /*
+        var nameIntroTween = new TWEEN.Tween({x: renderWidth *.8, y: renderHeight / 2, z: 0})
+            // .delay(1000)
+            .to({x: renderWidth/2 + 20*screenScale, y: renderHeight/2 + 20*screenScale, z:1}, 2000)
+            .onUpdate(function(){
+                namePanel.setPosition(this.x, this.y, this.z);
+            })
+            .easing(TWEEN.Easing.Quintic.Out);
+
+        var nameIntroTween = new TWEEN.Tween({x: renderWidth/2 + 20 *.8, y: renderHeight / 2, z: 0})
+            // .delay(1000)
+            .to({x: renderWidth/2 + 20*screenScale, y: renderHeight/2 + 20*screenScale, z:1}, 2000)
+            .onUpdate(function(){
+                namePanel.setPosition(this.x, this.y, this.z);
+            })
+            .easing(TWEEN.Easing.Quintic.Out);
+
+
+        nameIntroTween.start();
+       */
+    }
+
+    /* register what we want to do when loading is complete */
     LOADSYNC.onComplete(function(){
-        /* probably should be earlier... assuming that things aren't loaded instantaniously */
         $("#loading-graphic").velocity({color: "#000", opacity: 0},{"display":"none"});
+        runIntroAnimation();
+        // clock.start();
     });
 
-    function rotateComplete(){
-        /* to do when the rotation is done */
-        $("#please-rotate").css({display: "none"});
-    }
-    rotateComplete();
 
     function render(){
         var time = clock.getElapsedTime();
@@ -99,7 +168,7 @@ function main(renderWidth){
         }
 
         projectorPanel.render(time);
-        // subjectPanel.render();
+        subjectPanel.render();
 
         renderer.render(scene, camera);
 
@@ -250,6 +319,7 @@ function main(renderWidth){
 
     });
 
+    /*
     new TWEEN.Tween({loc: -.1})
                 .delay(1000)
 
@@ -260,6 +330,7 @@ function main(renderWidth){
                 })
                 .easing(TWEEN.Easing.Elastic.Out)
                 .start();
+               */
 
     function setTwitter(){
 

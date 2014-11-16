@@ -39,8 +39,8 @@ function createBackgroundPanel(renderer, width, height){
         // pointLight4 = new THREE.PointLight( 0xfd5f00, 0.75, 1500 );
         // pointLight4.position.z = -480;
 
-        scene.add( pointLight1 );
-        scene.add( pointLight2 );
+        // scene.add( pointLight1 );
+        // scene.add( pointLight2 );
         scene.add( pointLight3 );
         // scene.add( pointLight4 );
 
