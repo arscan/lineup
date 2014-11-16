@@ -111,14 +111,14 @@ function createLinksPanel(renderer, scale){
     function render(time){
         panel.render(time);
 
-        var center = {x: width / 2, y: height / 2},
-            radius = 90;
+        var center = {x: 120, y: 160},
+            radius = 50;
 
         var newRadius = radius * (Math.sin(time) + 2.5) / 2.5;
-        var newCenter = {x: center.x + Math.sin(time)*30, y: center.y + Math.cos(time)*30};
+        var newCenter = {x: center.x + Math.sin(time)*10, y: center.y + Math.cos(time)*10};
 
         for(var i = 0; i< icons.length; i++){
-            icons[i].position.set(newCenter.x + newRadius * Math.sin((i / icons.length) * Math.PI * 2 + time), newCenter.y + newRadius * Math.cos((i / icons.length) * Math.PI * 2 + time), 1);
+            icons[i].position.set(scale * (newCenter.x + newRadius * Math.sin((i / icons.length) * Math.PI * 2 + time)), scale * (newCenter.y + newRadius * Math.cos((i / icons.length) * Math.PI * 2 + time)), 1);
 
         }
     }

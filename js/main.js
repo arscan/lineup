@@ -304,6 +304,7 @@ $(function(){
                     families: ['Roboto:500']
                 },
                 active: main.bind(this,$(window).width()) // TODO: FIGURE OUT THE WIDTH?
+                // active: main.bind(this,1280) // TODO: FIGURE OUT THE WIDTH?
             }); 
         } else {
             $("#please-rotate").css({"display": "block"});

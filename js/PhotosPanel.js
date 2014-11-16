@@ -9,7 +9,7 @@ function createPhotosPanel(renderer, scale){
 
    var icons = [];
 
-   var picHeight = 80;
+   var picHeight = 70;
 
    function createTitleCanvas(){
 
@@ -76,16 +76,12 @@ function createPhotosPanel(renderer, scale){
         for(var i = 0; i< randomPics.length; i++){
             var item = randomPics[i];
             var imageScale = item.height / picHeight;
-            console.log('----');
-            console.log(item.height);
-            console.log(item.width);
-            console.log(imageScale);
 
             var tmpMesh = new THREE.Mesh(
                 new THREE.PlaneBufferGeometry(item.width * scale / imageScale, item.height * scale / imageScale),
                 new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture(item.url, undefined, LOADSYNC.register()), blending: THREE.AdditiveBlending, transparent: true})
                 );
-            tmpMesh.position.set((i%2)*200 + 100, Math.floor(i/2)*130 + 120, 1);
+            tmpMesh.position.set(scale *((i%2)*115 + 60), scale * (Math.floor(i/2)*85 + 85), 1);
             panel.addToScene(tmpMesh);
 
         }
