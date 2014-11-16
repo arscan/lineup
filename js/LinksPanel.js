@@ -57,7 +57,7 @@ function createLinksPanel(renderer, scale){
 
         var plane = new THREE.Mesh( titleGeometry, titleMaterial );
         plane.position.set(width/2 + 7, height-40*scale, 0);
-        panel.addToScene( plane );
+        // panel.addToScene( plane );
 
         var twitterIconTexture = THREE.ImageUtils.loadTexture('images/twitter.png', undefined, LOADSYNC.register() );
         var twitterIconMaterial = new THREE.MeshBasicMaterial({map: twitterIconTexture, transparent: true, blending: THREE.AdditiveBlending});

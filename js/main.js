@@ -21,14 +21,15 @@ function main(renderWidth){
         sharePanel = createSharePanel(renderer, screenScale),
         aboutPanel = createAboutPanel(renderer, screenScale),
         projectsPanel = createProjectsPanel(renderer, screenScale),
+        photosPanel = createPhotosPanel(renderer, screenScale),
         bioPanel = createBioPanel(renderer, screenScale),
         linksPanel = createLinksPanel(renderer, screenScale),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
-        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, sharePanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
-        subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
+        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, sharePanel, photosPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
+        // subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
-        carouselPanels = [aboutPanel, linksPanel, bioPanel, projectsPanel],
+        carouselPanels = [aboutPanel, linksPanel, bioPanel, photosPanel, projectsPanel],
         carouselLocation = 0,
         carouselGrabbed = false,
 
@@ -47,19 +48,19 @@ function main(renderWidth){
     /* add the main panels */
     // namePanel.quad.scale.set(1.2,1.2,1.2);
     scene.add(projectorPanel.quad);
-    scene.add(subjectPanel.quad);
+    // scene.add(subjectPanel.quad);
     scene.add(backgroundPanel.quad);
 
     skeletonPanel.setPosition(350 * screenScale, renderHeight - 20 * screenScale, 1);
     namePanel.setPosition(50 * screenScale, 358*screenScale, 1);
     sharePanel.setPosition(20 * screenScale, renderHeight - 20 * screenScale, 1);
 
-    subjectPanel.setPosition(500 * screenScale, 450 * screenScale, 1);
+    // subjectPanel.setPosition(500 * screenScale, 450 * screenScale, 1);
 
-    aboutPanel.setPosition(500 * screenScale, 400*screenScale, 1);
-    projectsPanel.setPosition(800 * screenScale, 400*screenScale, 1);
-    bioPanel.setPosition(800 * screenScale, 500*screenScale, 1);
-    linksPanel.setPosition(800 * screenScale, 200*screenScale, 1);
+    // aboutPanel.setPosition(500 * screenScale, 400*screenScale, 1);
+    // projectsPanel.setPosition(800 * screenScale, 400*screenScale, 1);
+    // bioPanel.setPosition(800 * screenScale, 500*screenScale, 1);
+    // linksPanel.setPosition(800 * screenScale, 200*screenScale, 1);
 
     /* add the elements */
     container.appendChild( stats.domElement );
@@ -98,7 +99,7 @@ function main(renderWidth){
         }
 
         projectorPanel.render(time);
-        subjectPanel.render();
+        // subjectPanel.render();
 
         renderer.render(scene, camera);
 

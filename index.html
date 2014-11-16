@@ -34,9 +34,10 @@
     <!-- Models -->
     <script src="models/encom_globe_grid.js"></script>
 
-    <!-- Flickr API -->
+    <!-- Flickr API (hosted locally, use bin/downloadflickr.js to generate to avoid cors issues -->
     <script src="js/FlickrHandler.js"></script>
-    <script src="https://api.flickr.com/services/feeds/photos_public.gne?format=json&id=45001949@N00"></script>
+    <script src="js/FlickrImages.js"></script>
+    <!-- <script src="https://api.flickr.com/services/feeds/photos_public.gne?format=json&#38;id=45001949@N00&#38;jsoncallback=FLICKR.setItems"></script> -->
 
     <!-- //////////////////////// -->
     <!-- APP CODE -->
@@ -62,6 +63,7 @@
 
     <!-- carousel panels -->
     <script src="js/AboutPanel.js"></script>
+    <script src="js/PhotosPanel.js"></script>
     <script src="js/EncomBoardroom.js"></script>
     <script src="js/EncomGlobe.js"></script>
     <script src="js/GithubWargames.js"></script>
