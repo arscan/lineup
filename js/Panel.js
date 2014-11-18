@@ -10,9 +10,52 @@ function createPanel(renderer, width, height, opts){
         glowComposer,
         finalBlurPass;
 
-    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat};
+    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat};
     var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
     var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true, blending: THREE.AdditiveBlending}));
+
+    var BlendShader = {
+
+        uniforms: {
+        
+            "tDiffuse": { type: "t", value: null },
+            "tAdd": { type: "t", value: null },
+            "fOpacity": { type: "f", value: 1.0 },
+            "fOpacitySource": { type: "f", value: 1.0 },
+        },
+
+        vertexShader: [
+
+            "varying vec2 vUv;",
+
+            "void main() {",
+
+                "vUv = uv;",
+                "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+
+            "}"
+
+        ].join("\n"),
+
+        fragmentShader: [
+
+            "uniform sampler2D tDiffuse;",
+            "uniform sampler2D tAdd;",
+            "uniform float fOpacity;",
+            "uniform float fOpacitySource;",
+
+            "varying vec2 vUv;",
+
+            "void main() {",
+
+                "vec4 texel1 = texture2D( tDiffuse, vUv );",
+                "vec4 texel2 = texture2D( tAdd, vUv ) ;",
+                "gl_FragColor = texel1 * fOpacitySource  + texel2 * fOpacity * (1.0-texel1.a*fOpacitySource);",
+            "}"
+
+        ].join("\n")
+
+    };
 
     function renderToCanvas(width, height, renderFunction) {
         var buffer = document.createElement('canvas');
@@ -67,7 +110,7 @@ function createPanel(renderer, width, height, opts){
             glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 1/height}));
         }
 
-        finalBlurPass = new THREE.ShaderPass(THREE.AdditiveBlendShader);
+        finalBlurPass = new THREE.ShaderPass(BlendShader);
         finalBlurPass.uniforms['tAdd'].value = glowComposer.writeBuffer;
         mainComposer.addPass(finalBlurPass);
 
