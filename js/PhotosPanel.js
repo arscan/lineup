@@ -71,7 +71,7 @@ function createPhotosPanel(renderer, scale){
         icons.push(twitterIconPlane);
         panel.addToScene(twitterIconPlane);
        */
-      var randomPics = FLICKR.getRandom(4);
+      var randomPics = FLICKR.getRandomLandscapes(4);
 
         for(var i = 0; i< randomPics.length; i++){
             var item = randomPics[i];

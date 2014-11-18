@@ -13,21 +13,21 @@ function createFlickrParser(){
                 items[i].width = parseInt(wRes[1],10);
             } 
 
-            console.log("!~!@#@!@!@!!");
-            console.log(input.items[i].description);
-            console.log(items[i].width);
-            console.log(items[i].height);
-
             /* flickr api doesn't allow for CORS, so run the downloadflickr.js periodically and grab locally */
 
             items[i].url = "images/flickr" + items[i].media.m.substring(items[i].media.m.lastIndexOf('/'));
         }
     }
-    function getRandom(num){
+    function getRandomLandscapes(num){
         var res = [];
+        var seen = [];
         while(num > 0){
-            res.push(items[Math.floor(Math.random() * items.length)]);
-            num--;
+            var randIndex = Math.floor(Math.random() * items.length);
+            if(items[randIndex].width > items[randIndex].height && seen.indexOf(randIndex) < 0){
+                res.push(items[randIndex]);
+                seen.push(randIndex);
+                num--;
+            }
         }
 
         return res;
@@ -39,7 +39,7 @@ function createFlickrParser(){
 
     return Object.freeze({
         setItems: setItems,
-        getRandom: getRandom,
+        getRandomLandscapes: getRandomLandscapes,
         getRecent: getRecent
     });
 };
