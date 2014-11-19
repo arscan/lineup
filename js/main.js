@@ -32,6 +32,7 @@ function main(renderWidth){
         carouselPanels = [aboutPanel, linksPanel, bioPanel, photosPanel, projectsPanel],
         carouselLocation = 0,
         carouselGrabbed = false,
+        carouselCenter = { x: renderWidth, y: 360 * screenScale},
 
         interactivePanels = [namePanel, skeletonPanel, sharePanel],
         grabbedPanel = null,
@@ -53,10 +54,16 @@ function main(renderWidth){
     scene.add(backgroundPanel.quad);
 
     skeletonPanel.setPosition(350 * screenScale, renderHeight - 20 * screenScale, 1);
-    namePanel.setPosition(50 * screenScale, 358*screenScale, 1);
-    sharePanel.setPosition(20 * screenScale, renderHeight - 20 * screenScale, 1);
+    // namePanel.setPosition(50 * screenScale, 358*screenScale, 1);
+    // sharePanel.setPosition(20 * screenScale, renderHeight - 20 * screenScale, 1);
     // subjectPanel.setPosition(500 * screenScale, 450 * screenScale, 1);
 
+    sharePanel.setPosition(renderWidth + 1000, 0, 0);
+    // put the carouselPanels off the right side of the screen
+    for(var i = 0; i< carouselPanels.length; i++){
+        carouselPanels[i].setPosition(renderWidth + 1000, 0, 0);
+
+    }
     /* place and position the rendering canvas */
     container.appendChild( stats.domElement );
     document.body.appendChild( container );
@@ -91,32 +98,124 @@ function main(renderWidth){
        return tweens[0];
     }
 
+    function setPanelPositions(intro){
+        for(var i = 0; i< carouselPanels.length; i++){
+            if(intro && i > 0 && i < carouselPanels.length-1){
+                continue;
+            }
+            var panel = carouselPanels[i];
+            var newY = Math.max(carouselCenter.y + screenScale*180 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58)), 310 * screenScale);
+            // var newX = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
+            
+            var newX = carouselCenter.x + (renderWidth/3) * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
+            var newZ = Math.max(0, Math.min(1, 1.1 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation) + 1.2)));
+            carouselPanels[i].setPosition(newX, newY, newZ);
+
+
+            // var scale = getScale(panel.quad.position.y);
+
+            // panel.quad.scale.set(scale, scale, scale, scale);
+
+            // panel.setBlur(getBlur(panel.quad.position.y));
+        }
+
+    }
+
     function runIntroAnimation(){
 
+        /* Name Panel */
         createChainedTween(namePanel, [
-            {position: {x: renderWidth * 2, y: renderHeight*2, z:0}},
+            {position: {x: renderWidth, z:0}},
             {   delay: 0, 
                 duration: 2000, 
-                easing: TWEEN.Easing.Back.InOut,
-                position: {x: 500 * screenScale, y: 340 * screenScale, z:.2}
+                easing: TWEEN.Easing.Quintic.InOut,
+                position: {x: 500 * screenScale, z:.2}
             },
             {   delay: 0, 
                 duration: 1000, 
                 easing: TWEEN.Easing.Back.Out,
-                position: {x: 500 * screenScale, y: 350 * screenScale, z:1}
+                position: {x: 500 * screenScale, z:1}
             },
             {   delay: 2000, 
                 duration: 2000, 
                 easing: TWEEN.Easing.Back.Out,
-                position: {x: 200 * screenScale, y: 360 * screenScale, z:1}
+                position: {x: 200 * screenScale}
             },
             {   delay: 4000, 
                 duration: 2000, 
                 easing: TWEEN.Easing.Quintic.InOut,
-                position: {x: 50 * screenScale, y: 360 * screenScale, z:1}
+                position: {x: 50 * screenScale}
             },
         ]
         ).start();
+
+        createChainedTween(namePanel, [
+            {position: {y: renderHeight}},
+            {   delay: 200, 
+                duration: 2200, 
+                easing: TWEEN.Easing.Back.InOut,
+                position: {y: 340 * screenScale}
+            },
+            {   delay: 0, 
+                duration: 1200, 
+                easing: TWEEN.Easing.Back.Out,
+                position: {y: 350 * screenScale}
+            },
+            {   delay: 2000, 
+                duration: 2000, 
+                easing: TWEEN.Easing.Back.Out,
+                position: {y: 360 * screenScale}
+            },
+            {   delay: 4000, 
+                duration: 2000, 
+                easing: TWEEN.Easing.Quintic.InOut,
+                position: {y: 350 * screenScale}
+            },
+        ]
+        ).start();
+
+        /* Share Panel */
+
+        createChainedTween(sharePanel, [
+            {position: {x: renderWidth + 100, z:0}},
+            {   delay: 500, 
+                duration: 1000, 
+                easing: TWEEN.Easing.Quintic.Out,
+                position: {x: renderWidth - 200 * screenScale, z:0}
+            },
+            {   delay: 1000, 
+                duration: 3000, 
+                easing: TWEEN.Easing.Quadratic.InOut,
+                position: {x: 20 * screenScale, z: 1}
+            },
+        ]
+        ).start();
+
+        createChainedTween(sharePanel, [
+            {position: {y: renderHeight - 120 * screenScale}},
+            {   delay: 500, 
+                duration: 1000, 
+                easing: TWEEN.Easing.Back.Out,
+                position: {y: renderHeight - 150 * screenScale}
+            },
+            {   delay: 0, 
+                duration: 2000, 
+                easing: TWEEN.Easing.Quintic.InOut,
+                position: {y: renderHeight - 20 * screenScale}
+            },
+        ]
+        ).start();
+
+        /* carousel */
+
+        new TWEEN.Tween({pos: -.5})
+            .delay(10000)
+            .to({pos: 0}, 2000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate(function(){
+                carouselLocation = this.pos;
+                setPanelPositions(true);
+            }).start();
 
         setTimeout(function(){clock.start()}, 6000);
 
@@ -176,8 +275,6 @@ function main(renderWidth){
 
         TWEEN.update();
     }
-
-    setPanelPositions();
 
     render();
 
@@ -242,26 +339,6 @@ function main(renderWidth){
         return 1-(y-250)/200;
     }
 
-    function setPanelPositions(){
-
-        for(var i = 0; i< carouselPanels.length; i++){
-            var panel = carouselPanels[i];
-            var newY = Math.max(360*screenScale + screenScale*180 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58)), 310 * screenScale);
-            // var newX = 1300 + 300 * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
-            
-            var newX = renderWidth + (renderWidth/3) * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
-            var newZ = Math.max(0, Math.min(1, 1.1 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation) + 1.2)));
-            carouselPanels[i].setPosition(newX, newY, newZ);
-
-
-            // var scale = getScale(panel.quad.position.y);
-
-            // panel.quad.scale.set(scale, scale, scale, scale);
-
-            // panel.setBlur(getBlur(panel.quad.position.y));
-        }
-
-    }
 
 
 

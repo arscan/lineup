@@ -139,7 +139,12 @@ function createPanel(renderer, width, height, opts){
             setBlur(z);
             quad.scale.set(z/2 + .5, z/2 + .5, z/2 + .5);
         }
-        quad.position.set(x + width/2, y-height/2, 0);
+        if(typeof x == "number"){
+            quad.position.x = x + width/2;
+        }
+        if(typeof y == "number"){
+            quad.position.y = y - height/2;
+        }
     }
 
     function setCamera(camera){
