@@ -118,11 +118,12 @@ function main(renderWidth){
         /* Background */
         new TWEEN.Tween({level: .1})
            .to({level: 1}, 3000)
-           .easing(TWEEN.Easing.Back.InOut)
+           .easing(TWEEN.Easing.Quadratic.Out)
            .onUpdate(function(){
                backgroundPanel.setLightBarLevel(this.level);
                backgroundPanel.setOverheadLightLevel(this.level);
                subjectPanel.setBrightness(this.level);
+               bottomPanel.element.css({opacity: this.level});
 
            }).start();
 
@@ -280,6 +281,15 @@ function main(renderWidth){
     }
 
     render();
+
+    $(window).resize(function() {
+        if($(window).width() > renderWidth * 1.3){
+            location.href = '#';
+            return;
+        }
+        $('canvas').css({width: $(window).width(), height: $(window).width() / screenRatio});
+        bottomPanel.element.hide();
+    });
 
     $(document).on("mousedown","canvas", function(event){
         
@@ -447,15 +457,6 @@ $(function(){
         return ( isMobile && $(window).width() < $(window).height());
     }
 
-    function start(){
-        var video = $("#video")[0];
-        video.src = "videos/test_vid.webm";
-        video.setAttribute('crossorigin', 'anonymous');
-        video.load(); // must call after setting/changing source
-        video.play();
-        main($(window).width());
-    }
-
     function load(){
         if(!isPortrait() || skipRotate){
             $("body").height(4000);
@@ -467,14 +468,24 @@ $(function(){
                 active: function(){
                     if(isMobile){
                         $("#play-button").click(function(){
+                            var video = $("#video")[0];
+                            video.src = "videos/test_vid.webm";
+                            video.setAttribute('crossorigin', 'anonymous');
+                            video.load(); // must call after setting/changing source
+                            video.play();
+                            main($(window).width());
 
                             $("#play-button").velocity({opacity: 0}, {complete: function(){
-                                start();
                                 $("#play-button").css({display: "none"});
                             }});
                         });
                     } else {
-                        start();
+                        var video = $("#video")[0];
+                        video.src = "videos/test_vid.webm";
+                        video.setAttribute('crossorigin', 'anonymous');
+                        video.load(); // must call after setting/changing source
+                        video.play();
+                        main($(window).width());
                     }
                 }
             }); 

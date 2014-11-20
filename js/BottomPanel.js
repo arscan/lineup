@@ -111,6 +111,9 @@ function createBottomPanel(elem){
 
 
    return Object.freeze({
+       element: elem
+
+
 
    });
 
