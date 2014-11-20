@@ -7,10 +7,20 @@ function createBackgroundPanel(renderer, width, height){
     quad.position.set(width/2,height/2, 0);
 
 
-    var pointLight1, pointLight2, pointLight3, pointLight4;
+    var pointLight1, pointLight2, pointLight4;
     var scene = new THREE.Scene();
     var camera;
     var startTime = Date.now();
+
+
+    var ambientLight,
+        ambientLightColor = new THREE.Color(0x12b7a7),
+        overheadLight,
+        overheadLightColor = new THREE.Color(0x12b7a7);
+
+    function setBrightness(color, brightness){
+        return new THREE.Color(color.r * brightness, color.g * brightness, color.b * brightness);
+    }
 
 
     function init(){
@@ -21,9 +31,15 @@ function createBackgroundPanel(renderer, width, height){
         camera.position.z = 1500;
 
 
+        overheadLight = new THREE.PointLight( 0x000000, 3.95, 2000 );
+        
+        overheadLight.position.y = 850;
+        overheadLight.position.z = -420;
+        scene.add(overheadLight);
+
         // LIGHTS
 
-        // var ambientLight = new THREE.AmbientLight( 0x111111 );
+        var ambientLight = new THREE.AmbientLight( setBrightness(ambientLightColor,.08) );
         // scene.add( ambientLight );
 
         pointLight1 = new THREE.PointLight( 0xeac7df, 0.75, 1500 );
@@ -32,16 +48,13 @@ function createBackgroundPanel(renderer, width, height){
         pointLight2 = new THREE.PointLight( 0x479578, 0.75, 1500 );
         pointLight2.position.z = -480;
 
-        pointLight3 = new THREE.PointLight( 0x12b7a7, 3.95, 2000 );
-        pointLight3.position.y = 850;
-        pointLight3.position.z = -420;
 
         // pointLight4 = new THREE.PointLight( 0xfd5f00, 0.75, 1500 );
         // pointLight4.position.z = -480;
 
         // scene.add( pointLight1 );
         // scene.add( pointLight2 );
-        scene.add( pointLight3 );
+        // scene.add( pointLight3 );
         // scene.add( pointLight4 );
 
 
@@ -188,6 +201,13 @@ function createBackgroundPanel(renderer, width, height){
 
     }
 
+    function setLightBarLevel(level){
+        quad.material.color = setBrightness(new THREE.Color(0xffffff), level);
+    }
+    function setOverheadLightLevel(level){
+        overheadLight.color = setBrightness(overheadLightColor, level);
+    }
+
     function render() {
 
         var diff = Date.now() - startTime; 
@@ -199,8 +219,8 @@ function createBackgroundPanel(renderer, width, height){
         pointLight2.position.x = -100 + Math.sin(diff/2000.0) * 200;
         pointLight2.position.y = 100 + Math.sin(diff/945) * 100;
 
-        pointLight3.position.x = 50 + Math.cos(diff/2000.0) * 120;
-        pointLight3.position.y = 850 + Math.sin(diff/745) * 120;
+        overheadLight.position.x = 50 + Math.cos(diff/2000.0) * 120;
+        overheadLight.position.y = 850 + Math.sin(diff/745) * 120;
         
         // pointLight4.position.x = 100 + Math.cos(diff/1500.0) * 800;
         // pointLight4.position.y = -50 + Math.sin(diff/845) * 200;
@@ -217,7 +237,9 @@ function createBackgroundPanel(renderer, width, height){
         renderTarget: renderTarget,
         width: width,
         height: height,
-        quad: quad
+        quad: quad,
+        setLightBarLevel: setLightBarLevel,
+        setOverheadLightLevel: setOverheadLightLevel
     });
 }
 

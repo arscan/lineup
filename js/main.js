@@ -26,7 +26,7 @@ function main(renderWidth){
         linksPanel = createLinksPanel(renderer, screenScale),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
         projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, sharePanel, photosPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
-        // subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
+        subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
         carouselPanels = [aboutPanel, linksPanel, bioPanel, photosPanel, projectsPanel],
@@ -50,13 +50,14 @@ function main(renderWidth){
 
     /* add add position the main panels */
     scene.add(projectorPanel.quad);
-    // scene.add(subjectPanel.quad);
+    scene.add(subjectPanel.quad);
     scene.add(backgroundPanel.quad);
+    backgroundPanel.quad.material.opacity = .1;
 
     skeletonPanel.setPosition(350 * screenScale, renderHeight - 20 * screenScale, 1);
     // namePanel.setPosition(50 * screenScale, 358*screenScale, 1);
     // sharePanel.setPosition(20 * screenScale, renderHeight - 20 * screenScale, 1);
-    // subjectPanel.setPosition(500 * screenScale, 450 * screenScale, 1);
+    subjectPanel.setPosition(500 * screenScale, 450 * screenScale, 1);
 
     sharePanel.setPosition(renderWidth + 1000, 0, 0);
     // put the carouselPanels off the right side of the screen
@@ -110,18 +111,21 @@ function main(renderWidth){
             var newX = carouselCenter.x + (renderWidth/3) * Math.cos(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation + .58));
             var newZ = Math.max(0, Math.min(1, 1.1 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation) + 1.2)));
             carouselPanels[i].setPosition(newX, newY, newZ);
-
-
-            // var scale = getScale(panel.quad.position.y);
-
-            // panel.quad.scale.set(scale, scale, scale, scale);
-
-            // panel.setBlur(getBlur(panel.quad.position.y));
         }
-
     }
 
     function runIntroAnimation(){
+        /* Background */
+        new TWEEN.Tween({level: .1})
+           .to({level: 1}, 3000)
+           .easing(TWEEN.Easing.Back.InOut)
+           .onUpdate(function(){
+               backgroundPanel.setLightBarLevel(this.level);
+               backgroundPanel.setOverheadLightLevel(this.level);
+               subjectPanel.setBrightness(this.level);
+
+           }).start();
+
 
         /* Name Panel */
         createChainedTween(namePanel, [
@@ -219,7 +223,6 @@ function main(renderWidth){
 
         setTimeout(function(){clock.start()}, 6000);
 
-
         /*
         var nameIntroTween = new TWEEN.Tween({x: renderWidth *.8, y: renderHeight / 2, z: 0})
             // .delay(1000)
@@ -267,7 +270,7 @@ function main(renderWidth){
         }
 
         projectorPanel.render(time);
-        // subjectPanel.render();
+        subjectPanel.render();
 
         renderer.render(scene, camera);
 
@@ -437,10 +440,20 @@ function main(renderWidth){
 $(function(){
     var bgHeight = 1600, 
         skipRotate = false,
-        rotateCheckTimeout = null;
+        rotateCheckTimeout = null,
+        isMobile = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     function isPortrait(){
-        return ( /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent) && $(window).width() < $(window).height());
+        return ( isMobile && $(window).width() < $(window).height());
+    }
+
+    function start(){
+        var video = $("#video")[0];
+        video.src = "videos/test_vid.webm";
+        video.setAttribute('crossorigin', 'anonymous');
+        video.load(); // must call after setting/changing source
+        video.play();
+        main($(window).width());
     }
 
     function load(){
@@ -451,8 +464,19 @@ $(function(){
                 google: {
                     families: ['Roboto:500']
                 },
-                active: main.bind(this,$(window).width()) // TODO: FIGURE OUT THE WIDTH?
-                // active: main.bind(this,1280) // TODO: FIGURE OUT THE WIDTH?
+                active: function(){
+                    if(isMobile){
+                        $("#play-button").click(function(){
+
+                            $("#play-button").velocity({opacity: 0}, {complete: function(){
+                                start();
+                                $("#play-button").css({display: "none"});
+                            }});
+                        });
+                    } else {
+                        start();
+                    }
+                }
             }); 
         } else {
             $("#please-rotate").css({"display": "block"});
@@ -466,6 +490,10 @@ $(function(){
         skipRotate = true;
         load();
     });
+
+    if(!isMobile){
+        $("#play-button").css({display: "none"});
+    }
 
     load();
 });

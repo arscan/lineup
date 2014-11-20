@@ -10,14 +10,14 @@ function createSubjectPanel(renderer, scale){
        renderCamera,
        clock,
        video,
-       videoTexture;
+       videoTexture,
+       brightnessContrastPass;
 
    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat};
    var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
    var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true}));
 
    // quad.scale.set(1.34,1.34,1.34);
-   // console.log(quad.scale);
 
    var subjectShader =  {
        uniforms : {
@@ -103,14 +103,12 @@ function createSubjectPanel(renderer, scale){
         renderScene = new THREE.Scene();
 
         video = document.getElementById( 'video' );
-        console.log(video);
 
         videoTexture = new THREE.VideoTexture( video );
         videoTexture.minFilter = THREE.LinearFilter;
         videoTexture.magFilter = THREE.LinearFilter;
         videoTexture.format = THREE.RGBAFormat;
 
-        console.log(videoTexture);
 
         // videoTexture.needsUpdate = true; //do i need this? todo
 
@@ -138,7 +136,9 @@ function createSubjectPanel(renderer, scale){
 
         renderComposer = new THREE.EffectComposer(renderer, renderTarget);
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
-        renderComposer.addPass(new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: .5, brightness: -.1}));
+        brightnessContrastPass = new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: .5, brightness: -.1});
+        renderComposer.addPass(brightnessContrastPass);
+        // renderComposer.addPass(new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: .5, brightness: .1 - (1-brightness)}));
         renderComposer.addPass(new THREE.ShaderPass(THREE.HueSaturationShader, {hue: .05, saturation: -.6}));
         // renderComposer.addPass(new THREE.ShaderPass(THREE.CopyShader)); // to line them up right
         // renderComposer.addPass(new THREE.ShaderPass(THREE.FXAAShader)); // to line them up right
@@ -168,6 +168,10 @@ function createSubjectPanel(renderer, scale){
                && (y > quad.position.y - height / 2 && y < quad.position.y + height/2);
     }
 
+    function setBrightness(level){
+        brightnessContrastPass.uniforms.brightness.value = -.1 - (.9 - level * .9);
+    }
+
     init();
 
     return Object.freeze({
@@ -179,7 +183,8 @@ function createSubjectPanel(renderer, scale){
         quad: quad,
         checkBounds: checkBounds,
         setBlur: setBlur,
-        setPosition: setPosition
+        setPosition: setPosition,
+        setBrightness: setBrightness
     });
 }
 
