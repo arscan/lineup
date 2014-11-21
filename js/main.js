@@ -288,7 +288,6 @@ function main(renderWidth){
             return;
         }
         $('canvas').css({width: $(window).width(), height: $(window).width() / screenRatio});
-        // bottomPanel.element.hide();
     });
 
     $(document).on("mousedown","canvas", function(event){

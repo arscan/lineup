@@ -1,1 +1,11 @@
-ffmpeg -vf scale=580:-1,transpose=1 -ss 3 -t 9 -i test_vid.mp4 -qmax 25 -threads 4 test_vid2.webm
+#some cmds to convert the video for me
+#note that my distro didn't have an up-to-date version of ffmpeg so i had to download a statically linked version
+
+ffmpeg -i vid1.mp4 -an -vf scale=580:436,transpose=1,setsar=1:1 -ss 9 -t 12 -threads 4 temp_output.webm
+ffmpeg -an -vf scale=580:-1,transpose=1 -ss 9 -t 9 -i vid1.webm -qmax 25 -threads 4 temp_output.webm
+ffmpeg -y -ss 11.95 -i temp_output.webm -vframes 1 -r 1 -f image2 last_image.jpg
+ffmpeg -y -i temp_output.webm -vframes 1 -r 1 -f image2 first_image.jpg
+~/Desktop/ffmpeg/ffmpeg-2.4.3-64bit-static/ffmpeg -loop 1 -i last_image.jpg -loop 1 -i first_image.jpg -filter_complex "[1:v][0:v]blend=all_expr='A*(if(gte(T,3),1,T/3))+B*(1-(if(gte(T,3),1,T/3)))'" -t 4 temp_output2.webm 
+~/Desktop/ffmpeg/ffmpeg-2.4.3-64bit-static/ffmpeg -i temp_output.webm -i temp_output2.webm -filter_complex 'concat' output.webm
+
+#ffmpeg -y -i "concat:temp_output.webm|temp_output2.webm" -c copy output.webm
