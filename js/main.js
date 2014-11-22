@@ -19,13 +19,14 @@ function main(renderWidth){
     var skeletonPanel = createSkeletonPanel(renderer, screenScale),
         namePanel = createNamePanel(renderer, screenScale),
         sharePanel = createSharePanel(renderer, screenScale),
+        tinyPanel1 = createTinyPanel(renderer, screenScale),
         aboutPanel = createAboutPanel(renderer, screenScale),
         projectsPanel = createProjectsPanel(renderer, screenScale),
         photosPanel = createPhotosPanel(renderer, screenScale),
         bioPanel = createBioPanel(renderer, screenScale),
         linksPanel = createLinksPanel(renderer, screenScale),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
-        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, sharePanel, photosPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
+        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, tinyPanel1, sharePanel, photosPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
         subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
@@ -58,6 +59,7 @@ function main(renderWidth){
     // namePanel.setPosition(50 * screenScale, 358*screenScale, 1);
     // sharePanel.setPosition(20 * screenScale, renderHeight - 20 * screenScale, 1);
     subjectPanel.setPosition(500 * screenScale, 450 * screenScale, 1);
+    tinyPanel1.setPosition(1024 * screenScale, 100 * screenScale, .5);
 
     sharePanel.setPosition(renderWidth + 1000, 0, 0);
     // put the carouselPanels off the right side of the screen
@@ -72,7 +74,7 @@ function main(renderWidth){
     container.appendChild( renderer.domElement );
     $(renderer.domElement).css({top: canvasTop});
 
-    function createChainedTween(element, commands){
+    function createChainedTween(element, commands, repeat){
        if(commands.length < 2){
            return;
        }
@@ -96,6 +98,11 @@ function main(renderWidth){
                .easing(commands[i].easing);
            tweens[i-2].chain(tweens[i-1]);
        }
+
+       /* this is broken but I don't really care. it works for long enough */
+       if(repeat){
+           tweens[tweens.length-1].chain(tweens[0]);
+       }
        return tweens[0];
     }
 
@@ -112,6 +119,22 @@ function main(renderWidth){
             var newZ = Math.max(0, Math.min(1, 1.1 * Math.sin(Math.PI * 2 * (i / carouselPanels.length) + Math.PI * 2 * (carouselLocation) + 1.2)));
             carouselPanels[i].setPosition(newX, newY, newZ);
         }
+    }
+
+    function tinyPanelTween(panel, startx, startz){
+        var newX = Math.random() * 1200 * screenScale;
+        var newZ = Math.random() * 1;
+
+        new TWEEN.Tween({x: startx, z: startz})
+            .to({x: newX, z: newZ}, 2000)
+            .delay(Math.random() * 10000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate(function(){
+                panel.setPosition(this.x, undefined, this.z);
+            })
+            .onComplete(function(){
+                tinyPanelTween(panel, newX, newZ);
+            }).start();
     }
 
     function runIntroAnimation(){
@@ -222,6 +245,60 @@ function main(renderWidth){
                 setPanelPositions(true);
             }).start();
 
+        /* tiny panel 1 */
+        tinyPanelTween(tinyPanel1, 1024 * screenScale, .5);
+
+        /*
+        new TWEEN.Tween({x: 1024 * screenScale-.5})
+            .delay(10000)
+            .to({pos: 0}, 2000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate(function(){
+                carouselLocation = this.pos;
+                setPanelPositions(true);
+            }).start();
+           */
+
+
+            /*
+
+        createChainedTween(tinyPanel1, [
+            {position: {x: 1024 * screenScale, z: .5}},
+            {   delay: 500, 
+                duration: 2000, 
+                easing: TWEEN.Easing.Back.Out,
+                position: {x: 500 * screenScale, z: .5}
+            },
+            {   delay: 1000, 
+                duration: 2000, 
+                easing: TWEEN.Easing.Quintic.InOut,
+                position: {x: 1024 * screenScale, z: .5}
+            },
+            {   delay: 3000, 
+                duration: 3000, 
+                easing: TWEEN.Easing.Quintic.InOut,
+                position: {x: 1200 * screenScale, z: 0}
+            },
+            {   delay: 5000, 
+                duration: 3000, 
+                easing: TWEEN.Easing.Quintic.InOut,
+                position: {x: 200 * screenScale, z: .8}
+            },
+            {   delay: 2000, 
+                duration: 2000, 
+                easing: TWEEN.Easing.Back.Out,
+                position: {x: 500 * screenScale, z: .5}
+            },
+            {   delay: 5000, 
+                duration: 2000, 
+                easing: TWEEN.Easing.Quintic.InOut,
+                position: {x: 1024 * screenScale, z: .5},
+            },
+        ], true).start();
+       */
+
+        /* start the clock after everything has finished loading */
+
         setTimeout(function(){clock.start()}, 6000);
 
         /*
@@ -263,6 +340,7 @@ function main(renderWidth){
         skeletonPanel.render(time);
         namePanel.render(time);
         sharePanel.render(time);
+        tinyPanel1.render(time);
 
         for(var i = 0; i < carouselPanels.length; i++){
             if(carouselPanels[i].quad.position.x < renderWidth + 200){
@@ -275,9 +353,10 @@ function main(renderWidth){
 
         renderer.render(scene, camera);
 
+        TWEEN.update();
+
         requestAnimationFrame(render);
 
-        TWEEN.update();
     }
 
     render();
