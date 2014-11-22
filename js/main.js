@@ -19,14 +19,16 @@ function main(renderWidth){
     var skeletonPanel = createSkeletonPanel(renderer, screenScale),
         namePanel = createNamePanel(renderer, screenScale),
         sharePanel = createSharePanel(renderer, screenScale),
-        tinyPanel1 = createTinyPanel(renderer, screenScale),
+        tinyPanel1 = createTinyPanel1(renderer, screenScale),
+        tinyPanel2 = createTinyPanel2(renderer, screenScale),
+        tinyPanel3 = createTinyPanel3(renderer, screenScale),
         aboutPanel = createAboutPanel(renderer, screenScale),
         projectsPanel = createProjectsPanel(renderer, screenScale),
         photosPanel = createPhotosPanel(renderer, screenScale),
         bioPanel = createBioPanel(renderer, screenScale),
         linksPanel = createLinksPanel(renderer, screenScale),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
-        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, tinyPanel1, sharePanel, photosPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
+        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, sharePanel, photosPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
         subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
@@ -59,7 +61,9 @@ function main(renderWidth){
     // namePanel.setPosition(50 * screenScale, 358*screenScale, 1);
     // sharePanel.setPosition(20 * screenScale, renderHeight - 20 * screenScale, 1);
     subjectPanel.setPosition(500 * screenScale, 450 * screenScale, 1);
-    tinyPanel1.setPosition(1024 * screenScale, 100 * screenScale, .5);
+    tinyPanel1.setPosition(2024 * screenScale, 100 * screenScale, .5);
+    tinyPanel2.setPosition(-2024 * screenScale, 105 * screenScale, .5);
+    tinyPanel3.setPosition(2024 * screenScale, 110 * screenScale, .5);
 
     sharePanel.setPosition(renderWidth + 1000, 0, 0);
     // put the carouselPanels off the right side of the screen
@@ -246,7 +250,9 @@ function main(renderWidth){
             }).start();
 
         /* tiny panel 1 */
-        tinyPanelTween(tinyPanel1, 1024 * screenScale, .5);
+        tinyPanelTween(tinyPanel1, 2024 * screenScale, .5);
+        tinyPanelTween(tinyPanel2, -2024 * screenScale, .5);
+        tinyPanelTween(tinyPanel3, 2024 * screenScale, .5);
 
         /*
         new TWEEN.Tween({x: 1024 * screenScale-.5})
@@ -341,6 +347,8 @@ function main(renderWidth){
         namePanel.render(time);
         sharePanel.render(time);
         tinyPanel1.render(time);
+        tinyPanel2.render(time);
+        tinyPanel3.render(time);
 
         for(var i = 0; i < carouselPanels.length; i++){
             if(carouselPanels[i].quad.position.x < renderWidth + 200){
