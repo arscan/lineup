@@ -378,11 +378,12 @@ function main(renderWidth){
     render();
 
     $(window).resize(function() {
-        if($(window).width() > renderWidth * 1.3){
-            location.href = '#';
+        if($(window).width() > renderWidth * 1.3 || $(window).width() < renderWidth * .7){
+            location.href = '?';
             return;
         }
-        $('canvas').css({width: $(window).width(), height: $(window).width() / screenRatio});
+        $('canvas').width($(window).width());
+        $('canvas').height($(window).width() / screenRatio);
     });
 
     $(document).on("mousedown","canvas", function(event){
