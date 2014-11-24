@@ -1,4 +1,4 @@
-function createTinyPanel2(renderer, scale){
+function createTinyPanel4(renderer, scale){
 
    var STANDARD_DIMENSIONS = {width: 64, height:96};
 
@@ -13,24 +13,26 @@ function createTinyPanel2(renderer, scale){
    function createCanvas(){
 
        return panel.renderToCanvas(64, 96, function(ctx){
-           ctx.lineWidth = 5.5;
+
+           ctx.lineWidth = 3.5;
+           ctx.strokeStyle="#eac7df";
+           ctx.beginPath();
+           ctx.moveTo(3,20);
+           ctx.lineTo(50,20);
+           ctx.stroke();
+
+           ctx.beginPath();
            ctx.strokeStyle="#12b7a7";
-           ctx.moveTo(3,16);
-           ctx.lineTo(30,16);
-           ctx.stroke();
-
-           ctx.lineWidth = 2.5;
-           ctx.moveTo(3,23);
-           ctx.lineTo(58,23);
-           ctx.lineTo(58,90);
-           ctx.lineTo(3,90);
-           ctx.lineTo(3,23);
-           ctx.stroke();
-
            ctx.lineWidth = 2.5;
            for(var i = 1; i< 11; i++){
-               ctx.moveTo(10,24 + i*6);
-               ctx.lineTo(Math.random()*10 + 40,24 + i*6);
+               if(Math.random() < .5){
+                   ctx.moveTo(3,24 + i*6);
+                   ctx.lineTo(25,24 + i*6);
+               } else {
+                   ctx.moveTo(25,24 + i*6);
+                   ctx.lineTo(50,24 + i*6);
+
+               }
            }
            ctx.stroke();
        });
@@ -49,11 +51,11 @@ function createTinyPanel2(renderer, scale){
         plane.position.set(width/2, height/2, 0);
         panel.addToScene( plane );
 
-        maskMeshFull = new THREE.Mesh( new THREE.PlaneBufferGeometry(50 * scale, 55 * scale), new THREE.MeshBasicMaterial({color: 0x00}));
+        maskMeshFull = new THREE.Mesh( new THREE.PlaneBufferGeometry(60 * scale, 55 * scale), new THREE.MeshBasicMaterial({color: 0x00}));
         maskMeshFull.position.set(width/2, height/2 - 10 * scale, 1);
         panel.addToScene(maskMeshFull);
 
-        maskMeshLine = new THREE.Mesh( new THREE.PlaneBufferGeometry(50 * scale, 10 * scale), new THREE.MeshBasicMaterial({color: 0x00}));
+        maskMeshLine = new THREE.Mesh( new THREE.PlaneBufferGeometry(60 * scale, 10 * scale), new THREE.MeshBasicMaterial({color: 0x00}));
         maskMeshLine.position.set(width/2, height - 30 * scale, 1);
         panel.addToScene(maskMeshLine);
 
@@ -62,8 +64,8 @@ function createTinyPanel2(renderer, scale){
     }
 
     function render(time){
-        time += .25;
-        var linesPerSecond = 7;
+        time += .5;
+        var linesPerSecond = 8;
         var numLines = 9;
         var linePercent = (time * linesPerSecond) % 1;
         var fullPercent = (Math.floor(time * linesPerSecond) / numLines) % 1;
@@ -74,8 +76,8 @@ function createTinyPanel2(renderer, scale){
         if(time > 0){
             
             maskMeshLine.scale.set(1 - linePercent, 1, 1);
-            maskMeshLine.position.x = width/2 + linePercent * 50 * scale / 2;
-            maskMeshLine.position.y = height - 30 * scale - fullPercent * 55 * scale  - 2 * scale;
+            maskMeshLine.position.x = width/2 + linePercent * 60 * scale / 2;
+            maskMeshLine.position.y = height - 35 * scale - fullPercent * 55 * scale  - 2 * scale;
 
             maskMeshFull.scale.set(1, 1 - fullPercent, 1);
             maskMeshFull.position.y = height/2 - fullPercent * 55 * scale / 2 - 10 * scale;

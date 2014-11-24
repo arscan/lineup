@@ -22,13 +22,15 @@ function main(renderWidth){
         tinyPanel1 = createTinyPanel1(renderer, screenScale),
         tinyPanel2 = createTinyPanel2(renderer, screenScale),
         tinyPanel3 = createTinyPanel3(renderer, screenScale),
+        tinyPanel4 = createTinyPanel4(renderer, screenScale),
+        tinyPanel5 = createTinyPanel5(renderer, screenScale),
         aboutPanel = createAboutPanel(renderer, screenScale),
         projectsPanel = createProjectsPanel(renderer, screenScale),
         photosPanel = createPhotosPanel(renderer, screenScale),
         bioPanel = createBioPanel(renderer, screenScale),
         linksPanel = createLinksPanel(renderer, screenScale),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
-        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, sharePanel, photosPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
+        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, tinyPanel4, tinyPanel5, sharePanel, photosPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
         subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
@@ -64,6 +66,8 @@ function main(renderWidth){
     tinyPanel1.setPosition(2024 * screenScale, 100 * screenScale, .5);
     tinyPanel2.setPosition(-2024 * screenScale, 105 * screenScale, .5);
     tinyPanel3.setPosition(2024 * screenScale, 110 * screenScale, .5);
+    tinyPanel4.setPosition(2024 * screenScale, 115 * screenScale, .5);
+    tinyPanel5.setPosition(2024 * screenScale, 120 * screenScale, .5);
 
     sharePanel.setPosition(renderWidth + 1000, 0, 0);
     // put the carouselPanels off the right side of the screen
@@ -127,7 +131,7 @@ function main(renderWidth){
 
     function tinyPanelTween(panel, startx, startz){
         var newX = Math.random() * 1200 * screenScale;
-        var newZ = Math.random() * 1;
+        var newZ = Math.random() * .5;
 
         new TWEEN.Tween({x: startx, z: startz})
             .to({x: newX, z: newZ}, 2000)
@@ -201,7 +205,7 @@ function main(renderWidth){
             {   delay: 4000, 
                 duration: 2000, 
                 easing: TWEEN.Easing.Quintic.InOut,
-                position: {y: 350 * screenScale}
+                position: {y: 358 * screenScale}
             },
         ]
         ).start();
@@ -253,6 +257,8 @@ function main(renderWidth){
         tinyPanelTween(tinyPanel1, 2024 * screenScale, .5);
         tinyPanelTween(tinyPanel2, -2024 * screenScale, .5);
         tinyPanelTween(tinyPanel3, 2024 * screenScale, .5);
+        tinyPanelTween(tinyPanel4, 2024 * screenScale, .5);
+        tinyPanelTween(tinyPanel5, 2024 * screenScale, .5);
 
         /*
         new TWEEN.Tween({x: 1024 * screenScale-.5})
@@ -349,6 +355,8 @@ function main(renderWidth){
         tinyPanel1.render(time);
         tinyPanel2.render(time);
         tinyPanel3.render(time);
+        tinyPanel4.render(time);
+        tinyPanel5.render(time);
 
         for(var i = 0; i < carouselPanels.length; i++){
             if(carouselPanels[i].quad.position.x < renderWidth + 200){

@@ -63,7 +63,7 @@ function createTinyPanel3(renderer, scale){
 
     function render(time){
         time += .5;
-        var linesPerSecond = 4;
+        var linesPerSecond = 12;
         var numLines = 9;
         var linePercent = (time * linesPerSecond) % 1;
         var fullPercent = (Math.floor(time * linesPerSecond) / numLines) % 1;

@@ -8,9 +8,11 @@ function createSharePanel(renderer, scale){
        githubPlane,
        githubStars = 0,
        tweets = 0,
-       fontSize = Math.floor(12 * scale);
+       fontSize = Math.floor(12 * scale),
+       startPosition = {x: 0, y: 0};
 
    var panel = createPanel(renderer, width, height);
+
 
    function createTwitterCanvas(){
 
@@ -65,6 +67,13 @@ function createSharePanel(renderer, scale){
     }
 
     function render(time){
+        if(time === 0){
+            startPosition.x = panel.quad.position.x;
+            startPosition.y = panel.quad.position.y;
+        } else {
+            panel.setPosition(startPosition.x - width / 2 + Math.sin(time) * 10);
+        }
+
         panel.render(time);
     }
 
