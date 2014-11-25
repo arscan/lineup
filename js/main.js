@@ -245,7 +245,7 @@ function main(renderWidth){
         /* carousel */
 
         new TWEEN.Tween({pos: -.5})
-            .delay(10000)
+            .delay(3000)
             .to({pos: 0}, 2000)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(function(){
