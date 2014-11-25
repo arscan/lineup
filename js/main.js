@@ -51,7 +51,7 @@ function main(renderWidth){
     $("#please-rotate").css({display: "none"});
 
     // unhide the laoding graphic
-    $("#loading-graphic div").css({"visibility": "visible", "top": window.innerHeight/2 - 10, "left": window.innerWidth/2 - 100 });
+    $("#cassette-bg").css({"visibility": "visible", "top": window.innerHeight/2 - 100 * screenScale, "left": window.innerWidth/2 - 100 * screenScale });
 
     /* add add position the main panels */
     scene.add(projectorPanel.quad);
@@ -311,7 +311,6 @@ function main(renderWidth){
 
         /* start the clock after everything has finished loading */
 
-        setTimeout(function(){clock.start()}, 6000);
 
         /*
         var nameIntroTween = new TWEEN.Tween({x: renderWidth *.8, y: renderHeight / 2, z: 0})
@@ -335,10 +334,18 @@ function main(renderWidth){
        */
     }
 
+    /* register what to do while loading */
+
+    LOADSYNC.onUpdate(function(completedCount, totalCount){
+        $(".cassette-tape").velocity("stop");
+        $(".cassette-tape").velocity({"margin-left": 45 * completedCount / totalCount}, 1000);
+    });
+
     /* register what we want to do when loading is complete */
     LOADSYNC.onComplete(function(){
         $("#loading-graphic").velocity({color: "#000", opacity: 0},{"display":"none"});
         runIntroAnimation();
+        setTimeout(function(){clock.start()}, 6000);
         // clock.start();
     });
 

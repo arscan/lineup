@@ -3,9 +3,11 @@
 // author: @arscan
 
 var LOADSYNC = (function(){
-    var count = 0,
+    var completedCount = 0,
+        count = 0,
         runWhenFinished = function(){},
-        started = false;
+        started = false,
+        onUpdateFunction = null;
 
     function register(callback){
         count++;
@@ -18,6 +20,11 @@ var LOADSYNC = (function(){
             count--;
             if(count === 0 && started){
                 setTimeout(runWhenFinished,1000);
+            }
+
+            completedCount++;
+            if(typeof onUpdateFunction === "function"){
+                onUpdateFunction(completedCount, count + completedCount);
             }
         };
     }
@@ -33,7 +40,12 @@ var LOADSYNC = (function(){
         started = true;
     }
 
+    function onUpdate(fn){
+        onUpdateFunction = fn;
+    }
+
     return {
+        onUpdate: onUpdate,
         register: register,
         onComplete: onComplete,
         start: start
