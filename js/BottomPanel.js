@@ -10,7 +10,7 @@ function createBottomPanel(elem){
         ORANGE: '#fd5f00'
     };
 
-    var paper = new Raphael(elem[0], '100%', 100);
+    var paper = new Raphael(elem[0], '100%', 90);
     function drawTrapezoid(x, y, width, height){
         x *= scale;
         y *= scale;

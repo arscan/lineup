@@ -337,6 +337,8 @@ function main(renderWidth){
             setPanelPositions();
         }
 
+        console.log(carouselVelocity);
+
         backgroundPanel.render(time);
 
         // skeletonPanel.quad.position.x = projectorPanel.width / 2 + Math.sin(time/2) * 300;
