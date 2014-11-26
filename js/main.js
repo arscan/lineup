@@ -15,6 +15,7 @@ function main(renderWidth){
         standardHeight = standardWidth/screenRatio,
         standardPanelSize = screenScale * 256,
         camera = new THREE.OrthographicCamera(0, renderWidth, renderHeight, 0, -1000, 1000),
+        snapTween = new TWEEN.Tween(),
         scene = new THREE.Scene();
 
     /* panels and such */
@@ -39,8 +40,9 @@ function main(renderWidth){
         carouselPanels = [aboutPanel, linksPanel, bioPanel, photosPanel, projectsPanel],
         carouselLocation = 0,
         carouselGrabbed = false,
-        carouselCenter = { x: renderWidth, y: 360 * screenScale},
+        carouselCenter = { x: renderWidth, y: 380 * screenScale},
         carouselVelocity = 0,
+        carouselSnapping = false,
 
         interactivePanels = [namePanel, skeletonPanel, sharePanel],
         grabbedPanel = null,
@@ -286,6 +288,7 @@ function main(renderWidth){
 
         /* window resize events */
         $(window).resize(function() {
+            snapTween.stop();
             if($(window).width() > renderWidth * 1.3 || $(window).width() < renderWidth * .7){
                 location.href = '?';
                 return;
@@ -297,11 +300,23 @@ function main(renderWidth){
         hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL });
         /* right carousel */
         hammertime.on('pan', function(ev){
+            snapTween.stop();
             carouselVelocity = ev.velocity;
         });
 
         $("canvas").on('mousewheel', function(event){
-            carouselVelocity = event.deltaY / 2 + carouselVelocity;
+            snapTween.stop();
+            carouselVelocity = event.deltaY / 5 + carouselVelocity;
+        });
+
+        $(window).keydown(function(event){
+            if(event.which === 40 || event.which === 39){
+                snapTween.stop();
+                carouselVelocity -= .2;
+            } else if (event.which === 38 || event.which === 37) {
+                snapTween.stop();
+                carouselVelocity += .2;
+            }
         });
 
 
@@ -325,20 +340,42 @@ function main(renderWidth){
         });
     }
 
+    function nearestCarouselSnap(){
+        return Math.round(carouselLocation * carouselPanels.length) / carouselPanels.length;
+    }
+
     function render(){
-        requestAnimationFrame(render);
-
+        setTimeout(render, 1000/30);
+        // requestAnimationFrame(render);
+        var delta = clock.getDelta();
         var time = clock.getElapsedTime();
+        var carouselMoving = Math.abs(carouselVelocity) > 0;
+
         stats.update();
+        carouselVelocity *= (1 - delta);
 
-        carouselVelocity *= .95;
-
-        if(Math.abs(carouselVelocity) > .001){
-            carouselLocation += (((clock.getDelta() * 1000 * carouselVelocity) / -8) * screenScale);
+        if(Math.abs(carouselVelocity) > .02){
+            carouselLocation = (carouselLocation + (-1 * delta * carouselVelocity * screenScale)) % 1;
             setPanelPositions();
-        }
+        } else if(carouselMoving && Math.abs(carouselVelocity) <= .02){
+            carouselVelocity = 0;
+            carouselSnapping = true;
 
-        console.log(carouselVelocity);
+            snapTween = new TWEEN.Tween({pos: carouselLocation})
+               .to({pos: nearestCarouselSnap()}, 1000)
+               .onUpdate(function(){
+                   carouselLocation = this.pos;
+                   setPanelPositions();
+               })
+               .easing(TWEEN.Easing.Back.Out)
+               .onComplete(function(){
+                   carouselSnapping = false;
+
+               }).start();
+               
+
+
+        }
 
         backgroundPanel.render(time);
 
@@ -367,10 +404,6 @@ function main(renderWidth){
 
 
     }
-
-
-
-
 
     setInteraction();
     setTwitter();

@@ -63,8 +63,6 @@ function createTinyPanel5(renderer, scale){
         maskMeshLine.position.set(width/2, height - 30 * scale, 1);
         panel.addToScene(maskMeshLine);
 
-        console.log(maskMeshLine);
-
     }
 
     function render(time){
