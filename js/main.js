@@ -3,8 +3,9 @@ function main(renderWidth){
 
     var //loadingCirlce = createLoadingCircle($("#loading-graphic")),
         container = document.createElement( 'div' ),
-        stats = new Stats(), 
+        stats = new Stats(),
         renderer = new THREE.WebGLRenderer( { antialias: false, alpha: true } ), 
+        hammertime = new Hammer(renderer.domElement),
         /* screen size */
         screenRatio = 23/9;
         standardWidth = 1280,
@@ -38,6 +39,7 @@ function main(renderWidth){
         carouselLocation = 0,
         carouselGrabbed = false,
         carouselCenter = { x: renderWidth, y: 360 * screenScale},
+        carouselVelocity = 0,
 
         interactivePanels = [namePanel, skeletonPanel, sharePanel],
         grabbedPanel = null,
@@ -52,6 +54,7 @@ function main(renderWidth){
 
     // unhide the laoding graphic
     $("#cassette-bg").css({"visibility": "visible", "top": window.innerHeight/2 - 100 * screenScale, "left": window.innerWidth/2 - 100 * screenScale });
+
 
     /* add add position the main panels */
     scene.add(projectorPanel.quad);
@@ -260,78 +263,6 @@ function main(renderWidth){
         tinyPanelTween(tinyPanel4, 2024 * screenScale, .5);
         tinyPanelTween(tinyPanel5, 2024 * screenScale, .5);
 
-        /*
-        new TWEEN.Tween({x: 1024 * screenScale-.5})
-            .delay(10000)
-            .to({pos: 0}, 2000)
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .onUpdate(function(){
-                carouselLocation = this.pos;
-                setPanelPositions(true);
-            }).start();
-           */
-
-
-            /*
-
-        createChainedTween(tinyPanel1, [
-            {position: {x: 1024 * screenScale, z: .5}},
-            {   delay: 500, 
-                duration: 2000, 
-                easing: TWEEN.Easing.Back.Out,
-                position: {x: 500 * screenScale, z: .5}
-            },
-            {   delay: 1000, 
-                duration: 2000, 
-                easing: TWEEN.Easing.Quintic.InOut,
-                position: {x: 1024 * screenScale, z: .5}
-            },
-            {   delay: 3000, 
-                duration: 3000, 
-                easing: TWEEN.Easing.Quintic.InOut,
-                position: {x: 1200 * screenScale, z: 0}
-            },
-            {   delay: 5000, 
-                duration: 3000, 
-                easing: TWEEN.Easing.Quintic.InOut,
-                position: {x: 200 * screenScale, z: .8}
-            },
-            {   delay: 2000, 
-                duration: 2000, 
-                easing: TWEEN.Easing.Back.Out,
-                position: {x: 500 * screenScale, z: .5}
-            },
-            {   delay: 5000, 
-                duration: 2000, 
-                easing: TWEEN.Easing.Quintic.InOut,
-                position: {x: 1024 * screenScale, z: .5},
-            },
-        ], true).start();
-       */
-
-        /* start the clock after everything has finished loading */
-
-
-        /*
-        var nameIntroTween = new TWEEN.Tween({x: renderWidth *.8, y: renderHeight / 2, z: 0})
-            // .delay(1000)
-            .to({x: renderWidth/2 + 20*screenScale, y: renderHeight/2 + 20*screenScale, z:1}, 2000)
-            .onUpdate(function(){
-                namePanel.setPosition(this.x, this.y, this.z);
-            })
-            .easing(TWEEN.Easing.Quintic.Out);
-
-        var nameIntroTween = new TWEEN.Tween({x: renderWidth/2 + 20 *.8, y: renderHeight / 2, z: 0})
-            // .delay(1000)
-            .to({x: renderWidth/2 + 20*screenScale, y: renderHeight/2 + 20*screenScale, z:1}, 2000)
-            .onUpdate(function(){
-                namePanel.setPosition(this.x, this.y, this.z);
-            })
-            .easing(TWEEN.Easing.Quintic.Out);
-
-
-        nameIntroTween.start();
-       */
     }
 
     /* register what to do while loading */
@@ -350,9 +281,62 @@ function main(renderWidth){
     });
 
 
+    function setInteraction(){
+
+        /* window resize events */
+        $(window).resize(function() {
+            if($(window).width() > renderWidth * 1.3 || $(window).width() < renderWidth * .7){
+                location.href = '?';
+                return;
+            }
+            $('canvas').width($(window).width());
+            $('canvas').height($(window).width() / screenRatio);
+        });
+
+        hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+        /* right carousel */
+        hammertime.on('pan', function(ev){
+            carouselVelocity = ev.velocity;
+        });
+
+        $("canvas").on('mousewheel', function(event){
+            carouselVelocity = event.deltaY / 2 + carouselVelocity;
+        });
+
+
+    }
+
+    function setTwitter(){
+
+        $.getJSON('http://cdn.api.twitter.com/1/urls/count.json?url=' + encodeURIComponent(document.URL) + '&callback=?', null, function (results) {
+            if(typeof results.count == "number"){
+                sharePanel.setTweets(results.count);
+            }
+        });
+    }
+
+    function setGithub(){
+
+        $.getJSON('https://api.github.com/repos/arscan/lineup', null, function (results) {
+            if(typeof results.stargazers_count == "number"){
+                sharePanel.setStars(results.stargazers_count);
+            }
+        });
+    }
+
     function render(){
+        requestAnimationFrame(render);
+
         var time = clock.getElapsedTime();
         stats.update();
+
+        carouselVelocity *= .95;
+
+        if(Math.abs(carouselVelocity) > .001){
+            carouselLocation += (((clock.getDelta() * 1000 * carouselVelocity) / -8) * screenScale);
+            setPanelPositions();
+        }
+
         backgroundPanel.render(time);
 
         // skeletonPanel.quad.position.x = projectorPanel.width / 2 + Math.sin(time/2) * 300;
@@ -378,173 +362,17 @@ function main(renderWidth){
 
         TWEEN.update();
 
-        requestAnimationFrame(render);
 
     }
 
-    render();
-
-    $(window).resize(function() {
-        if($(window).width() > renderWidth * 1.3 || $(window).width() < renderWidth * .7){
-            location.href = '?';
-            return;
-        }
-        $('canvas').width($(window).width());
-        $('canvas').height($(window).width() / screenRatio);
-    });
-
-    $(document).on("mousedown","canvas", function(event){
-        
-        // Do Dragging
-        //
-        // namePanel.quad.position.set(event.clientX, 580-event.clientY - namePanel.height / 2, 0);
-
-        if(event.clientY > 250 && event.clientY < 450 && event.clientX > 850){
-
-            carouselGrabbed = true;
-            $(event.target).addClass("grabbing");
-            grabStart = {x: event.clientX, y: event.clientY};
-            return;
-        }
-
-        for(var i = 0; i< interactivePanels.length; i++){
-            var panel = interactivePanels[i];
-            var boundRes = panel.checkBounds(event.clientX,renderHeight - event.clientY - canvasTop);
-            if(typeof boundRes == "string"){
-                location.href=boundRes;
-                return;
-
-            } else if(boundRes){
-                grabbedPanel = panel;
-                grabStart = {x: event.clientX, y: event.clientY};
-                $(event.target).removeClass("pointing");
-                $(event.target).addClass("grabbing");
-                return;
-            }
-        }
-
-    });
-
-    $(document).on("mouseup","canvas", function(event){
-        carouselGrabbed = false;
-        grabbedPanel = null;
-        grabStart = null;
-        $(event.target).removeClass("pointing");
-        $(event.target).removeClass("grabbing");
-    });
-
-    $(document).on("mouseout","canvas", function(event){
-        carouselGrabbed = false;
-        grabbedPanel = null;
-        grabStart = null;
-        $(event.target).removeClass("pointing");
-        $(event.target).removeClass("grabbing");
-    });
-
-    $(document).on("scroll", function(){
-        carouselLocation = $(document).scrollTop() /  ($(document).height() - window.innerHeight);
-        setPanelPositions();
-    });
-
-    function getScale(y){
-        return 1 - (y-250)/400;
-    }
-
-    function getBlur(y){
-        return 1-(y-250)/200;
-    }
 
 
 
 
-    $(document).on("mousemove","canvas", function(event){
-        // check to see what object i'm in...
-
-        
-        if(grabbedPanel){
-
-            grabbedPanel.quad.position.x = grabbedPanel.quad.position.x - (grabStart.x - event.clientX); 
-            grabbedPanel.quad.position.y = grabbedPanel.quad.position.y + (grabStart.y - event.clientY); 
-
-            grabStart.x = event.clientX;
-            grabStart.y = event.clientY;
-
-            return;
-
-        } else if (carouselGrabbed){
-
-            carouselLocation = (carouselLocation + 1.0 + (event.clientX - grabStart.x) / 1000) % 1.0;
-
-            grabStart.x = event.clientX;
-            grabStart.y = event.clientY;
-
-            setPanelPositions();
-
-            return;
-
-        }
-
-        if(event.clientY > 250 && event.clientY < 450 && event.clientX > 850){
-            $(event.target).addClass("grab");
-            return;
-        }
-
-
-        for(var i = 0; i< interactivePanels.length; i++){
-            var panel = interactivePanels[i];
-            var boundRes = panel.checkBounds(event.clientX,renderHeight - event.clientY + canvasTop);
-            if(typeof boundRes == "string"){
-                $(event.target).removeClass("grab");
-                $(event.target).addClass("pointing");
-                clickStart = boundRes;
-                return;
-
-            } else if(boundRes){
-                $(event.target).addClass("grab");
-                $(event.target).removeClass("pointing");
-                return;
-            }
-        }
-        $(event.target).removeClass("pointing");
-        $(event.target).removeClass("grab");
-        // $(event.target).css("cursor", "inherit")
-
-    });
-
-    /*
-    new TWEEN.Tween({loc: -.1})
-                .delay(1000)
-
-                .to({loc: 0}, 2000)
-                .onUpdate(function(){
-                    carouselLocation = this.loc;
-                    setPanelPositions();
-                })
-                .easing(TWEEN.Easing.Elastic.Out)
-                .start();
-               */
-
-    function setTwitter(){
-
-        $.getJSON('http://cdn.api.twitter.com/1/urls/count.json?url=' + encodeURIComponent(document.URL) + '&callback=?', null, function (results) {
-            if(typeof results.count == "number"){
-                sharePanel.setTweets(results.count);
-            }
-        });
-    }
-
-    function setGithub(){
-
-        $.getJSON('https://api.github.com/repos/arscan/lineup', null, function (results) {
-            if(typeof results.stargazers_count == "number"){
-                sharePanel.setStars(results.stargazers_count);
-            }
-        });
-    }
-
-
+    setInteraction();
     setTwitter();
     setGithub();
+    render();
     LOADSYNC.start();
 
 }
@@ -561,7 +389,7 @@ $(function(){
 
     function load(){
         if(!isPortrait() || skipRotate){
-            $("body").height(4000);
+            // $("body").height(4000);
             $("#please-rotate").css({"display": "none"});
             WebFont.load({
                 google: {
