@@ -104,18 +104,17 @@ function createSubjectPanel(renderer, scale){
 
         video = document.getElementById( 'video' );
 
-        videoTexture = new THREE.VideoTexture( video );
-        videoTexture.minFilter = THREE.LinearFilter;
-        videoTexture.magFilter = THREE.LinearFilter;
-        videoTexture.format = THREE.RGBAFormat;
+        if(VIDEO_ENABLED){
+            videoTexture = new THREE.VideoTexture( video );
+            videoTexture.minFilter = THREE.LinearFilter;
+            videoTexture.magFilter = THREE.LinearFilter;
+            videoTexture.format = THREE.RGBAFormat;
+            subjectShader.uniforms.tDiffuse.value = videoTexture;
+        } else {
+            videoTexture = new THREE.Texture();
 
+        }
 
-        // videoTexture.needsUpdate = true; //do i need this? todo
-
-        // var videoMaterial  = new THREE.MeshBasicMaterial({color: 0xffffff, map: videoTexture});
-        console.log(videoMaterial);
-
-        subjectShader.uniforms.tDiffuse.value = videoTexture;
 
         var videoMaterial = new THREE.ShaderMaterial({
             uniforms: subjectShader.uniforms,
@@ -124,10 +123,6 @@ function createSubjectPanel(renderer, scale){
             transparent: true
         });
 
-
-        // nameBoxMaterial.uniforms.name1.value = nameTexture1;
-        // nameBoxMaterial.transparent = true;
-        //
         var planegeometry = new THREE.PlaneBufferGeometry( width, height );
 
         var plane = new THREE.Mesh( planegeometry, videoMaterial );
