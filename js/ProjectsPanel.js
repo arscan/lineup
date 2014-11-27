@@ -18,32 +18,42 @@ function createProjectsPanel(renderer, scale){
        return panel.renderToCanvas(512, 160, function(ctx){
            ctx.strokeStyle="#fff";
 
-           ctx.font = "bold 28pt Roboto";
+           ctx.font = "24pt Roboto";
            ctx.fillStyle = '#ff8d07';
-           ctx.fillText("RECENT PROJECTS", 25, 35);
+           ctx.fillText("OTHER PROJECTS", 50, 35);
 
            ctx.lineWidth = 2.5;
-           ctx.strokeStyle="#fd2616";
-           ctx.moveTo(4,2);
-           ctx.lineTo(4,50);
-           ctx.lineTo(440,50);
+           ctx.strokeStyle="#fd5f00";
+           ctx.moveTo(4,28);
+           ctx.lineTo(4,60);
+           ctx.lineTo(440,60);
            ctx.stroke();
 
            ctx.beginPath();
-           ctx.fillStyle='#ff8d07';
-           ctx.arc(4, 4, 4, 0, 2 * Math.PI);
+           ctx.fillStyle='#eac7df';
+           ctx.arc(4, 28, 4, 0, 2 * Math.PI);
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(4, 50, 4, 0, 2 * Math.PI);
+           ctx.arc(4, 60, 4, 0, 2 * Math.PI);
+           ctx.fill();
+
+           ctx.fillStyle='#fd5f00';
+           ctx.beginPath();
+           ctx.arc(380, 60, 4, 0, 2 * Math.PI);
+           ctx.fill();
+
+           ctx.fillStyle='#eac7df';
+           ctx.beginPath();
+           ctx.arc(440, 60, 4, 0, 2 * Math.PI);
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(380, 50, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
+           ctx.fillStyle='#336699';
            ctx.beginPath();
-           ctx.arc(440, 50, 4, 0, 2 * Math.PI);
+           ctx.moveTo(30, 18);
+           ctx.lineTo(20, 28);
+           ctx.lineTo(40, 28);
            ctx.fill();
 
        });
