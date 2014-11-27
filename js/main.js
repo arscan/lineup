@@ -345,8 +345,8 @@ function main(renderWidth){
     }
 
     function render(){
-        setTimeout(render, 1000/30);
-        // requestAnimationFrame(render);
+        // setTimeout(render, 1000/30);
+        requestAnimationFrame(render);
         var delta = clock.getDelta();
         var time = clock.getElapsedTime();
         var carouselMoving = Math.abs(carouselVelocity) > 0;
