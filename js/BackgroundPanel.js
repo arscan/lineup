@@ -16,7 +16,9 @@ function createBackgroundPanel(renderer, width, height){
     var ambientLight,
         ambientLightColor = new THREE.Color(0x12b7a7),
         overheadLight,
-        overheadLightColor = new THREE.Color(0x12b7a7);
+        overheadLightColor = new THREE.Color(0x12b7a7),
+        middleLight,
+        middleLightColor = new THREE.Color(0xff9600);
 
     function setBrightness(color, brightness){
         return new THREE.Color(color.r * brightness, color.g * brightness, color.b * brightness);
@@ -36,6 +38,12 @@ function createBackgroundPanel(renderer, width, height){
         overheadLight.position.y = 850;
         overheadLight.position.z = -420;
         scene.add(overheadLight);
+
+        middleLight = new THREE.PointLight( 0x000000, 0.85, 1000 );
+        
+        middleLight.position.y = height/2;
+        middleLight.position.z = 300;
+        scene.add(middleLight);
 
         // LIGHTS
 
@@ -204,23 +212,27 @@ function createBackgroundPanel(renderer, width, height){
     function setLightBarLevel(level){
         quad.material.color = setBrightness(new THREE.Color(0xffffff), level);
     }
-    function setOverheadLightLevel(level){
+    function setLightLevel(level){
         overheadLight.color = setBrightness(overheadLightColor, level);
+        middleLight.color = setBrightness(middleLightColor, level);
     }
 
     function render() {
 
         var diff = Date.now() - startTime; 
 
-        pointLight1.position.x = Math.sin(diff/1000.0) * 200;
-        pointLight1.position.y = 500 + Math.sin(diff/745) * 100;
+        // pointLight1.position.x = Math.sin(diff/1000.0) * 200;
+        // pointLight1.position.y = 500 + Math.sin(diff/745) * 100;
         // pointLight1.position.z = 100 + Math.sin(diff/100.0) * 100;
         //
-        pointLight2.position.x = -100 + Math.sin(diff/2000.0) * 200;
-        pointLight2.position.y = 100 + Math.sin(diff/945) * 100;
+        // pointLight2.position.x = -100 + Math.sin(diff/2000.0) * 200;
+        // pointLight2.position.y = 100 + Math.sin(diff/945) * 100;
 
         overheadLight.position.x = 50 + Math.cos(diff/2000.0) * 120;
         overheadLight.position.y = 850 + Math.sin(diff/745) * 120;
+
+        middleLight.position.x = 100 + Math.sin(diff/2000.0) * 320;
+        middleLight.position.y =  Math.cos(diff/945) * 120;
         
         // pointLight4.position.x = 100 + Math.cos(diff/1500.0) * 800;
         // pointLight4.position.y = -50 + Math.sin(diff/845) * 200;
@@ -239,7 +251,7 @@ function createBackgroundPanel(renderer, width, height){
         height: height,
         quad: quad,
         setLightBarLevel: setLightBarLevel,
-        setOverheadLightLevel: setOverheadLightLevel
+        setLightLevel: setLightLevel
     });
 }
 

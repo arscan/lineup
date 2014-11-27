@@ -158,7 +158,7 @@ function main(renderWidth){
            .easing(TWEEN.Easing.Quadratic.Out)
            .onUpdate(function(){
                backgroundPanel.setLightBarLevel(this.level);
-               backgroundPanel.setOverheadLightLevel(this.level);
+               backgroundPanel.setLightLevel(this.level);
                subjectPanel.setBrightness(this.level);
                bottomPanel.element.css({opacity: this.level});
 

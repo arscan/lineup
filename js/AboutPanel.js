@@ -13,89 +13,71 @@ function createAboutPanel(renderer, scale){
    function createTitleCanvas(){
 
        return panel.renderToCanvas(512, 160, function(ctx){
-           ctx.strokeStyle="#fff";
-
-           ctx.font = "bold 28pt Roboto";
-           ctx.fillStyle = '#ff8d07';
-           ctx.fillText("WELCOME", 25, 35);
+           ctx.font = "26pt Roboto";
+           ctx.fillStyle = '#fd5f00';
+           ctx.fillText("WELCOME MESSAGE", 115, 26);
 
            ctx.lineWidth = 2.5;
-           ctx.strokeStyle="#fd2616";
-           ctx.moveTo(4,2);
-           ctx.lineTo(4,50);
-           ctx.lineTo(440,50);
+           ctx.strokeStyle="#fd5f00";
+           ctx.moveTo(4,5);
+           ctx.lineTo(78,5);
+           ctx.moveTo(35,8);
+           ctx.lineTo(100,8);
            ctx.stroke();
-
-           ctx.beginPath();
-           ctx.fillStyle='#ff8d07';
-           ctx.arc(4, 4, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.beginPath();
-           ctx.arc(4, 50, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.beginPath();
-           ctx.arc(380, 50, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.beginPath();
-           ctx.arc(440, 50, 4, 0, 2 * Math.PI);
-           ctx.fill();
+           ctx.moveTo(37,11);
+           ctx.lineTo(100,11);
+           ctx.stroke();
 
        });
 
    };
 
    function createBodyCanvas(){
-       var text = ["Thanks for stopping by!",
-                   "This is a project by Rob Scanlon using THREE.js, and a ",
-                   "long list of other open source projects.",
-                   "Try scrolling down to continue.",
+       var text = ["This is a reproduction of the lineup scene in ",
+                   "Marvel's Guardians of the Galaxy, built with",
+                   "HTML5 and a bunch of open source libraries.",
+                   "",
+                   "Made by @arscan as a learning exercise.",
+                   "Source available at github.com/arscan/lineup.",
+                   "",
+                   "Scroll/swipe/drag down to continue.",
        ];
 
        return panel.renderToCanvas(512, 400, function(ctx){
            ctx.strokeStyle="#fff";
 
-           ctx.font = "20pt Roboto";
+           ctx.font = "18pt Roboto";
            ctx.fillStyle = '#ffffff';
 
            for(var i = 0; i < text.length; i++){
-               ctx.fillText(text[i], 0, 20 + i*38);
+               ctx.fillText(text[i], 0, 20 + i*30);
            }
        });
 
    };
 
-   function createScrollCanvas(){
-       return panel.renderToCanvas(512, 50, function(ctx){
+   function createBottomCanvas(){
+       return panel.renderToCanvas(512, 100, function(ctx){
+                   ctx.fillStyle = '#a94000';
 
-           ctx.font = "12pt Roboto";
-           ctx.fillStyle = '#6Fc0BA';
+           for(var i = 0; i< 3; i++){
 
-           ctx.fillText("SCROLL DOWN", 50, 18);
-           ctx.fillStyle = '#996699';
+               if(i == 1){
+                   ctx.fillStyle = '#fd5f00';
+               } else if(i == 2){
+                   ctx.fillStyle = '#6d2900';
+               }
 
-           function drawTriangles(x){
-               ctx.moveTo(x, 10);
-               ctx.lineTo(x+5, 5);
-               ctx.lineTo(x-5, 5);
-               ctx.lineTo(x, 10);
-               ctx.moveTo(x, 15);
-               ctx.lineTo(x+5, 10);
-               ctx.lineTo(x-5, 10);
-               ctx.lineTo(x, 15);
-               ctx.moveTo(x, 20);
-               ctx.lineTo(x+5, 15);
-               ctx.lineTo(x-5, 15);
-               ctx.lineTo(x, 20);
-               ctx.fill();
+               for(var j = 0; j < 5; j++){
+                   var boxWidth = 80;
+                   if(i === 2){
+                       boxWidth = Math.random() * 80;
+                   }
+                   ctx.fillRect(j * 100, i * 10, boxWidth, 5);
+               }
+
            }
-
-           drawTriangles(40);
-           drawTriangles(180);
        });
-
    };
 
     function init(){
@@ -108,7 +90,7 @@ function createAboutPanel(renderer, scale){
         var titleGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 80 * scale );
 
         var plane = new THREE.Mesh( titleGeometry, titleMaterial );
-        plane.position.set(width/2 + 7, height-40*scale, 0);
+        plane.position.set(width/2 + 7, height-45*scale, 0);
         panel.addToScene( plane );
 
         var bodyCanvas= createBodyCanvas(); 
@@ -119,8 +101,19 @@ function createAboutPanel(renderer, scale){
         var bodyGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 200 * scale );
 
         bodyPlane = new THREE.Mesh( bodyGeometry, bodyMaterial );
-        bodyPlane.position.set(width/2 + 7, height - 40*scale - (200*scale)/2, 0);
+        bodyPlane.position.set(width/2 + 7, height - 35*scale - (200*scale)/2, 0);
         panel.addToScene( bodyPlane );
+
+        var bottomCanvas= createBottomCanvas(); 
+        var bottomTexture = new THREE.Texture(bottomCanvas)
+        bottomTexture.needsUpdate = true;
+
+        var bottomMaterial = new THREE.MeshBasicMaterial({map: bottomTexture, transparent: true});
+        var bottomGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 100 * scale );
+
+        bottomPlane = new THREE.Mesh( bottomGeometry, bottomMaterial );
+        bottomPlane.position.set(128 * scale + 5*scale, 50, 0);
+        panel.addToScene( bottomPlane );
 
         // var scrollCanvas= createScrollCanvas(); 
         // var scrollTexture = new THREE.Texture(scrollCanvas)
