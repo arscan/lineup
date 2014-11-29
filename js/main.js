@@ -40,7 +40,7 @@ function main(renderWidth){
         carouselPanels = [aboutPanel, linksPanel, bioPanel, photosPanel, projectsPanel],
         carouselLocation = 0,
         carouselGrabbed = false,
-        carouselCenter = { x: renderWidth, y: 380 * screenScale},
+        carouselCenter = { x: renderWidth - 50 * screenScale, y: 420 * screenScale},
         carouselVelocity = 0,
         carouselSnapping = false,
 

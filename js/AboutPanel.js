@@ -1,6 +1,6 @@
 function createAboutPanel(renderer, scale){
 
-   var STANDARD_DIMENSIONS = {width: 256, height:256};
+   var STANDARD_DIMENSIONS = {width: 350, height:350};
 
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale;
@@ -44,10 +44,9 @@ function createAboutPanel(renderer, scale){
        ];
 
        return panel.renderToCanvas(512, 400, function(ctx){
-           ctx.strokeStyle="#fff";
 
            ctx.font = "18pt Roboto";
-           ctx.fillStyle = '#ffffff';
+           ctx.fillStyle="#aaa";
 
            for(var i = 0; i < text.length; i++){
                ctx.fillText(text[i], 0, 20 + i*30);
@@ -87,10 +86,10 @@ function createAboutPanel(renderer, scale){
         titleTexture.needsUpdate = true;
 
         var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
-        var titleGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 80 * scale );
+        var titleGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 109 * scale );
 
         var plane = new THREE.Mesh( titleGeometry, titleMaterial );
-        plane.position.set(width/2 + 7, height-45*scale, 0);
+        plane.position.set(width/2 + 7, height-60*scale, 0);
         panel.addToScene( plane );
 
         var bodyCanvas= createBodyCanvas(); 
@@ -98,10 +97,10 @@ function createAboutPanel(renderer, scale){
         bodyTexture.needsUpdate = true;
 
         var bodyMaterial = new THREE.MeshBasicMaterial({map: bodyTexture, transparent: true});
-        var bodyGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 200 * scale );
+        var bodyGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 276 * scale );
 
         bodyPlane = new THREE.Mesh( bodyGeometry, bodyMaterial );
-        bodyPlane.position.set(width/2 + 7, height - 35*scale - (200*scale)/2, 0);
+        bodyPlane.position.set(width/2 + 7, height - 33*scale - (276*scale)/2, 0);
         panel.addToScene( bodyPlane );
 
         var bottomCanvas= createBottomCanvas(); 
@@ -109,10 +108,10 @@ function createAboutPanel(renderer, scale){
         bottomTexture.needsUpdate = true;
 
         var bottomMaterial = new THREE.MeshBasicMaterial({map: bottomTexture, transparent: true});
-        var bottomGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 100 * scale );
+        var bottomGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 130 * scale );
 
         bottomPlane = new THREE.Mesh( bottomGeometry, bottomMaterial );
-        bottomPlane.position.set(128 * scale + 5*scale, 50, 0);
+        bottomPlane.position.set(185 * scale, 70 * scale, 0);
         panel.addToScene( bottomPlane );
 
         // var scrollCanvas= createScrollCanvas(); 
