@@ -300,8 +300,25 @@ function main(renderWidth){
         hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL });
         /* right carousel */
         hammertime.on('pan', function(ev){
-            snapTween.stop();
-            carouselVelocity = ev.velocity;
+            if(ev.center.x > renderWidth / 2){
+                snapTween.stop(); 
+
+                if(ev.velocity < 0){
+                    carouselVelocity = Math.max(-.8 * screenScale, ev.velocity / screenScale);
+                } else {
+                    carouselVelocity = Math.max(.001, Math.min(.8 * screenScale, ev.velocity / screenScale));
+                }
+
+                return;
+            } 
+
+            console.log("---");
+
+            if(ev.direction === Hammer.DIRECTION_HORITZONTAL && ev.center.y < renderHeight /3){
+                carouselVelocity *= -1;
+                console.log("swapping!");
+
+            }
         });
 
         $("canvas").on('mousewheel', function(event){
