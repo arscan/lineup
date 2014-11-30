@@ -253,7 +253,8 @@ function createNamePanel(renderer, scale){
         quad: panel.quad,
         checkBounds: panel.checkBounds,
         setBlur: panel.setBlur,
-        setPosition: panel.setPosition
+        setPosition: panel.setPosition,
+        setDeltaPosition: panel.setDeltaPosition
     });
 }
 

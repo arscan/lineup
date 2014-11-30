@@ -30,19 +30,19 @@ function main(renderWidth){
         aboutPanel = createAboutPanel(renderer, screenScale),
         projectsPanel = createProjectsPanel(renderer, screenScale),
         photosPanel = createPhotosPanel(renderer, screenScale),
-        bioPanel = createBioPanel(renderer, screenScale),
         linksPanel = createLinksPanel(renderer, screenScale),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
-        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, tinyPanel4, tinyPanel5, sharePanel, photosPanel, projectsPanel, aboutPanel, bioPanel, linksPanel]),
+        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, tinyPanel4, tinyPanel5, sharePanel, photosPanel, projectsPanel, aboutPanel, linksPanel]),
         subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
-        carouselPanels = [aboutPanel, linksPanel, bioPanel, photosPanel, projectsPanel],
+        carouselPanels = [aboutPanel, linksPanel, photosPanel, projectsPanel],
         carouselLocation = 0,
         carouselGrabbed = false,
         carouselCenter = { x: renderWidth - 50 * screenScale, y: 420 * screenScale},
         carouselVelocity = 0,
         carouselSnapping = false,
+
 
         interactivePanels = [namePanel, skeletonPanel, sharePanel],
         grabbedPanel = null,
@@ -285,6 +285,12 @@ function main(renderWidth){
 
 
     function setInteraction(){
+        var prevDeltaX = 0, 
+            prevDeltaY = 0, 
+            panning = false,
+            panTimeout = null,
+            panStartPositionX = namePanel.quad.position.x,
+            panStartPositionY = namePanel.quad.position.y;
 
         /* window resize events */
         $(window).resize(function() {
@@ -300,8 +306,7 @@ function main(renderWidth){
         hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL });
         /* right carousel */
         hammertime.on('pan', function(ev){
-            console.log("panning");
-            if(ev.center.x > renderWidth / 2){
+            if(ev.center.x > renderWidth / 2 && !panning){
                 snapTween.stop(); 
 
                 if(ev.velocity < 0){
@@ -316,6 +321,43 @@ function main(renderWidth){
 
                 return;
             } 
+
+            // check to see if we are on the name panel
+
+            if(namePanel.checkBounds(ev.center.x, renderHeight - ev.center.y)){
+                if(!panning){
+                    panStartPositionX = namePanel.quad.position.x;
+                    panStartPositionY= namePanel.quad.position.y;
+                }
+                panning = true;
+                namePanel.setDeltaPosition(ev.deltaX - prevDeltaX, -1 * (ev.deltaY - prevDeltaY));
+                prevDeltaX = ev.deltaX;
+                prevDeltaY = ev.deltaY;
+                clearTimeout(panTimeout);
+                panTimeout = setTimeout(function(){
+                    prevDeltaX = 0; 
+                    prevDeltaY = 0; 
+                    panning = false;
+                    new TWEEN.Tween({x: namePanel.quad.position.x})
+                         .to({x: panStartPositionX})
+                         .easing(TWEEN.Easing.Back.Out)
+                         .onUpdate(function(){
+                             namePanel.quad.position.x = this.x;
+                         })
+                         .start();
+                    new TWEEN.Tween({y: namePanel.quad.position.y})
+                         .delay(100)
+                         .to({y: panStartPositionY})
+                         .easing(TWEEN.Easing.Back.Out)
+                         .onUpdate(function(){
+                             namePanel.quad.position.y = this.y;
+                         })
+                         .start();
+                }, 1000);
+
+                console.log(ev);
+
+            }
 
         });
 

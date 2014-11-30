@@ -147,6 +147,15 @@ function createPanel(renderer, width, height, opts){
         }
     }
 
+    function setDeltaPosition(deltaX, deltaY){
+        if(typeof deltaX == "number"){
+            quad.position.x = quad.position.x + deltaX;
+        }
+        if(typeof deltaY == "number"){
+            quad.position.y = quad.position.y + deltaY;
+        }
+    }
+
     function setCamera(camera){
         renderComposer.passes[0].camera = camera;
     }
@@ -167,6 +176,7 @@ function createPanel(renderer, width, height, opts){
         checkBounds: checkBounds,
         setBlur: setBlur,
         setPosition: setPosition,
+        setDeltaPosition: setDeltaPosition,
         setCamera: setCamera,
         renderScene: renderScene, /* should get rid of this, but need to fix the projects objects */
         addToScene: addToScene,
