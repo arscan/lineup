@@ -78,13 +78,19 @@ function createSharePanel(renderer, scale){
     }
 
     function checkBounds(x, y){
-        if(x > panel.quad.position.x - width / 2 && x < panel.quad.position.x && y > panel.quad.position.y - height/2 && y < panel.quad.position.y + height/2){
-            return "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Frobscanlon.com%2flineup&text=GoG%20Lineup%20in%20Web&tw_p=tweetbutton&url=http%3A%2F%2Fwww.robscanlon.com%2Flineup&via=arscan";
-        } else if(x > panel.quad.position.x && x < panel.quad.position.x + width / 2 && y > panel.quad.position.y -height/2 && y < panel.quad.position.y + height/2){
-            return "http://github.com/arscan/lineup";
+        if(panel.checkBounds(x,y)){
+            var panelPos = panel.positionWithinPanel(x, y);
+
+            if(panelPos.x < width / 2){
+                return "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Frobscanlon.com%2flineup&text=GoG%20Lineup%20in%20Web&tw_p=tweetbutton&url=http%3A%2F%2Fwww.robscanlon.com%2Flineup&via=arscan";
+            } else {
+                return "http://github.com/arscan/lineup";
+            }
+
+            return true;
         }
 
-        return panel.checkBounds(x,y);
+        return false;
     }
 
     function setTweets(_tweets){

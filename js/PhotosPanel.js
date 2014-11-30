@@ -16,32 +16,42 @@ function createPhotosPanel(renderer, scale){
        return panel.renderToCanvas(512, 160, function(ctx){
            ctx.strokeStyle="#fff";
 
-           ctx.font = "bold 28pt Roboto";
+           ctx.font = "24pt Roboto";
            ctx.fillStyle = '#ff8d07';
-           ctx.fillText("PHOTOS", 25, 35);
+           ctx.fillText("RECENT PHOTOS", 50, 35);
 
            ctx.lineWidth = 2.5;
-           ctx.strokeStyle="#fd2616";
-           ctx.moveTo(4,2);
-           ctx.lineTo(4,50);
-           ctx.lineTo(440,50);
+           ctx.strokeStyle="#fd5f00";
+           ctx.moveTo(4,28);
+           ctx.lineTo(4,60);
+           ctx.lineTo(440,60);
            ctx.stroke();
 
            ctx.beginPath();
-           ctx.fillStyle='#ff8d07';
-           ctx.arc(4, 4, 4, 0, 2 * Math.PI);
+           ctx.fillStyle='#eac7df';
+           ctx.arc(4, 28, 4, 0, 2 * Math.PI);
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(4, 50, 4, 0, 2 * Math.PI);
+           ctx.arc(4, 60, 4, 0, 2 * Math.PI);
+           ctx.fill();
+
+           ctx.fillStyle='#fd5f00';
+           ctx.beginPath();
+           ctx.arc(380, 60, 4, 0, 2 * Math.PI);
+           ctx.fill();
+
+           ctx.fillStyle='#eac7df';
+           ctx.beginPath();
+           ctx.arc(440, 60, 4, 0, 2 * Math.PI);
            ctx.fill();
 
            ctx.beginPath();
-           ctx.arc(380, 50, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
+           ctx.fillStyle='#336699';
            ctx.beginPath();
-           ctx.arc(440, 50, 4, 0, 2 * Math.PI);
+           ctx.moveTo(30, 18);
+           ctx.lineTo(20, 28);
+           ctx.lineTo(40, 28);
            ctx.fill();
 
        });
@@ -61,16 +71,6 @@ function createPhotosPanel(renderer, scale){
         plane.position.set(width/2 + 7, height-40*scale, 0);
         panel.addToScene( plane );
 
-        /*
-        var twitterIconTexture = THREE.ImageUtils.loadTexture('images/twitter.png', undefined, LOADSYNC.register() );
-        var twitterIconMaterial = new THREE.MeshBasicMaterial({map: twitterIconTexture, transparent: true, blending: THREE.AdditiveBlending});
-        var twitterIconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30*scale );
-        var twitterIconPlane = new THREE.Mesh(twitterIconGeometry, twitterIconMaterial );
-        twitterIconPlane.position.set(30*scale, 30*scale/2 + 4, 0);
-        twitterIconPlane._gotg_url = "https://www.twitter.com/arscan/";
-        icons.push(twitterIconPlane);
-        panel.addToScene(twitterIconPlane);
-       */
       var randomPics = FLICKR.getRandomLandscapes(4);
 
         for(var i = 0; i< randomPics.length; i++){
@@ -92,6 +92,13 @@ function createPhotosPanel(renderer, scale){
         panel.render(time);
     }
 
+    function checkBounds(x, y){
+        if(panel.checkBounds(x,y)){
+            return "https://www.flickr.com/photos/45001949@N00/";
+        }
+        return false;
+    }
+
     init();
 
     return Object.freeze({
@@ -101,7 +108,7 @@ function createPhotosPanel(renderer, scale){
         width: width,
         height: height,
         quad: panel.quad,
-        checkBounds: panel.checkBounds,
+        checkBounds: checkBounds,
         setBlur: panel.setBlur,
         setPosition: panel.setPosition
     });

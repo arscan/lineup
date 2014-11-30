@@ -355,8 +355,6 @@ function main(renderWidth){
                          .start();
                 }, 1000);
 
-                console.log(ev);
-
             }
 
         });
@@ -364,6 +362,25 @@ function main(renderWidth){
         $("canvas").on('mousewheel', function(event){
             snapTween.stop();
             carouselVelocity = event.deltaY / 5 + carouselVelocity;
+        });
+        $("canvas").on('click', function(event){
+            if(carouselVelocity === 0){
+                for(var i = 0; i< carouselPanels.length; i++){
+                    var res= carouselPanels[i].checkBounds(event.offsetX, renderHeight - event.offsetY);
+                    if(typeof res === "string"){
+                        location.href=res;
+                        return;
+                    }
+
+                }
+            }
+
+            var res= sharePanel.checkBounds(event.offsetX, renderHeight - event.offsetY);
+            if(typeof res === "string"){
+                location.href=res;
+                return;
+            }
+
         });
 
         $(window).keydown(function(event){

@@ -16,7 +16,7 @@ function createGithubWargames(scene){
            ctx.strokeStyle="#fff";
 
            ctx.font = "10pt Roboto";
-           ctx.fillStyle = '#ffcc00';
+           ctx.fillStyle = '#eac7df';
            ctx.fillText("Github Wargames", 25, 15);
 
        });

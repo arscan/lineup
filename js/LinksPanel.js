@@ -82,7 +82,7 @@ function createLinksPanel(renderer, scale){
         var linkedInIconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30 * scale);
         var linkedInIconPlane = new THREE.Mesh(linkedInIconGeometry, linkedInIconMaterial );
         linkedInIconPlane.position.set(width/2 + 30 * scale / 2 + 5, 100 + 30*scale/2 + 2, 0);
-        linkedInIconPlane._gotg_url = "https://www.linkedin.com/robscanlon/";
+        linkedInIconPlane._gotg_url = "https://www.linkedin.com/in/robscanlon/";
         icons.push(linkedInIconPlane);
         panel.addToScene(linkedInIconPlane);
 
@@ -100,12 +100,31 @@ function createLinksPanel(renderer, scale){
         var homeIconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30 * scale);
         var homeIconPlane = new THREE.Mesh(homeIconGeometry, homeIconMaterial );
         homeIconPlane.position.set(width/2 + 20 * scale / 2 + 5, 200 + 30*scale/2 + 2, 0);
-        homeIconPlane._gotg_url = "https://www.robscanlon.com/";
+        homeIconPlane._gotg_url = "http://www.robscanlon.com/";
         icons.push(homeIconPlane);
         panel.addToScene(homeIconPlane);
 
 
 
+    }
+
+    function checkBounds(x,y){
+        if(!panel.checkBounds(x,y)){
+            return false;
+        }
+
+        var pos = panel.positionWithinPanel(x,y);
+        pos.y = pos.y;
+
+        for(var i = 0; i< icons.length; i++){
+            if(pos.x > icons[i].position.x - 30 && pos.x < icons[i].position.x + 30
+                    && pos.y > icons[i].position.y - 30 && pos.y < icons[i].position.y + 30){
+                return icons[i]._gotg_url;
+
+            }
+
+        }
+        return false;
     }
 
     function render(time){
@@ -132,7 +151,7 @@ function createLinksPanel(renderer, scale){
         width: width,
         height: height,
         quad: panel.quad,
-        checkBounds: panel.checkBounds,
+        checkBounds: checkBounds,
         setBlur: panel.setBlur,
         setPosition: panel.setPosition
     });

@@ -129,6 +129,11 @@ function createPanel(renderer, width, height, opts){
                && (y > quad.position.y - height / 2 && y < quad.position.y + height/2);
     }
 
+    function positionWithinPanel(x, y){
+        return {x: x - quad.position.x + width/2, y: y - quad.position.y + height/2};
+
+    }
+
     function setBlur(blur){
         blurLevel = Math.max(0,Math.min(1,blur));
     }
@@ -174,6 +179,7 @@ function createPanel(renderer, width, height, opts){
         height: height,
         quad: quad,
         checkBounds: checkBounds,
+        positionWithinPanel: positionWithinPanel,
         setBlur: setBlur,
         setPosition: setPosition,
         setDeltaPosition: setDeltaPosition,
