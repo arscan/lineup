@@ -98,15 +98,13 @@ function createProjectsPanel(renderer, scale){
 
     function checkBounds(x, y){
         if(panel.checkBounds(x,y)){
-            console.log("inside panel");
             var panelPos = panel.positionWithinPanel(x, y);
-            console.log(panelPos.y);
-            console.log(panelPos.x);
-            if(panelPos.y > 160 && panelPos.y < 270){
+
+            if(panelPos.y > 160*scale && panelPos.y < 270*scale){
                 return "http://www.robscanlon.com/encom-boardroom";
             }
-            if(panelPos.y <= 160){
-                if(panelPos.x < 170){
+            if(panelPos.y <= 160*scale){
+                if(panelPos.x < width/2){
                     return "http://www.robscanlon.com/encom-globe";
                 } else {
                     return "http://www.github.com/arscan/streamed";
