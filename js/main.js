@@ -55,8 +55,6 @@ function main(renderWidth){
     // hide the rotation graphic 
     $("#please-rotate").css({display: "none"});
 
-    // unhide the laoding graphic
-    $("#cassette-bg").css({"visibility": "visible", "top": window.innerHeight/2 - 100 * screenScale, "left": window.innerWidth/2 - 100 * screenScale });
 
 
     /* add add position the main panels */
@@ -527,24 +525,25 @@ $(function(){
                     families: ['Roboto:500']
                 },
                 active: function(){
+                    // unhide the laoding graphic
+                    $("#cassette-bg").css({"visibility": "visible", "top": window.innerHeight/2 - 100 , "left": window.innerWidth/2 - 100});
                     if(isMobile){
                         $("#play-button").click(function(){
-                            var video = $("#video")[0];
-                            if(typeof video.load == "function"){
-                                VIDEO_ENABLED = true;
-                                video.src = "videos/test_vid.webm";
-                                video.setAttribute('crossorigin', 'anonymous');
-                                video.load(); // must call after setting/changing source
-                                video.play();
-                            } else {
-
-
-                            }
-                            main($(window).width());
-
                             $("#play-button").velocity({opacity: 0}, {complete: function(){
                                 $("#play-button").css({display: "none"});
                             }});
+                            setTimeout(function(){
+                                var video = $("#video")[0];
+                                if(typeof video.load == "function"){
+                                    VIDEO_ENABLED = true;
+                                    video.src = "videos/test_vid.webm";
+                                    video.setAttribute('crossorigin', 'anonymous');
+                                    video.load(); // must call after setting/changing source
+                                    video.play();
+                                }
+                                main($(window).width());
+                            }, 500);
+
                         });
                     } else {
                         var video = $("#video")[0];
