@@ -157,7 +157,7 @@ function main(renderWidth){
            .onUpdate(function(){
                backgroundPanel.setLightBarLevel(this.level);
                backgroundPanel.setLightLevel(this.level);
-               subjectPanel.setBrightness(this.level);
+               // subjectPanel.setBrightness(this.level);
                bottomPanel.element.css({opacity: this.level});
 
            }).start();
@@ -536,7 +536,7 @@ $(function(){
                                 var video = $("#video")[0];
                                 if(typeof video.load == "function"){
                                     VIDEO_ENABLED = true;
-                                    video.src = "videos/test_vid.webm";
+                                    video.src = "videos/video.mp4";
                                     video.setAttribute('crossorigin', 'anonymous');
                                     video.load(); // must call after setting/changing source
                                     video.play();
@@ -549,7 +549,8 @@ $(function(){
                         var video = $("#video")[0];
                         if(typeof video.load == "function"){
                             VIDEO_ENABLED = true;
-                            video.src = "videos/test_vid.webm";
+                            // video.src = "videos/test_vid.webm";
+                            video.src = "videos/video.mp4";
                             video.setAttribute('crossorigin', 'anonymous');
                             video.load(); // must call after setting/changing source
                             video.play();
