@@ -1,5 +1,6 @@
 /**
  * @author rscanlon / http://robscanlon.com/
+ * adapted from http://threejs.org/examples/webgl_postprocessing_godrays.html | @author huwb / http://huwbowles.com/ 
  */
 
 THREE.ProjectorShaders = {
@@ -87,11 +88,7 @@ THREE.ProjectorShaders = {
                 "}",
                 "gl_FragColor = vec4(col / 3.0);",
                 "if(fTick > 0.0){",
-                // "gl_FragColor.rgb = gl_FragColor.rgb * texture2D(tMask, vec2(mod(vUv.x - offset, 1.0), vUv.y)).rgb;",
-                // "gl_FragColor.rgb = gl_FragColor.rgb - texture2D(tMask, vUv).rgb;",
-                // "gl_FragColor.rgb = gl_FragColor.rgb - texture2D(tMask, vUv).rgb;",
-                "gl_FragColor.a = pow(1.0-dist,2.0);",//length(vUv.x;",//texture2D(tMask, vUv).g;",
-                    // "gl_FragColor.rgba = vec4(1.0, 1.0, 1.0, 1.0);",
+                    "gl_FragColor.a = pow(1.0-dist,1.75);",
                 "}",
             "}"
 

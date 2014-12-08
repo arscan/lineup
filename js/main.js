@@ -2,8 +2,7 @@ var VIDEO_ENABLED = false;
 
 function main(renderWidth){
 
-    var //loadingCirlce = createLoadingCircle($("#loading-graphic")),
-        container = document.createElement( 'div' ),
+    var container = document.createElement( 'div' ),
         stats = new Stats(),
         renderer = new THREE.WebGLRenderer( { antialias: false, alpha: true } ), 
         hammertime = new Hammer(renderer.domElement),
@@ -43,6 +42,7 @@ function main(renderWidth){
         carouselVelocity = 0,
         carouselSnapping = false,
 
+        mouseX = 0,
 
         interactivePanels = [namePanel, skeletonPanel, sharePanel],
         grabbedPanel = null,
@@ -55,30 +55,27 @@ function main(renderWidth){
     // hide the rotation graphic 
     $("#please-rotate").css({display: "none"});
 
-
-
     /* add add position the main panels */
     scene.add(projectorPanel.quad);
     scene.add(subjectPanel.quad);
     scene.add(backgroundPanel.quad);
     backgroundPanel.quad.material.opacity = .1;
 
-    skeletonPanel.setPosition(350 * screenScale, renderHeight - 20 * screenScale, 1);
-    // namePanel.setPosition(50 * screenScale, 358*screenScale, 1);
-    // sharePanel.setPosition(20 * screenScale, renderHeight - 20 * screenScale, 1);
-    subjectPanel.setPosition(500 * screenScale, 450 * screenScale, 1);
+    skeletonPanel.setPosition(380 * screenScale, renderHeight - 20 * screenScale, 1);
+    subjectPanel.setPosition(450 * screenScale, 450 * screenScale, 1);
     tinyPanel1.setPosition(2024 * screenScale, 100 * screenScale, .5);
     tinyPanel2.setPosition(-2024 * screenScale, 105 * screenScale, .5);
     tinyPanel3.setPosition(2024 * screenScale, 110 * screenScale, .5);
     tinyPanel4.setPosition(2024 * screenScale, 115 * screenScale, .5);
     tinyPanel5.setPosition(2024 * screenScale, 120 * screenScale, .5);
-
     sharePanel.setPosition(renderWidth + 1000, 0, 0);
+
     // put the carouselPanels off the right side of the screen
     for(var i = 0; i< carouselPanels.length; i++){
         carouselPanels[i].setPosition(renderWidth + 1000, 0, 0);
 
     }
+
     /* place and position the rendering canvas */
     container.appendChild( stats.domElement );
     document.body.appendChild( container );
@@ -277,10 +274,9 @@ function main(renderWidth){
     LOADSYNC.onComplete(function(){
         $("#loading-graphic").velocity({color: "#000", opacity: 0},{"display":"none"});
         runIntroAnimation();
-        setTimeout(function(){clock.start()}, 2400);
+        setTimeout(function(){clock.start()}, 3000);
         // clock.start();
     });
-
 
     function setInteraction(){
         var prevDeltaX = 0, 
@@ -381,6 +377,7 @@ function main(renderWidth){
 
         });
         $("canvas").on('mousemove', function(event){
+            mouseX = event.offsetX;
             if(carouselVelocity === 0){
                 for(var i = 0; i< carouselPanels.length; i++){
                     var res= carouselPanels[i].checkBounds(event.offsetX, renderHeight - event.offsetY);
@@ -438,8 +435,8 @@ function main(renderWidth){
     }
 
     function render(){
-        // setTimeout(render, 1000/30);
         requestAnimationFrame(render);
+
         var delta = clock.getDelta();
         var time = clock.getElapsedTime();
         var carouselMoving = Math.abs(carouselVelocity) > 0;
@@ -465,15 +462,11 @@ function main(renderWidth){
                    carouselSnapping = false;
 
                }).start();
-               
-
 
         }
 
         backgroundPanel.render(time);
-
-        // skeletonPanel.quad.position.x = projectorPanel.width / 2 + Math.sin(time/2) * 300;
-        skeletonPanel.render(time);
+        skeletonPanel.render(time, 2 * Math.PI * mouseX / renderWidth);
         namePanel.render(time);
         sharePanel.render(time);
         tinyPanel1.render(time);
@@ -495,7 +488,6 @@ function main(renderWidth){
 
         TWEEN.update();
 
-
     }
 
     setInteraction();
@@ -516,9 +508,17 @@ $(function(){
         return ( isMobile && $(window).width() < $(window).height());
     }
 
+    function getWidth(){
+        /* I don't know why my ipad doesn't want to display the right width, soooo lets hardcode! */
+        if(/iPad/i.test(navigator.userAgent)){
+            return 1024;
+        } else {
+            return $(window).width();
+        }
+    }
+
     function load(){
         if(!isPortrait() || skipRotate){
-            // $("body").height(4000);
             $("#please-rotate").css({"display": "none"});
             WebFont.load({
                 google: {
@@ -538,10 +538,10 @@ $(function(){
                                     VIDEO_ENABLED = true;
                                     video.src = "videos/video.mp4";
                                     video.setAttribute('crossorigin', 'anonymous');
-                                    video.load(); // must call after setting/changing source
+                                    video.load();
                                     video.play();
                                 }
-                                main($(window).width());
+                                main(getWidth());
                             }, 500);
 
                         });
@@ -549,18 +549,17 @@ $(function(){
                         var video = $("#video")[0];
                         if(typeof video.load == "function"){
                             VIDEO_ENABLED = true;
-                            // video.src = "videos/test_vid.webm";
                             video.src = "videos/video.mp4";
                             video.setAttribute('crossorigin', 'anonymous');
-                            video.load(); // must call after setting/changing source
+                            video.load();
                             video.play();
                         }
-                        main($(window).width());
+                        main(getWidth());
                     }
                 }
             }); 
         } else {
-            $("#please-rotate").css({"display": "block"});
+            $("#please-rotate").css({"display": "block", "top": window.innerHeight/2 - 100, "left": window.innerWidth/2 - 100});
             rotateCheckTimeout = setTimeout(load, 500);
         }
     }
@@ -571,6 +570,7 @@ $(function(){
         skipRotate = true;
         load();
     });
+    $("#play-image").css({"display": "block", "top": window.innerHeight/2 - 50, "left": window.innerWidth/2 - 100});
 
     if(!isMobile){
         $("#play-button").css({display: "none"});
@@ -578,21 +578,3 @@ $(function(){
 
     load();
 });
-
-/*
-    $('body').height( bgHeight + $(window).height() );
-    $(window).scroll(function() {
-        if ( $(window).scrollTop() >= ($('body').height() - $(window).height()) ) {
-            $(window).scrollTop(1);
-        }
-        else if ( $(window).scrollTop() == 0 ) {
-            $(window).scrollTop($('body').height() - $(window).height() -1);
-        }    
-    });
-*/
-
-/*
-$(window).resize(function() {
-    $('body').height( bgHeight + $(window).height() );
-});
-*/

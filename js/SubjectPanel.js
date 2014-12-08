@@ -130,17 +130,18 @@ function createSubjectPanel(renderer, scale){
         // brightnessContrastPass = new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: .5, brightness: -.1});
         // renderComposer.addPass(brightnessContrastPass);
         // renderComposer.addPass(new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: .5, brightness: .1 - (1-brightness)}));
-        renderComposer.addPass(new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: .9, brightness: -1}));
+        renderComposer.addPass(new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: 0, brightness: -.07}));
         // renderComposer.addPass(new THREE.ShaderPass(THREE.HueSaturationShader, {hue: .05, saturation: -.6}));
-        renderComposer.addPass(new THREE.ShaderPass(THREE.CopyShader)); // to line them up right
+        // renderComposer.addPass(new THREE.ShaderPass(THREE.CopyShader)); // to line them up right
         // renderComposer.addPass(new THREE.ShaderPass(THREE.FXAAShader)); // to line them up right
         renderComposer.addPass(new THREE.ShaderPass(THREE.FXAAShader, {resolution: new THREE.Vector2(1/width, 1/height)}));
+        // renderComposer.addPass(new THREE.ShaderPass(THREE.CopyShader)); // to line them up right
 
     }
 
     function render(){
-        renderer.render(renderScene, renderCamera, renderTarget);
-        // renderComposer.render();
+        // renderer.render(renderScene, renderCamera, renderTarget);
+        renderComposer.render();
 
     }
 

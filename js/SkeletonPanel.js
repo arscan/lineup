@@ -91,9 +91,9 @@ function createSkeletonPanel(renderer, scale){
 
             skeletonObject.children[0].geometry.mergeVertices();
             skeletonObject.children[0].geometry.computeVertexNormals();
-            skeletonObject.children[0].scale.set(scale,scale,scale);
+            skeletonObject.children[0].scale.set(scale * 1.25, scale * 1.25, scale * 1.25);
             skeletonObject.children[1].geometry.computeVertexNormals();
-            skeletonObject.children[1].scale.set(scale,scale,scale);
+            skeletonObject.children[1].scale.set(scale * 1.25, scale * 1.25, scale * 1.25);
 
             skeletonObject.children[0].material = skeletonMaterial;
             skeletonObject.children[1].material = organMaterial;
@@ -107,10 +107,10 @@ function createSkeletonPanel(renderer, scale){
 
     }
 
-    function render(time){
+    function render(time, mouseX){
 
         if(skeleton){
-            skeleton.rotation.y = -time/2;
+            skeleton.rotation.y = -time/2 + mouseX;
         }
         Shaders.skeleton.uniforms.currentTime.value = time -6;
         Shaders.organs.uniforms.currentTime.value = time -7;
