@@ -8,9 +8,7 @@ function createSubjectPanel(renderer, scale){
        renderScene,
        renderComposer,
        renderCamera,
-       clock,
-       video,
-       videoTexture,
+       videoMaterial,
        brightnessContrastPass;
 
    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat};
@@ -93,31 +91,33 @@ function createSubjectPanel(renderer, scale){
     }
 
     function init(){
-        clock = new THREE.Clock();
+        var videoTexture,
+            video;
 
         renderCamera = new THREE.OrthographicCamera(0, width-1, height, 0, -1000, 1000),
         renderScene = new THREE.Scene();
 
-        video = document.getElementById( 'video' );
 
         if(VIDEO_ENABLED){
+            video = document.getElementById( 'video' );
             videoTexture = new THREE.VideoTexture( video );
             videoTexture.minFilter = THREE.LinearFilter;
             videoTexture.magFilter = THREE.LinearFilter;
             videoTexture.format = THREE.RGBAFormat;
+
             subjectShader.uniforms.tDiffuse.value = videoTexture;
+            videoMaterial = new THREE.ShaderMaterial({
+                uniforms: subjectShader.uniforms,
+                vertexShader: subjectShader.vertexShader,
+                fragmentShader: subjectShader.fragmentShader,
+                transparent: true
+            });
         } else {
-            videoTexture = new THREE.Texture();
+            videoMaterial = new THREE.MeshBasicMaterial({transparent: true, map: THREE.ImageUtils.loadTexture("images/snapshot_with_error.png", undefined, LOADSYNC.register())});
 
         }
 
 
-        var videoMaterial = new THREE.ShaderMaterial({
-            uniforms: subjectShader.uniforms,
-            vertexShader: subjectShader.vertexShader,
-            fragmentShader: subjectShader.fragmentShader,
-            transparent: true
-        });
 
         var planegeometry = new THREE.PlaneBufferGeometry( width, height );
 

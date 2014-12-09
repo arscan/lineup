@@ -98,7 +98,7 @@ function createSkeletonPanel(renderer, scale){
             skeletonObject.children[0].material = skeletonMaterial;
             skeletonObject.children[1].material = organMaterial;
 
-            skeletonObject.position.set(width/2, 15, 0);
+            skeletonObject.position.set(width/2, 10 * scale, 0);
 
             skeleton = skeletonObject;
             panel.addToScene(skeletonObject);

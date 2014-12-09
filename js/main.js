@@ -355,7 +355,7 @@ function main(renderWidth){
 
         $("canvas").on('mousewheel', function(event){
             snapTween.stop();
-            carouselVelocity = event.deltaY / 5 + carouselVelocity;
+            carouselVelocity = Math.max(-.5, Math.min(.5, event.deltaY / 6 + carouselVelocity));
         });
         $("canvas").on('click', function(event){
             if(carouselVelocity === 0){
@@ -436,13 +436,16 @@ function main(renderWidth){
 
     function render(){
         requestAnimationFrame(render);
+        // setTimeout(render, 1000/5);
 
         var delta = clock.getDelta();
         var time = clock.getElapsedTime();
         var carouselMoving = Math.abs(carouselVelocity) > 0;
 
+        var numTicks = (delta / .01666)
+
         stats.update();
-        carouselVelocity *= (1 - delta);
+        carouselVelocity *= Math.pow(.95, numTicks);
 
         if(Math.abs(carouselVelocity) > .02){
             carouselLocation = (carouselLocation + (-1 * delta * carouselVelocity * screenScale)) % 1;
@@ -465,9 +468,13 @@ function main(renderWidth){
 
         }
 
+
+        if(!carouselMoving){
+            skeletonPanel.render(time, 2 * Math.PI * mouseX / renderWidth);
+            namePanel.render(time);
+        } 
+
         backgroundPanel.render(time);
-        skeletonPanel.render(time, 2 * Math.PI * mouseX / renderWidth);
-        namePanel.render(time);
         sharePanel.render(time);
         tinyPanel1.render(time);
         tinyPanel2.render(time);
@@ -520,6 +527,7 @@ $(function(){
     function load(){
         if(!isPortrait() || skipRotate){
             $("#please-rotate").css({"display": "none"});
+            $("#play-image").css({"display": "block", "top": window.innerHeight/2 - 50, "left": window.innerWidth/2 - 100});
             WebFont.load({
                 google: {
                     families: ['Roboto:500']
@@ -570,7 +578,6 @@ $(function(){
         skipRotate = true;
         load();
     });
-    $("#play-image").css({"display": "block", "top": window.innerHeight/2 - 50, "left": window.innerWidth/2 - 100});
 
     if(!isMobile){
         $("#play-button").css({display: "none"});
