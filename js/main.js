@@ -544,7 +544,7 @@ $(function(){
                 active: function(){
                     // unhide the laoding graphic
                     $("#cassette-bg").css({"visibility": "visible", "top": window.innerHeight/2 - 100 , "left": window.innerWidth/2 - 100});
-                    if(isMobile && !VIDEO_ENABLED){
+                    if(isMobile && VIDEO_ENABLED){
                         $("#play-button").click(function(){
                             $("#play-button").velocity({opacity: 0}, {complete: function(){
                                 $("#play-button").css({display: "none"});
