@@ -1,4 +1,4 @@
-var VIDEO_ENABLED = false;
+var VIDEO_ENABLED = window.location.href.indexOf('?DISABLE_VIDEO') === -1;
 
 function main(renderWidth){
 
@@ -476,12 +476,14 @@ function main(renderWidth){
         } 
 
         backgroundPanel.render(time);
-        sharePanel.render(time);
+
         tinyPanel1.render(time);
         tinyPanel2.render(time);
         tinyPanel3.render(time);
         tinyPanel4.render(time);
         tinyPanel5.render(time);
+        sharePanel.render(time);
+
 
         for(var i = 0; i < carouselPanels.length; i++){
             if(carouselPanels[i].quad.position.x < renderWidth + 200){
@@ -490,7 +492,13 @@ function main(renderWidth){
         }
 
         projectorPanel.render(time);
-        subjectPanel.render();
+
+        try {
+            subjectPanel.render();
+        } catch (ex){
+            console.log("GOT IT");
+            location.href='?DISABLE_VIDEO';
+        }
 
         renderer.render(scene, camera);
 
@@ -536,7 +544,7 @@ $(function(){
                 active: function(){
                     // unhide the laoding graphic
                     $("#cassette-bg").css({"visibility": "visible", "top": window.innerHeight/2 - 100 , "left": window.innerWidth/2 - 100});
-                    if(isMobile){
+                    if(isMobile && !VIDEO_ENABLED){
                         $("#play-button").click(function(){
                             $("#play-button").velocity({opacity: 0}, {complete: function(){
                                 $("#play-button").css({display: "none"});
@@ -544,11 +552,13 @@ $(function(){
                             setTimeout(function(){
                                 var video = $("#video")[0];
                                 if(typeof video.load == "function"){
-                                    VIDEO_ENABLED = true;
                                     video.src = "videos/video.mp4";
                                     video.setAttribute('crossorigin', 'anonymous');
                                     video.load();
                                     video.play();
+                                } else {
+                                    VIDEO_ENABLED = false;
+
                                 }
                                 main(getWidth());
                             }, 500);
@@ -556,12 +566,14 @@ $(function(){
                         });
                     } else {
                         var video = $("#video")[0];
-                        if(typeof video.load == "function"){
-                            VIDEO_ENABLED = true;
+                        if(typeof video.load == "function" && VIDEO_ENABLED){
                             video.src = "videos/video.mp4";
                             video.setAttribute('crossorigin', 'anonymous');
                             video.load();
                             video.play();
+                        } else {
+                            VIDEO_ENABLED = false;
+
                         }
                         main(getWidth());
                     }
@@ -580,7 +592,7 @@ $(function(){
         load();
     });
 
-    if(!isMobile){
+    if(!isMobile || !VIDEO_ENABLED){
         $("#play-button").css({display: "none"});
     }
 
