@@ -73,6 +73,12 @@ video {
    display: block;
 }
 
+#cassette-svg {
+    position: absolute;
+    width: 600px;
+
+}
+
 #loading-graphic {
     width: 100%;
     height: 100%;
