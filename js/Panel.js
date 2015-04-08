@@ -21,7 +21,7 @@ function createPanel(renderer, width, height, opts){
             "tDiffuse": { type: "t", value: null },
             "tAdd": { type: "t", value: null },
             "fOpacity": { type: "f", value: 1.0 },
-            "fOpacitySource": { type: "f", value: 1.0 },
+            "fOpacitySource": { type: "f", value: 1.0 }
         },
 
         vertexShader: [
@@ -50,7 +50,7 @@ function createPanel(renderer, width, height, opts){
 
                 "vec4 texel1 = texture2D( tDiffuse, vUv );",
                 "vec4 texel2 = texture2D( tAdd, vUv ) ;",
-                "gl_FragColor = texel1 * fOpacitySource  + texel2 * fOpacity * (1.0-texel1.a*fOpacitySource);",
+                "gl_FragColor = texel1 * fOpacitySource  + texel2 * fOpacity;",
             "}"
 
         ].join("\n")
@@ -92,23 +92,13 @@ function createPanel(renderer, width, height, opts){
         glowComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
         glowComposer.addPass(renderScenePass);
 
-        blurComposer = new THREE.EffectComposer(renderer, createRenderTarget(width/4, height/4));
-        blurComposer.addPass(renderScenePass);
-        blurComposer.addPass(new THREE.ShaderPass(THREE.HorizontalBlurShader, {h: BLURINESS / (width/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: BLURINESS / (height/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.HorizontalBlurShader, {h: (BLURINESS/4) / (width/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: (BLURINESS/4) / (height/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.HorizontalBlurShader, {h: (BLURINESS/4) / (width/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: (BLURINESS/4) / (height/4)}));
-        blurComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: (BLURINESS/4) / (height/4)}));
+        glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 4/width} ));
+        glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 4/height}));
+        glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 2/width} ));
+        glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 2/height}));
+        glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 1/width} ));
+        glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 1/height}));
 
-
-        if(!opts || opts['glow']){
-            glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 2/width} ));
-            glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 2/height}));
-            glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 1/width} ));
-            glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 1/height}));
-        }
 
         finalBlurPass = new THREE.ShaderPass(BlendShader);
         finalBlurPass.uniforms['tAdd'].value = glowComposer.writeBuffer;
@@ -119,6 +109,11 @@ function createPanel(renderer, width, height, opts){
     function render(time){
         
         finalBlurPass.uniforms['fOpacitySource'].value = blurLevel;
+
+        if(!opts || !opts['foregroundGlow']){
+            finalBlurPass.uniforms['fOpacity'].value = 1.0 - blurLevel;
+        }
+
         renderComposer.render();
         glowComposer.render();
         mainComposer.render();

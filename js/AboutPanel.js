@@ -1,11 +1,11 @@
 function createAboutPanel(renderer, scale){
 
-   var STANDARD_DIMENSIONS = {width: 350, height:350};
+   var STANDARD_DIMENSIONS = {width: 460, height:287};
 
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale;
 
-   var panel = createPanel(renderer, width, height);
+   var panel = createPanel(renderer, width, height, {foregroundGlow: true});
 
    var bodyPlane,
        scrollPlane;
@@ -81,38 +81,46 @@ function createAboutPanel(renderer, scale){
 
     function init(){
 
-        var titleCanvas= createTitleCanvas(); 
-        var titleTexture = new THREE.Texture(titleCanvas)
-        titleTexture.needsUpdate = true;
+        var onlineTexture = THREE.ImageUtils.loadTexture('images/online-comp.png', undefined, LOADSYNC.register() );
+        var onlineMaterial = new THREE.MeshBasicMaterial({map: onlineTexture, transparent: true});
+        var onlineGeometry = new THREE.PlaneBufferGeometry( 531*scale, 287*scale);
+        var onlinePlane = new THREE.Mesh( onlineGeometry, onlineMaterial );
+        onlinePlane.position.set(width/2, height/2, 0);
 
-        var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
-        var titleGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 109 * scale );
+        panel.addToScene( onlinePlane );
 
-        var plane = new THREE.Mesh( titleGeometry, titleMaterial );
-        plane.position.set(width/2 + 7, height-60*scale, 0);
-        panel.addToScene( plane );
+        // var titleCanvas= createTitleCanvas(); 
+        // var titleTexture = new THREE.Texture(titleCanvas)
+        // titleTexture.needsUpdate = true;
 
-        var bodyCanvas= createBodyCanvas(); 
-        var bodyTexture = new THREE.Texture(bodyCanvas)
-        bodyTexture.needsUpdate = true;
+        // var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
+        // var titleGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 109 * scale );
 
-        var bodyMaterial = new THREE.MeshBasicMaterial({map: bodyTexture, transparent: true});
-        var bodyGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 276 * scale );
+        // var plane = new THREE.Mesh( titleGeometry, titleMaterial );
+        // plane.position.set(width/2 + 7, height-60*scale, 0);
+        // panel.addToScene( plane );
 
-        bodyPlane = new THREE.Mesh( bodyGeometry, bodyMaterial );
-        bodyPlane.position.set(width/2 + 7, height - 33*scale - (276*scale)/2, 0);
-        panel.addToScene( bodyPlane );
+        // var bodyCanvas= createBodyCanvas(); 
+        // var bodyTexture = new THREE.Texture(bodyCanvas)
+        // bodyTexture.needsUpdate = true;
 
-        var bottomCanvas= createBottomCanvas(); 
-        var bottomTexture = new THREE.Texture(bottomCanvas)
-        bottomTexture.needsUpdate = true;
+        // var bodyMaterial = new THREE.MeshBasicMaterial({map: bodyTexture, transparent: true});
+        // var bodyGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 276 * scale );
 
-        var bottomMaterial = new THREE.MeshBasicMaterial({map: bottomTexture, transparent: true});
-        var bottomGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 130 * scale );
+        // bodyPlane = new THREE.Mesh( bodyGeometry, bodyMaterial );
+        // bodyPlane.position.set(width/2 + 7, height - 33*scale - (276*scale)/2, 0);
+        // panel.addToScene( bodyPlane );
 
-        bottomPlane = new THREE.Mesh( bottomGeometry, bottomMaterial );
-        bottomPlane.position.set(185 * scale, 70 * scale, 0);
-        panel.addToScene( bottomPlane );
+        // var bottomCanvas= createBottomCanvas(); 
+        // var bottomTexture = new THREE.Texture(bottomCanvas)
+        // bottomTexture.needsUpdate = true;
+
+        // var bottomMaterial = new THREE.MeshBasicMaterial({map: bottomTexture, transparent: true});
+        // var bottomGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 130 * scale );
+
+        // bottomPlane = new THREE.Mesh( bottomGeometry, bottomMaterial );
+        // bottomPlane.position.set(185 * scale, 70 * scale, 0);
+        // panel.addToScene( bottomPlane );
 
         // var scrollCanvas= createScrollCanvas(); 
         // var scrollTexture = new THREE.Texture(scrollCanvas)
