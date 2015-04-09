@@ -83,9 +83,9 @@ function createAboutPanel(renderer, scale){
 
         var onlineTexture = THREE.ImageUtils.loadTexture('images/online-comp.png', undefined, LOADSYNC.register() );
         var onlineMaterial = new THREE.MeshBasicMaterial({map: onlineTexture, transparent: true});
-        var onlineGeometry = new THREE.PlaneBufferGeometry( 531*scale, 287*scale);
+        var onlineGeometry = new THREE.PlaneBufferGeometry( 531*scale* .75, 287*scale * .75);
         var onlinePlane = new THREE.Mesh( onlineGeometry, onlineMaterial );
-        onlinePlane.position.set(width/2, height/2, 0);
+        onlinePlane.position.set(width/2 - 30, height/2, 0);
 
         panel.addToScene( onlinePlane );
 

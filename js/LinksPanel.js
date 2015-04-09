@@ -5,7 +5,8 @@ function createLinksPanel(renderer, scale){
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale;
 
-   var panel = createPanel(renderer, width, height);
+   var panel = createPanel(renderer, width, height),
+       renderCamera;
 
    var icons = [];
 
@@ -46,7 +47,27 @@ function createLinksPanel(renderer, scale){
 
    };
 
+   function createButton(path, url){
+
+        var iconTexture = THREE.ImageUtils.loadTexture(path, undefined, LOADSYNC.register() );
+        var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, transparent: true, blending: THREE.AdditiveBlending});
+        var iconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30*scale );
+        var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
+        // iconPlane.position.set(70*scale, 70*scale/2 + 4, 0);
+        iconPlane.position.set(0, 0, 0);
+        iconPlane._gotg_url =url;
+        icons.push(iconPlane);
+        panel.addToScene(iconPlane);
+
+   }
+
     function init(){
+
+        renderCamera = new THREE.PerspectiveCamera( 70, width / height, 1, 1000 );
+        renderCamera.position.z = 200;
+        renderCamera.position.y = 0;
+
+        panel.setCamera(renderCamera);
 
         var titleCanvas= createTitleCanvas(); 
         var titleTexture = new THREE.Texture(titleCanvas)
@@ -59,52 +80,12 @@ function createLinksPanel(renderer, scale){
         plane.position.set(width/2 + 7, height-40*scale, 0);
         // panel.addToScene( plane );
 
-        var twitterIconTexture = THREE.ImageUtils.loadTexture('images/twitter.png', undefined, LOADSYNC.register() );
-        var twitterIconMaterial = new THREE.MeshBasicMaterial({map: twitterIconTexture, transparent: true, blending: THREE.AdditiveBlending});
-        var twitterIconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30*scale );
-        var twitterIconPlane = new THREE.Mesh(twitterIconGeometry, twitterIconMaterial );
-        twitterIconPlane.position.set(30*scale, 30*scale/2 + 4, 0);
-        twitterIconPlane._gotg_url = "https://www.twitter.com/arscan/";
-        icons.push(twitterIconPlane);
-        panel.addToScene(twitterIconPlane);
-
-        var githubIconTexture = THREE.ImageUtils.loadTexture('images/github.png', undefined, LOADSYNC.register() );
-        var githubIconMaterial = new THREE.MeshBasicMaterial({map: githubIconTexture, transparent: true, blending: THREE.AdditiveBlending});
-        var githubIconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30 * scale);
-        var githubIconPlane = new THREE.Mesh(githubIconGeometry, githubIconMaterial );
-        githubIconPlane.position.set(width/2 + 30 * scale / 2 + 5, 30*scale/2 + 2, 0);
-        githubIconPlane._gotg_url = "https://www.github.com/arscan/";
-        icons.push(githubIconPlane);
-        panel.addToScene(githubIconPlane);
-
-        var linkedInIconTexture = THREE.ImageUtils.loadTexture('images/linkedin.png', undefined, LOADSYNC.register() );
-        var linkedInIconMaterial = new THREE.MeshBasicMaterial({map: linkedInIconTexture, transparent: true, blending: THREE.AdditiveBlending});
-        var linkedInIconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30 * scale);
-        var linkedInIconPlane = new THREE.Mesh(linkedInIconGeometry, linkedInIconMaterial );
-        linkedInIconPlane.position.set(width/2 + 30 * scale / 2 + 5, 100 + 30*scale/2 + 2, 0);
-        linkedInIconPlane._gotg_url = "https://www.linkedin.com/in/robscanlon/";
-        icons.push(linkedInIconPlane);
-        panel.addToScene(linkedInIconPlane);
-
-        var flickrIconTexture = THREE.ImageUtils.loadTexture('images/flickr.png', undefined, LOADSYNC.register() );
-        var flickrIconMaterial = new THREE.MeshBasicMaterial({map: flickrIconTexture, transparent: true, blending: THREE.AdditiveBlending});
-        var flickrIconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30 * scale);
-        var flickrIconPlane = new THREE.Mesh(flickrIconGeometry, flickrIconMaterial );
-        flickrIconPlane.position.set(width/4 + 20 * scale / 2 + 5, 100 + 30*scale/2 + 2, 0);
-        flickrIconPlane._gotg_url = "https://www.flickr.com/photos/45001949@N00/";
-        icons.push(flickrIconPlane);
-        panel.addToScene(flickrIconPlane);
-
-        var homeIconTexture = THREE.ImageUtils.loadTexture('images/home.png', undefined, LOADSYNC.register() );
-        var homeIconMaterial = new THREE.MeshBasicMaterial({map: homeIconTexture, transparent: true, blending: THREE.AdditiveBlending});
-        var homeIconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30 * scale);
-        var homeIconPlane = new THREE.Mesh(homeIconGeometry, homeIconMaterial );
-        homeIconPlane.position.set(width/2 + 20 * scale / 2 + 5, 200 + 30*scale/2 + 2, 0);
-        homeIconPlane._gotg_url = "http://www.robscanlon.com/";
-        icons.push(homeIconPlane);
-        panel.addToScene(homeIconPlane);
-
-
+        console.log('creating');
+        createButton('images/online-twitter.png', 'https://www.twitter.com/arscan/');
+        createButton('images/online-github.png', 'https://www.github.com/arscan/');
+        createButton('images/online-linkedin.png', 'https://www.linkedin.com/in/robscanlon/');
+        createButton('images/online-home.png', 'http://www.robscanlon.com/');
+        createButton('images/online-flickr.png', 'https://www.flickr.com/photos/45001949@N00');
 
     }
 
@@ -136,10 +117,10 @@ function createLinksPanel(renderer, scale){
         var newRadius = radius * (Math.sin(time) + 2.5) / 2.5;
         var newCenter = {x: center.x + Math.sin(time)*10, y: center.y + Math.cos(time)*10};
 
-        for(var i = 0; i< icons.length; i++){
-            icons[i].position.set(scale * (newCenter.x + newRadius * Math.sin((i / icons.length) * Math.PI * 2 + time)), scale * (newCenter.y + newRadius * Math.cos((i / icons.length) * Math.PI * 2 + time)), 1);
+        // for(var i = 0; i< icons.length; i++){
+        //     icons[i].position.set(scale * (newCenter.x + newRadius * Math.sin((i / icons.length) * Math.PI * 2 + time)), scale * (newCenter.y + newRadius * Math.cos((i / icons.length) * Math.PI * 2 + time)), 1);
 
-        }
+        // }
     }
 
     init();
