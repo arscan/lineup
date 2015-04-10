@@ -1,14 +1,15 @@
 function createLinksPanel(renderer, scale){
 
-   var STANDARD_DIMENSIONS = {width: 256, height:256};
+   var STANDARD_DIMENSIONS = {width: 460, height:300};
 
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale;
 
-   var panel = createPanel(renderer, width, height),
-       renderCamera;
+   var panel = createPanel(renderer, width, height, {foregroundGlow: true}),
+       renderCamera; 
 
-   var icons = [];
+   var icons = [],
+       sprites = [];
 
    function createTitleCanvas(){
 
@@ -47,18 +48,39 @@ function createLinksPanel(renderer, scale){
 
    };
 
-   function createButton(path, url){
+   function createButton(path, url, x, y, z){
 
         var iconTexture = THREE.ImageUtils.loadTexture(path, undefined, LOADSYNC.register() );
-        var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, transparent: true, blending: THREE.AdditiveBlending});
+        var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, transparent: true, depthTest: false});
         var iconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30*scale );
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         // iconPlane.position.set(70*scale, 70*scale/2 + 4, 0);
-        iconPlane.position.set(0, 0, 0);
+        iconPlane.position.set(x, y, z);
         iconPlane._gotg_url =url;
         icons.push(iconPlane);
+        sprites.push(iconPlane)
         panel.addToScene(iconPlane);
 
+   }
+
+   function createHollowNode(x,y,z, iconSize){
+        var iconTexture = THREE.ImageUtils.loadTexture("images/online-open-circle.png", undefined, LOADSYNC.register() );
+        var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
+        var iconGeometry = new THREE.PlaneBufferGeometry( iconSize * scale, iconSize * scale );
+        var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
+        iconPlane.position.set(x, y, z);
+        sprites.push(iconPlane)
+        panel.addToScene(iconPlane);
+   }
+
+   function createSolidNode(x,y,z, iconSize){
+        var iconTexture = THREE.ImageUtils.loadTexture("images/online-closed-circle.png", undefined, LOADSYNC.register() );
+        var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
+        var iconGeometry = new THREE.PlaneBufferGeometry( iconSize * scale, iconSize*scale );
+        var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
+        iconPlane.position.set(x, y, z);
+        sprites.push(iconPlane)
+        panel.addToScene(iconPlane);
    }
 
     function init(){
@@ -69,23 +91,114 @@ function createLinksPanel(renderer, scale){
 
         panel.setCamera(renderCamera);
 
-        var titleCanvas= createTitleCanvas(); 
-        var titleTexture = new THREE.Texture(titleCanvas)
-        titleTexture.needsUpdate = true;
+        // var titleCanvas= createTitleCanvas(); 
+        // var titleTexture = new THREE.Texture(titleCanvas)
+        // titleTexture.needsUpdate = true;
 
-        var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
-        var titleGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 80 * scale );
+        // var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
+        // var titleGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 80 * scale );
 
-        var plane = new THREE.Mesh( titleGeometry, titleMaterial );
-        plane.position.set(width/2 + 7, height-40*scale, 0);
-        // panel.addToScene( plane );
+        // var plane = new THREE.Mesh( titleGeometry, titleMaterial );
+        // plane.position.set(width/2 + 7, height-40*scale, 0);
+        // panel.addToScene(plane);
 
-        console.log('creating');
-        createButton('images/online-twitter.png', 'https://www.twitter.com/arscan/');
-        createButton('images/online-github.png', 'https://www.github.com/arscan/');
-        createButton('images/online-linkedin.png', 'https://www.linkedin.com/in/robscanlon/');
-        createButton('images/online-home.png', 'http://www.robscanlon.com/');
-        createButton('images/online-flickr.png', 'https://www.flickr.com/photos/45001949@N00');
+        var geometry = new THREE.PlaneGeometry( 1000, 1000);
+        var material = new THREE.MeshBasicMaterial( {color: 0x000000} );
+        var plane = new THREE.Mesh( geometry, material );
+        plane.position.set(0, 0, -100);
+        panel.addToScene( plane );
+
+        createButton('images/online-linkedin.png', 'https://www.linkedin.com/in/robscanlon/', -100, -30, 0);
+        createButton('images/online-twitter.png', 'https://www.twitter.com/arscan/', -50, 20, 0);
+        createButton('images/online-github.png', 'https://www.github.com/arscan/', 60, 30, 0);
+        createButton('images/online-flickr.png', 'https://www.flickr.com/photos/45001949@N00', 110, -30, 0);
+        createButton('images/online-home.png', 'http://www.robscanlon.com/', 130, 50, 0);
+
+        createSolidNode(-172, -3, -80, 12);
+        createSolidNode(-150, -25, -10, 12);
+        createHollowNode(-120, 25, 10, 12);
+        createHollowNode(-170, -5, 0, 12);
+        createHollowNode(-180, -45, -50, 12);
+        createHollowNode(-40, -40, 50, 10);
+        // createSolidNode(-5, -10, -15, 10);
+
+        createHollowNode(0, -20, -10, 15);
+        createHollowNode(0, -60, -20, 15);
+        createSolidNode(-30, -65, -40, 13);
+        createSolidNode(-10, -85, -40, 8);
+
+        createSolidNode(10, 30, 0, 13);
+        createHollowNode(-5, 8, -20, 10);
+        createHollowNode(-8, 58, -20, 11);
+        createHollowNode(-18, 38, -20, 9);
+        createHollowNode(18, 55, 0, 9);
+        createHollowNode(7, 75, 10, 9);
+
+        createSolidNode(50, -50, -20, 13);
+        createHollowNode(60, -60, 10, 9);
+
+        createSolidNode(120, 10, -10, 9);
+        createSolidNode(160, 10, -10, 11);
+        createHollowNode(170, -30, -20, 11);
+        createHollowNode(180, -30, 10, 11);
+        createHollowNode(200, 40, -20, 11);
+
+
+        var splineGeometry = new THREE.Geometry();
+        var splineMaterial = new THREE.LineBasicMaterial({color: 0x6FC0BA, linewidth: 3});
+
+        splineGeometry.vertices.push(new THREE.Vector3(-120, 25, 10));
+        splineGeometry.vertices.push(new THREE.Vector3(-172, -3, -80));
+        splineGeometry.vertices.push(new THREE.Vector3(-150, -25, -10));
+        splineGeometry.vertices.push(new THREE.Vector3(-170, -5, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(-150, -25, -10));
+        splineGeometry.vertices.push(new THREE.Vector3(-180, -45, -50));
+        splineGeometry.vertices.push(new THREE.Vector3(-150, -25, -10));
+        splineGeometry.vertices.push(new THREE.Vector3(-100, -30, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(-40, -40, 50));
+        splineGeometry.vertices.push(new THREE.Vector3(-100, -30, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(-50, 20, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(-172, -3, -80));
+        splineGeometry.vertices.push(new THREE.Vector3(-50, 20, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(0, -20, -10));
+        splineGeometry.vertices.push(new THREE.Vector3(0, -60, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(-30, -65, -40));
+        splineGeometry.vertices.push(new THREE.Vector3(0, -60, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(-10, -85, -40));
+        splineGeometry.vertices.push(new THREE.Vector3(0, -60, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(-50, 20, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(0, -20, -10));
+        splineGeometry.vertices.push(new THREE.Vector3(10, 30, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(-5, 8, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(10, 30, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(7, 75, 10));
+        splineGeometry.vertices.push(new THREE.Vector3(10, 30, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(-8, 58, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(-18, 38, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(-8, 58, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(18, 55, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(50, -50, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(60, -60, 10));
+        splineGeometry.vertices.push(new THREE.Vector3(50, -50, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(0, -60, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(50, -50, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(60, 30, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(120, 10, -10));
+        splineGeometry.vertices.push(new THREE.Vector3(130, 50, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(160, 10, -10));
+        splineGeometry.vertices.push(new THREE.Vector3(120, 10, -10));
+        splineGeometry.vertices.push(new THREE.Vector3(130, 50, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(170, -30, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(180, -30, 10));
+        splineGeometry.vertices.push(new THREE.Vector3(170, -30, -20));
+        splineGeometry.vertices.push(new THREE.Vector3(110, -30, 0));
+        splineGeometry.vertices.push(new THREE.Vector3(200, 40, -20));
+
+
+        splineGeometry.verticesNeedUpdate = true;
+        var splineLine = new THREE.Line(splineGeometry, splineMaterial);
+        panel.addToScene(splineLine);
+        console.log("done");
 
     }
 
@@ -114,8 +227,16 @@ function createLinksPanel(renderer, scale){
         var center = {x: 120, y: 160},
             radius = 50;
 
-        var newRadius = radius * (Math.sin(time) + 2.5) / 2.5;
-        var newCenter = {x: center.x + Math.sin(time)*10, y: center.y + Math.cos(time)*10};
+        renderCamera.position.y = Math.sin(Math.sin(time/3)) * 200;
+        renderCamera.position.z = Math.cos(Math.sin(time/3)) * 200;
+        renderCamera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        for(var i = 0; i< sprites.length; i++){
+            sprites[i].lookAt(new THREE.Vector3(sprites[i].position.x, renderCamera.position.y, renderCamera.position.z));
+        }
+
+        // var newRadius = radius * (Math.sin(time) + 2.5) / 2.5;
+        // var newCenter = {x: center.x + Math.sin(time)*10, y: center.y + Math.cos(time)*10};
 
         // for(var i = 0; i< icons.length; i++){
         //     icons[i].position.set(scale * (newCenter.x + newRadius * Math.sin((i / icons.length) * Math.PI * 2 + time)), scale * (newCenter.y + newRadius * Math.cos((i / icons.length) * Math.PI * 2 + time)), 1);
