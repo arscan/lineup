@@ -9,7 +9,11 @@ function createLinksPanel(renderer, scale){
        renderCamera; 
 
    var icons = [],
-       sprites = [];
+       sprites = [],
+       graph = new THREE.Group,
+       selection,
+       // raycaster = new THREE.Raycaster(),
+       mousePos;
 
    function createTitleCanvas(){
 
@@ -59,7 +63,8 @@ function createLinksPanel(renderer, scale){
         iconPlane._gotg_url =url;
         icons.push(iconPlane);
         sprites.push(iconPlane)
-        panel.addToScene(iconPlane);
+        graph.add(iconPlane);
+        // panel.addToScene(iconPlane);
 
    }
 
@@ -70,7 +75,8 @@ function createLinksPanel(renderer, scale){
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         iconPlane.position.set(x, y, z);
         sprites.push(iconPlane)
-        panel.addToScene(iconPlane);
+        // panel.addToScene(iconPlane);
+        graph.add(iconPlane);
    }
 
    function createSolidNode(x,y,z, iconSize){
@@ -79,14 +85,65 @@ function createLinksPanel(renderer, scale){
         var iconGeometry = new THREE.PlaneBufferGeometry( iconSize * scale, iconSize*scale );
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         iconPlane.position.set(x, y, z);
-        sprites.push(iconPlane)
+        sprites.push(iconPlane);
+        graph.add(iconPlane);
+
+        // panel.addToScene(iconPlane);
+   }
+
+   function createLegend(){
+        var iconTexture = THREE.ImageUtils.loadTexture("images/links-legend.png", undefined, LOADSYNC.register() );
+        var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
+        var iconGeometry = new THREE.PlaneBufferGeometry( 118 * scale, 58 * scale );
+        var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
+        iconPlane.position.set(150, -75, 50);
+        iconPlane.scale.set(.5, .5, .5);
         panel.addToScene(iconPlane);
+   }
+
+   function createHeader(){
+        var iconTexture = THREE.ImageUtils.loadTexture("images/links-header.png", undefined, LOADSYNC.register() );
+        var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
+        var iconGeometry = new THREE.PlaneBufferGeometry( 134 * scale, 32 * scale );
+        var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
+        iconPlane.position.set(-160, 70, 50);
+        iconPlane.scale.set(.5, .5, .5);
+        panel.addToScene(iconPlane);
+   }
+
+   function createSelectBackground(){
+        var iconTexture = THREE.ImageUtils.loadTexture("images/links-select-background.png", undefined, LOADSYNC.register() );
+        var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
+        var iconGeometry = new THREE.PlaneBufferGeometry( 163 * scale, 39 * scale );
+        var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
+        iconPlane.position.set(-150, -82, 50);
+        iconPlane.scale.set(.5, .5, .5);
+        panel.addToScene(iconPlane);
+   }
+
+   function createSelectForeground(icon){
+        var iconTexture = THREE.ImageUtils.loadTexture(icon, undefined, LOADSYNC.register() );
+        var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
+        var iconGeometry = new THREE.PlaneBufferGeometry( 131 * scale, 17 * scale );
+        var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
+        iconPlane.position.set(-161, -78, 50);
+        iconPlane.scale.set(.5, .5, .5);
+        panel.addToScene(iconPlane);
+
+        return function(on){
+            if(on){
+                iconPlane.position.z = 51;
+            } else {
+                console.log('set z to 49');
+                iconPlane.position.z = 49;
+            }
+        }
    }
 
     function init(){
 
         renderCamera = new THREE.PerspectiveCamera( 70, width / height, 1, 1000 );
-        renderCamera.position.z = 200;
+        renderCamera.position.z = 250;
         renderCamera.position.y = 0;
 
         panel.setCamera(renderCamera);
@@ -107,6 +164,29 @@ function createLinksPanel(renderer, scale){
         var plane = new THREE.Mesh( geometry, material );
         plane.position.set(0, 0, -100);
         panel.addToScene( plane );
+
+        createLegend();
+        createHeader();
+
+        createSelectBackground();
+
+        selection = {
+           setTwitter : createSelectForeground("images/links-text-twitter.png"),
+           setHome : createSelectForeground("images/links-text-home.png"),
+           setGithub : createSelectForeground("images/links-text-github.png"),
+           setFlickr : createSelectForeground("images/links-text-flickr.png"),
+           setLinkedIn : createSelectForeground("images/links-text-linkedin.png"),
+           setSelect : createSelectForeground("images/links-text-select.png"),
+           setCover: createSelectForeground("images/links-text-cover.png")
+        };
+
+        selection.setHome(false);
+        selection.setGithub(false);
+        selection.setFlickr(false);
+        selection.setLinkedIn(false);
+        selection.setTwitter(true);
+        selection.setSelect(false);
+
 
         createButton('images/online-linkedin.png', 'https://www.linkedin.com/in/robscanlon/', -100, -30, 0);
         createButton('images/online-twitter.png', 'https://www.twitter.com/arscan/', -50, 20, 0);
@@ -197,7 +277,9 @@ function createLinksPanel(renderer, scale){
 
         splineGeometry.verticesNeedUpdate = true;
         var splineLine = new THREE.Line(splineGeometry, splineMaterial);
-        panel.addToScene(splineLine);
+        graph.add(splineLine);
+        panel.addToScene(graph);
+        // panel.addToScene(splineLine);
         console.log("done");
 
     }
@@ -207,9 +289,19 @@ function createLinksPanel(renderer, scale){
             return false;
         }
 
-        var pos = panel.positionWithinPanel(x,y);
-        pos.y = pos.y;
+        mousePos = panel.positionWithinPanel(x,y);
 
+        // if(pos.y > 250){
+        //     selection.setHome(true);
+        //     selection.setTwitter(false);
+
+        // } else {
+        //     selection.setHome(false);
+        //     selection.setTwitter(true);
+
+        // }
+
+        /*
         for(var i = 0; i< icons.length; i++){
             if(pos.x > icons[i].position.x - 30 && pos.x < icons[i].position.x + 30
                     && pos.y > icons[i].position.y - 30 && pos.y < icons[i].position.y + 30){
@@ -218,22 +310,34 @@ function createLinksPanel(renderer, scale){
             }
 
         }
+        */
         return false;
     }
 
     function render(time){
         panel.render(time);
 
-        var center = {x: 120, y: 160},
+        var center = {x: 120, y: 160}
             radius = 50;
 
-        renderCamera.position.y = Math.sin(Math.sin(time/3)) * 200;
-        renderCamera.position.z = Math.cos(Math.sin(time/3)) * 200;
-        renderCamera.lookAt(new THREE.Vector3(0, 0, 0));
-
+        graph.rotation.x = time;
         for(var i = 0; i< sprites.length; i++){
-            sprites[i].lookAt(new THREE.Vector3(sprites[i].position.x, renderCamera.position.y, renderCamera.position.z));
+            sprites[i].rotation.x = -time;
+            // sprites[i].lookAt(new THREE.Vector3(sprites[i].position.x, graph.position.y, graph.position.z));
         }
+
+        // raycaster.setFromCamera( mousePos, renderCamera );
+
+        // var intersects = raycaster.intersectObjects( graph);
+        // console.log(intersects);
+
+        // graph.position.y = Math.sin(Math.sin(time/3)/2) * 210;
+        // graph.position.z = Math.cos(Math.sin(time/3)/2) * 210;
+        // renderCamera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        // for(var i = 0; i< sprites.length; i++){
+        //     sprites[i].lookAt(new THREE.Vector3(sprites[i].position.x, graph.position.y, graph.position.z));
+        // }
 
         // var newRadius = radius * (Math.sin(time) + 2.5) / 2.5;
         // var newCenter = {x: center.x + Math.sin(time)*10, y: center.y + Math.cos(time)*10};
