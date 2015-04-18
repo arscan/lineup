@@ -56,50 +56,18 @@ function createBackgroundPanel(renderer, width, height){
         pointLight2 = new THREE.PointLight( 0x479578, 0.75, 1500 );
         pointLight2.position.z = -480;
 
-
-        // pointLight4 = new THREE.PointLight( 0xfd5f00, 0.75, 1500 );
-        // pointLight4.position.z = -480;
-
-        // scene.add( pointLight1 );
-        // scene.add( pointLight2 );
-        // scene.add( pointLight3 );
-        // scene.add( pointLight4 );
-
-
-
         var ambient = 0x111111, diffuse = 0xbbbbbb, specular = 0x060606, shininess = 15;
 
-        var shader = THREE.ShaderLib[ "normalmap" ];
-        var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
-
-        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "images/background_normal.png", undefined, LOADSYNC.register() );
-        uniforms[ "uNormalScale" ].value.set( 0.8, 0.8 );
-
-        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "images/background_diffuse.png", undefined, LOADSYNC.register() );
-        // uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "obj/leeperrysmith/Map-SPEC.jpg" );
-
-        uniforms[ "enableAO" ].value = false;
-        uniforms[ "enableDiffuse" ].value = true;
-        uniforms[ "enableSpecular" ].value = false;
-
-        uniforms[ "diffuse" ].value.setHex( diffuse );
-        uniforms[ "specular" ].value.setHex( specular );
-        // uniforms[ "ambient" ].value.setHex( ambient );
-
-        uniforms[ "shininess" ].value = shininess;
-
-        // uniforms["uRepeat"].value =  new THREE.Vector2( 3, 1 );
-        // uniforms["uOffset"].value =  new THREE.Vector2( -.5, 0 );
-        // uniforms["offsetRepeat"].value =  new THREE.Vector4( 1,1,1, 1 );
-
-        // uniforms[ "wrapRGB" ].value.set( 0.575, 0.5, 0.5 );
-
-        var parameters = { fragmentShader: shader.fragmentShader, vertexShader: shader.vertexShader, uniforms: uniforms, lights: true };
-        var material = new THREE.ShaderMaterial( parameters );
+        var material = new THREE.MeshPhongMaterial( {
+           color: diffuse,
+           specular: specular,
+           shininess: shininess,
+           map: THREE.ImageUtils.loadTexture( "images/background_diffuse.png", undefined, LOADSYNC.register() ),
+           normalMap: THREE.ImageUtils.loadTexture( "images/background_normal.png", undefined, LOADSYNC.register() ),
+           normalScale: new THREE.Vector2( 0.8, 0.8 ),
+        } );
 
         var geometry= new THREE.PlaneBufferGeometry(800, 600);
-        // var material = new THREE.MeshPhongMaterial({map: THREE.ImageUtils.loadTexture( "normal_map.png")});
-        // uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "normal_map.png" );
 
         var spacerGeometry= new THREE.PlaneBufferGeometry(48, 1600);
         var spacerMaterial = new THREE.MeshPhongMaterial( { ambient: 0x000000, color: 0x9fa4b7, specular: 0x000000, shininess: 0, shading: THREE.FlatShading } );

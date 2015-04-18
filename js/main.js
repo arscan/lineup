@@ -38,7 +38,7 @@ function main(renderWidth){
         carouselPanels = [aboutPanel, linksPanel, photosPanel, projectsPanel],
         carouselLocation = 0,
         carouselGrabbed = false,
-        carouselCenter = { x: renderWidth - 50 * screenScale, y: 420 * screenScale},
+        carouselCenter = { x: renderWidth - 100 * screenScale, y: 420 * screenScale},
         carouselVelocity = 0,
         carouselSnapping = false,
 
@@ -51,9 +51,6 @@ function main(renderWidth){
         canvasTop = Math.max(0, (window.innerHeight - renderHeight)/2),
 
         clock = new THREE.Clock(false);
-
-    // hide the rotation graphic 
-    $("#please-rotate").css({display: "none"});
 
     /* add add position the main panels */
     scene.add(projectorPanel.quad);
@@ -290,8 +287,8 @@ function main(renderWidth){
         $(window).resize(function() {
             snapTween.stop();
             if($(window).width() > renderWidth * 1.3 || $(window).width() < renderWidth * .7){
-                location.href = '?';
-                return;
+                // location.href = '?';
+                // return;
             }
             $('canvas').width($(window).width());
             $('canvas').height($(window).width() / screenRatio);
@@ -515,14 +512,9 @@ function main(renderWidth){
 }
 
 $(function(){
-    var bgHeight = 1600, 
-        skipRotate = false,
-        rotateCheckTimeout = null,
-        isMobile = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-    function isPortrait(){
-        return ( isMobile && $(window).width() < $(window).height());
-    }
+    var bgHeight = 1600,
+        isMobile = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent),
+        loaded = false;
 
     function getWidth(){
         /* I don't know why my ipad doesn't want to display the right width, soooo lets hardcode! */
@@ -534,75 +526,65 @@ $(function(){
     }
 
     function load(){
-        if(!isPortrait() || skipRotate){
-            $("#please-rotate").css({"display": "none"});
-            $("#cassette-bg").css({"visibility":"hidden"});
-            $("#play-image").css({"display": "block", "top": window.innerHeight/2 - 50, "left": window.innerWidth/2});
-            $("#cassette-svg").css({"top": window.innerHeight/2 - 150, "left": window.innerWidth/2 - 300});
-            new Vivus('cassette-svg', {type: 'oneByOne', duration: 100, start: "autostart"}, function(){
-                WebFont.load({
-                    google: {
-                        families: ['Roboto:500']
-                    },
-                    active: function(){
-                        // unhide the laoding graphic
-                        $("#cassette-bg").css({"visibility": "visible", "top": window.innerHeight/2, "left": window.innerWidth/2});
-                        if(isMobile && VIDEO_ENABLED){
-                            $("#play-button").click(function(){
-                                $("#play-button").velocity({opacity: 0}, {complete: function(){
-                                    $("#play-button").css({display: "none"});
-                                }});
-                                setTimeout(function(){
-                                    var video = $("#video")[0];
-                                    if(typeof video.load == "function"){
-                                        video.src = "videos/video.mp4";
-                                        video.setAttribute('crossorigin', 'anonymous');
-                                        video.load();
-                                        video.play();
-                                    } else {
-                                        VIDEO_ENABLED = false;
+        loaded = true;
+        $("#cassette-bg").css({"visibility":"hidden"});
+        $("#play-image").css({"display": "block", "top": window.innerHeight/2 - 50, "left": window.innerWidth/2});
+        $("#cassette-svg").css({"top": window.innerHeight/2 - 150, "left": window.innerWidth/2 - 300});
+        new Vivus('cassette-svg', {type: 'oneByOne', duration: 100, start: "autostart"}, function(){
+            WebFont.load({
+                google: {
+                    families: ['Roboto:500']
+                },
+                active: function(){
+                    // unhide the laoding graphic
+                    $("#cassette-bg").css({"visibility": "visible", "top": window.innerHeight/2, "left": window.innerWidth/2});
+                    if(isMobile && VIDEO_ENABLED){
+                        $("#play-button").click(function(){
+                            $("#play-button").velocity({opacity: 0}, {complete: function(){
+                                $("#play-button").css({display: "none"});
+                            }});
+                            setTimeout(function(){
+                                var video = $("#video")[0];
+                                if(typeof video.load == "function"){
+                                    video.src = "videos/video.mp4";
+                                    video.setAttribute('crossorigin', 'anonymous');
+                                    video.load();
+                                    video.play();
+                                } else {
+                                    VIDEO_ENABLED = false;
 
-                                    }
-                                    main(getWidth());
-                                }, 500);
+                                }
+                                main(getWidth());
+                            }, 500);
 
-                            });
+                        });
+                    } else {
+                        var video = $("#video")[0];
+                        if(typeof video.load == "function" && VIDEO_ENABLED){
+                            video.src = "videos/video.mp4";
+                            video.setAttribute('crossorigin', 'anonymous');
+                            video.load();
+                            video.play();
                         } else {
-                            var video = $("#video")[0];
-                            if(typeof video.load == "function" && VIDEO_ENABLED){
-                                video.src = "videos/video.mp4";
-                                video.setAttribute('crossorigin', 'anonymous');
-                                video.load();
-                                video.play();
-                            } else {
-                                VIDEO_ENABLED = false;
+                            VIDEO_ENABLED = false;
 
-                            }
-                            main(getWidth());
                         }
+                        main(getWidth());
                     }
-                }); 
-            });
-        } else {
-            $("#please-rotate").css({"display": "block", "top": window.innerHeight/2 - 100, "left": window.innerWidth/2 - 100});
-            rotateCheckTimeout = setTimeout(load, 500);
-        }
+                }
+            }); 
+        });
     }
 
-
-    $("#please-rotate").click(function(){
-        clearTimeout(rotateCheckTimeout);
-        skipRotate = true;
-        load();
-    });
 
     if(!isMobile || !VIDEO_ENABLED){
         $("#play-button").css({display: "none"});
     }
 
-    load();
-
-    
-
-
+    PleaseRotate.onHide(function(){
+        console.log("hide");
+        if(!loaded){
+            load();
+        }
+    });
 });
