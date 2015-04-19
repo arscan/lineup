@@ -26,16 +26,15 @@ function main(renderWidth){
         tinyPanel3 = createTinyPanel3(renderer, screenScale),
         tinyPanel4 = createTinyPanel4(renderer, screenScale),
         tinyPanel5 = createTinyPanel5(renderer, screenScale),
-        aboutPanel = createAboutPanel(renderer, screenScale),
         projectsPanel = createProjectsPanel(renderer, screenScale),
         photosPanel = createPhotosPanel(renderer, screenScale),
         linksPanel = createLinksPanel(renderer, screenScale),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
-        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, tinyPanel4, tinyPanel5, sharePanel, photosPanel, projectsPanel, aboutPanel, linksPanel]),
+        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [namePanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, tinyPanel4, tinyPanel5, sharePanel, photosPanel, projectsPanel, linksPanel]),
         subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
-        carouselPanels = [aboutPanel, linksPanel, photosPanel, projectsPanel],
+        carouselPanels = [linksPanel, photosPanel, projectsPanel],
         carouselLocation = 0,
         carouselGrabbed = false,
         carouselCenter = { x: renderWidth - 100 * screenScale, y: 420 * screenScale},
@@ -433,9 +432,12 @@ function main(renderWidth){
     }
 
     function render(){
+
         requestAnimationFrame(render);
         // setTimeout(render, 1000/5);
 
+        var url = null;
+        var tmpUrl = null;
         var delta = clock.getDelta();
         var time = clock.getElapsedTime();
         var carouselMoving = Math.abs(carouselVelocity) > 0;
@@ -493,7 +495,6 @@ function main(renderWidth){
         try {
             subjectPanel.render();
         } catch (ex){
-            console.log("GOT IT");
             location.href='?DISABLE_VIDEO';
         }
 

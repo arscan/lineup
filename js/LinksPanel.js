@@ -12,8 +12,8 @@ function createLinksPanel(renderer, scale){
        sprites = [],
        graph = new THREE.Group,
        selection,
-       // raycaster = new THREE.Raycaster(),
-       mousePos;
+       highlight = null,
+       showSelectionText;
 
    function createTitleCanvas(){
 
@@ -52,20 +52,75 @@ function createLinksPanel(renderer, scale){
 
    };
 
-   function createButton(path, url, x, y, z){
+   function createPointCloud(){
+       var geometry = new THREE.Geometry();
 
+       var sprite = THREE.ImageUtils.loadTexture( "images/online-closed-circle.png", undefined, LOADSYNC.register() );
+
+       for ( i = 0; i < 50; i ++ ) {
+
+           var vertex = new THREE.Vector3();
+           vertex.x = 500 * Math.random() - 250;
+           vertex.y = 150 * Math.random() - 75;
+           vertex.z = 150 * Math.random() - 75;
+
+           geometry.vertices.push( vertex );
+
+       }
+
+       var material = new THREE.PointCloudMaterial( { opacity: .5, size: 2, map: sprite, transparent: true } );
+
+       var particles = new THREE.PointCloud( geometry, material );
+       graph.add( particles );
+   }
+
+   function createButton(path, url, x, y, z, setTextFn){
         var iconTexture = THREE.ImageUtils.loadTexture(path, undefined, LOADSYNC.register() );
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, transparent: true, depthTest: false});
         var iconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30*scale );
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
-        // iconPlane.position.set(70*scale, 70*scale/2 + 4, 0);
         iconPlane.position.set(x, y, z);
         iconPlane._gotg_url =url;
+        iconPlane._gotg_settext = setTextFn;
         icons.push(iconPlane);
         sprites.push(iconPlane)
         graph.add(iconPlane);
-        // panel.addToScene(iconPlane);
+   }
 
+   function createHighlight(){
+        var iconTexture = THREE.ImageUtils.loadTexture('images/online-highlighted.png', undefined, LOADSYNC.register() );
+        var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, transparent: true, depthTest: false, blending: THREE.AdditiveBlending});
+        var iconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30*scale );
+        var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
+        var currentObject = null;
+        iconPlane.position.set(-500, 0, 0);
+        panel.addToScene(iconPlane);
+
+        return {
+            setHighlight: function(object){
+                showSelectionText(false);
+                if(currentObject && currentObject.uuid != object.uuid){
+                    currentObject._gotg_settext(false);
+                }
+                currentObject = object;
+                currentObject._gotg_settext(true);
+            },
+            coverHighlight: function(rotation){
+                if(currentObject){
+                    iconPlane.position.set(currentObject.position.x, currentObject.position.y, currentObject.position.z);
+                    iconPlane.position.setFromMatrixPosition(currentObject.matrixWorld);
+                    iconPlane.position.z += 1;
+                }
+            },
+            clearHighlight: function(){
+                iconPlane.position.set(-500, 0, 0);
+                if(currentObject){
+                    currentObject._gotg_settext(false);
+                }
+                currentObject = null;
+
+            }
+        }
    }
 
    function createHollowNode(x,y,z, iconSize){
@@ -126,7 +181,7 @@ function createLinksPanel(renderer, scale){
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
         var iconGeometry = new THREE.PlaneBufferGeometry( 131 * scale, 17 * scale );
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
-        iconPlane.position.set(-161, -78, 50);
+        iconPlane.position.set(-161, -77, 49);
         iconPlane.scale.set(.5, .5, .5);
         panel.addToScene(iconPlane);
 
@@ -134,10 +189,20 @@ function createLinksPanel(renderer, scale){
             if(on){
                 iconPlane.position.z = 51;
             } else {
-                console.log('set z to 49');
                 iconPlane.position.z = 49;
             }
         }
+   }
+
+   function createClearForeground(){
+        var iconTexture = THREE.ImageUtils.loadTexture("images/links-text-cover.png", undefined, LOADSYNC.register() );
+        var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
+        var iconGeometry = new THREE.PlaneBufferGeometry( 131 * scale, 17 * scale );
+        var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
+        iconPlane.position.set(-161, -78, 50);
+        iconPlane.scale.set(.5, .5, .5);
+        panel.addToScene(iconPlane);
+
    }
 
     function init(){
@@ -148,59 +213,38 @@ function createLinksPanel(renderer, scale){
 
         panel.setCamera(renderCamera);
 
-        // var titleCanvas= createTitleCanvas(); 
-        // var titleTexture = new THREE.Texture(titleCanvas)
-        // titleTexture.needsUpdate = true;
-
-        // var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
-        // var titleGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 80 * scale );
-
-        // var plane = new THREE.Mesh( titleGeometry, titleMaterial );
-        // plane.position.set(width/2 + 7, height-40*scale, 0);
-        // panel.addToScene(plane);
-
         var geometry = new THREE.PlaneGeometry( 1000, 1000);
         var material = new THREE.MeshBasicMaterial( {color: 0x000000} );
         var plane = new THREE.Mesh( geometry, material );
         plane.position.set(0, 0, -100);
         panel.addToScene( plane );
 
+        createPointCloud();
         createLegend();
         createHeader();
 
         createSelectBackground();
 
-        selection = {
-           setTwitter : createSelectForeground("images/links-text-twitter.png"),
-           setHome : createSelectForeground("images/links-text-home.png"),
-           setGithub : createSelectForeground("images/links-text-github.png"),
-           setFlickr : createSelectForeground("images/links-text-flickr.png"),
-           setLinkedIn : createSelectForeground("images/links-text-linkedin.png"),
-           setSelect : createSelectForeground("images/links-text-select.png"),
-           setCover: createSelectForeground("images/links-text-cover.png")
-        };
+        showSelectionText = createSelectForeground("images/links-text-select.png");
+        showSelectionText(true);
 
-        selection.setHome(false);
-        selection.setGithub(false);
-        selection.setFlickr(false);
-        selection.setLinkedIn(false);
-        selection.setTwitter(true);
-        selection.setSelect(false);
+        createClearForeground();
 
+        createButton('images/online-linkedin.png', 'https://www.linkedin.com/in/robscanlon/', -100, -30, 0, createSelectForeground("images/links-text-linkedin.png"));
+        createButton('images/online-twitter.png', 'https://www.twitter.com/arscan/', -50, 20, 0, createSelectForeground("images/links-text-twitter.png"));
+        createButton('images/online-github.png', 'https://www.github.com/arscan/', 60, 30, 0, createSelectForeground("images/links-text-github.png"));
+        createButton('images/online-flickr.png', 'https://www.flickr.com/photos/45001949@N00', 110, -30, 0, createSelectForeground("images/links-text-flickr.png"));
+        createButton('images/online-home.png', 'http://www.robscanlon.com/', 130, 50, 0, createSelectForeground("images/links-text-home.png"));
 
-        createButton('images/online-linkedin.png', 'https://www.linkedin.com/in/robscanlon/', -100, -30, 0);
-        createButton('images/online-twitter.png', 'https://www.twitter.com/arscan/', -50, 20, 0);
-        createButton('images/online-github.png', 'https://www.github.com/arscan/', 60, 30, 0);
-        createButton('images/online-flickr.png', 'https://www.flickr.com/photos/45001949@N00', 110, -30, 0);
-        createButton('images/online-home.png', 'http://www.robscanlon.com/', 130, 50, 0);
+        highlight = createHighlight();
 
-        createSolidNode(-172, -3, -80, 12);
+        // createSolidNode(-172, -3, -80, 12);
+        createSolidNode(-142, 30, -20, 12);
         createSolidNode(-150, -25, -10, 12);
         createHollowNode(-120, 25, 10, 12);
         createHollowNode(-170, -5, 0, 12);
-        createHollowNode(-180, -45, -50, 12);
+        createHollowNode(-140, -25, -50, 12);
         createHollowNode(-40, -40, 50, 10);
-        // createSolidNode(-5, -10, -15, 10);
 
         createHollowNode(0, -20, -10, 15);
         createHollowNode(0, -60, -20, 15);
@@ -228,17 +272,17 @@ function createLinksPanel(renderer, scale){
         var splineMaterial = new THREE.LineBasicMaterial({color: 0x6FC0BA, linewidth: 3});
 
         splineGeometry.vertices.push(new THREE.Vector3(-120, 25, 10));
-        splineGeometry.vertices.push(new THREE.Vector3(-172, -3, -80));
+        splineGeometry.vertices.push(new THREE.Vector3(-142, 30, -20));
         splineGeometry.vertices.push(new THREE.Vector3(-150, -25, -10));
         splineGeometry.vertices.push(new THREE.Vector3(-170, -5, 0));
         splineGeometry.vertices.push(new THREE.Vector3(-150, -25, -10));
-        splineGeometry.vertices.push(new THREE.Vector3(-180, -45, -50));
+        splineGeometry.vertices.push(new THREE.Vector3(-140, -25, -50));
         splineGeometry.vertices.push(new THREE.Vector3(-150, -25, -10));
         splineGeometry.vertices.push(new THREE.Vector3(-100, -30, 0));
         splineGeometry.vertices.push(new THREE.Vector3(-40, -40, 50));
         splineGeometry.vertices.push(new THREE.Vector3(-100, -30, 0));
         splineGeometry.vertices.push(new THREE.Vector3(-50, 20, 0));
-        splineGeometry.vertices.push(new THREE.Vector3(-172, -3, -80));
+        splineGeometry.vertices.push(new THREE.Vector3(-142, 30, -20));
         splineGeometry.vertices.push(new THREE.Vector3(-50, 20, 0));
         splineGeometry.vertices.push(new THREE.Vector3(0, -20, -10));
         splineGeometry.vertices.push(new THREE.Vector3(0, -60, -20));
@@ -279,38 +323,33 @@ function createLinksPanel(renderer, scale){
         var splineLine = new THREE.Line(splineGeometry, splineMaterial);
         graph.add(splineLine);
         panel.addToScene(graph);
-        // panel.addToScene(splineLine);
-        console.log("done");
-
     }
 
     function checkBounds(x,y){
         if(!panel.checkBounds(x,y)){
+            mousePos = null;
             return false;
         }
+        var raycaster = new THREE.Raycaster(),
+            pos = panel.positionWithinPanel(x,y);
 
-        mousePos = panel.positionWithinPanel(x,y);
+        mousePos = new THREE.Vector2(2 * pos.x / width - 1, 2 * pos.y/height - 1);
+        raycaster.setFromCamera( mousePos, renderCamera );
 
-        // if(pos.y > 250){
-        //     selection.setHome(true);
-        //     selection.setTwitter(false);
+        var intersects = raycaster.intersectObjects( icons);
 
-        // } else {
-        //     selection.setHome(false);
-        //     selection.setTwitter(true);
-
-        // }
-
-        /*
-        for(var i = 0; i< icons.length; i++){
-            if(pos.x > icons[i].position.x - 30 && pos.x < icons[i].position.x + 30
-                    && pos.y > icons[i].position.y - 30 && pos.y < icons[i].position.y + 30){
-                return icons[i]._gotg_url;
-
+        if(intersects.length > 0){
+            for(var i = 0; i< intersects.length; i++){
+                if(intersects[i].object._gotg_url){
+                    highlight.setHighlight(intersects[0].object);
+                    return intersects[0].object._gotg_url;
+                }
             }
-
         }
-        */
+
+        highlight.clearHighlight();
+        showSelectionText(true);
+
         return false;
     }
 
@@ -320,32 +359,15 @@ function createLinksPanel(renderer, scale){
         var center = {x: 120, y: 160}
             radius = 50;
 
-        graph.rotation.x = time;
+        graph.rotation.x = time/2;
         for(var i = 0; i< sprites.length; i++){
-            sprites[i].rotation.x = -time;
-            // sprites[i].lookAt(new THREE.Vector3(sprites[i].position.x, graph.position.y, graph.position.z));
+            sprites[i].rotation.x = -time/2;
+        }
+        if(highlight){
+            highlight.coverHighlight(time/2);
+
         }
 
-        // raycaster.setFromCamera( mousePos, renderCamera );
-
-        // var intersects = raycaster.intersectObjects( graph);
-        // console.log(intersects);
-
-        // graph.position.y = Math.sin(Math.sin(time/3)/2) * 210;
-        // graph.position.z = Math.cos(Math.sin(time/3)/2) * 210;
-        // renderCamera.lookAt(new THREE.Vector3(0, 0, 0));
-
-        // for(var i = 0; i< sprites.length; i++){
-        //     sprites[i].lookAt(new THREE.Vector3(sprites[i].position.x, graph.position.y, graph.position.z));
-        // }
-
-        // var newRadius = radius * (Math.sin(time) + 2.5) / 2.5;
-        // var newCenter = {x: center.x + Math.sin(time)*10, y: center.y + Math.cos(time)*10};
-
-        // for(var i = 0; i< icons.length; i++){
-        //     icons[i].position.set(scale * (newCenter.x + newRadius * Math.sin((i / icons.length) * Math.PI * 2 + time)), scale * (newCenter.y + newRadius * Math.cos((i / icons.length) * Math.PI * 2 + time)), 1);
-
-        // }
     }
 
     init();
