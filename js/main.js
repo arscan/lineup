@@ -469,10 +469,8 @@ function main(renderWidth){
         }
 
 
-        if(!carouselMoving){
-            skeletonPanel.render(time, 2 * Math.PI * mouseX / renderWidth);
-            namePanel.render(time);
-        } 
+        skeletonPanel.render(time, 2 * Math.PI * mouseX / renderWidth);
+        namePanel.render(time);
 
         backgroundPanel.render(time);
 

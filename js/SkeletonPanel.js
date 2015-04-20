@@ -5,7 +5,7 @@ function createSkeletonPanel(renderer, scale){
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale;
     
-   var panel = createPanel(renderer, width, height, {fxaa: true, glow: true});
+   var panel = createPanel(renderer, width, height, {fxaa: true, foregroundGlow: true});
 
    var skeleton = null;
 
@@ -28,7 +28,7 @@ function createSkeletonPanel(renderer, scale){
                 'uniform float currentTime;',
                 'void main() {',
                 '  if(gl_FragCoord.y < currentTime * 150.0){',
-                '    float intensity = 1.2 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
+                '    float intensity = 1.1 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
                 '    vec3 outline = vec3( 0.0708, 0.714, 0.652 ) * pow( intensity, 1.0 );',
                 '    gl_FragColor = vec4(outline, intensity);',
                 ' } ',
@@ -74,7 +74,8 @@ function createSkeletonPanel(renderer, scale){
             fragmentShader: Shaders.skeleton.fragmentShader,
             shading: THREE.SmoothShading,
             blending: THREE.AdditiveBlending,
-            transparent: true
+            transparent: true,
+            depthTest: false
         });
 
         var organMaterial = new THREE.ShaderMaterial({
@@ -83,7 +84,8 @@ function createSkeletonPanel(renderer, scale){
             fragmentShader: Shaders.organs.fragmentShader,
             shading: THREE.SmoothShading,
             blending: THREE.AdditiveBlending,
-            transparent: true
+            transparent: true,
+            depthTest: false
         });
 
 
@@ -104,6 +106,12 @@ function createSkeletonPanel(renderer, scale){
             panel.addToScene(skeletonObject);
 
         }));
+
+        var backdropGeometry = new THREE.PlaneGeometry( 1000, 1000);
+        var backdropMaterial = new THREE.MeshBasicMaterial( {color: 0x000000} );
+        var plane = new THREE.Mesh( backdropGeometry, backdropMaterial );
+        plane.position.set(0, 0, -100);
+        panel.addToScene( plane );
 
     }
 
