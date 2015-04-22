@@ -15,43 +15,6 @@ function createLinksPanel(renderer, scale){
        highlight = null,
        showSelectionText;
 
-   function createTitleCanvas(){
-
-       return panel.renderToCanvas(512, 160, function(ctx){
-           ctx.strokeStyle="#fff";
-
-           ctx.font = "bold 28pt Roboto";
-           ctx.fillStyle = '#ff8d07';
-           ctx.fillText("LINKS", 25, 35);
-
-           ctx.lineWidth = 2.5;
-           ctx.strokeStyle="#fd2616";
-           ctx.moveTo(4,2);
-           ctx.lineTo(4,50);
-           ctx.lineTo(440,50);
-           ctx.stroke();
-
-           ctx.beginPath();
-           ctx.fillStyle='#ff8d07';
-           ctx.arc(4, 4, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.beginPath();
-           ctx.arc(4, 50, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.beginPath();
-           ctx.arc(380, 50, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.beginPath();
-           ctx.arc(440, 50, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-       });
-
-   };
-
    function createPointCloud(){
        var geometry = new THREE.Geometry();
 
@@ -77,7 +40,7 @@ function createLinksPanel(renderer, scale){
    function createButton(path, url, x, y, z, setTextFn){
         var iconTexture = THREE.ImageUtils.loadTexture(path, undefined, LOADSYNC.register() );
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, transparent: true, depthTest: false});
-        var iconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30*scale );
+        var iconGeometry = new THREE.PlaneBufferGeometry( 40, 40);
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         iconPlane.position.set(x, y, z);
         iconPlane._gotg_url =url;
@@ -90,7 +53,7 @@ function createLinksPanel(renderer, scale){
    function createHighlight(){
         var iconTexture = THREE.ImageUtils.loadTexture('images/online-highlighted.png', undefined, LOADSYNC.register() );
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, transparent: true, depthTest: false, blending: THREE.AdditiveBlending});
-        var iconGeometry = new THREE.PlaneBufferGeometry( 30 * scale, 30*scale );
+        var iconGeometry = new THREE.PlaneBufferGeometry( 40, 40);
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         var currentObject = null;
         iconPlane.position.set(-500, 0, 0);
@@ -126,7 +89,7 @@ function createLinksPanel(renderer, scale){
    function createHollowNode(x,y,z, iconSize){
         var iconTexture = THREE.ImageUtils.loadTexture("images/online-open-circle.png", undefined, LOADSYNC.register() );
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
-        var iconGeometry = new THREE.PlaneBufferGeometry( iconSize * scale, iconSize * scale );
+        var iconGeometry = new THREE.PlaneBufferGeometry( iconSize, iconSize);
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         iconPlane.position.set(x, y, z);
         sprites.push(iconPlane)
@@ -137,7 +100,7 @@ function createLinksPanel(renderer, scale){
    function createSolidNode(x,y,z, iconSize){
         var iconTexture = THREE.ImageUtils.loadTexture("images/online-closed-circle.png", undefined, LOADSYNC.register() );
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
-        var iconGeometry = new THREE.PlaneBufferGeometry( iconSize * scale, iconSize*scale );
+        var iconGeometry = new THREE.PlaneBufferGeometry( iconSize, iconSize);
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         iconPlane.position.set(x, y, z);
         sprites.push(iconPlane);
@@ -149,7 +112,7 @@ function createLinksPanel(renderer, scale){
    function createLegend(){
         var iconTexture = THREE.ImageUtils.loadTexture("images/links-legend.png", undefined, LOADSYNC.register() );
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
-        var iconGeometry = new THREE.PlaneBufferGeometry( 118 * scale, 58 * scale );
+        var iconGeometry = new THREE.PlaneBufferGeometry( 118 * 1.2, 58 * 1.2);
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         iconPlane.position.set(150, -75, 50);
         iconPlane.scale.set(.5, .5, .5);
@@ -159,7 +122,7 @@ function createLinksPanel(renderer, scale){
    function createHeader(){
         var iconTexture = THREE.ImageUtils.loadTexture("images/links-header.png", undefined, LOADSYNC.register() );
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
-        var iconGeometry = new THREE.PlaneBufferGeometry( 134 * scale, 32 * scale );
+        var iconGeometry = new THREE.PlaneBufferGeometry( 134 * 1.2, 32 * 1.2);
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         iconPlane.position.set(-160, 70, 50);
         iconPlane.scale.set(.5, .5, .5);
@@ -169,7 +132,7 @@ function createLinksPanel(renderer, scale){
    function createSelectBackground(){
         var iconTexture = THREE.ImageUtils.loadTexture("images/links-select-background.png", undefined, LOADSYNC.register() );
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
-        var iconGeometry = new THREE.PlaneBufferGeometry( 163 * scale, 39 * scale );
+        var iconGeometry = new THREE.PlaneBufferGeometry( 163 * 1.25, 39 * 1.25);
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         iconPlane.position.set(-150, -82, 50);
         iconPlane.scale.set(.5, .5, .5);
@@ -179,7 +142,7 @@ function createLinksPanel(renderer, scale){
    function createSelectForeground(icon){
         var iconTexture = THREE.ImageUtils.loadTexture(icon, undefined, LOADSYNC.register() );
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
-        var iconGeometry = new THREE.PlaneBufferGeometry( 131 * scale, 17 * scale );
+        var iconGeometry = new THREE.PlaneBufferGeometry( 131 * 1.2, 17 * 1.2);
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         iconPlane.position.set(-161, -77, 49);
         iconPlane.scale.set(.5, .5, .5);
@@ -197,7 +160,7 @@ function createLinksPanel(renderer, scale){
    function createClearForeground(){
         var iconTexture = THREE.ImageUtils.loadTexture("images/links-text-cover.png", undefined, LOADSYNC.register() );
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
-        var iconGeometry = new THREE.PlaneBufferGeometry( 131 * scale, 17 * scale );
+        var iconGeometry = new THREE.PlaneBufferGeometry( 131 * 1.2, 17 * 1.2);
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
         iconPlane.position.set(-161, -78, 50);
         iconPlane.scale.set(.5, .5, .5);
@@ -239,19 +202,19 @@ function createLinksPanel(renderer, scale){
         highlight = createHighlight();
 
         // createSolidNode(-172, -3, -80, 12);
-        createSolidNode(-142, 30, -20, 12);
-        createSolidNode(-150, -25, -10, 12);
-        createHollowNode(-120, 25, 10, 12);
-        createHollowNode(-170, -5, 0, 12);
-        createHollowNode(-140, -25, -50, 12);
-        createHollowNode(-40, -40, 50, 10);
+        createSolidNode(-142, 30, -20, 16);
+        createSolidNode(-150, -25, -10, 16);
+        createHollowNode(-120, 25, 10, 16);
+        createHollowNode(-170, -5, 0, 16);
+        createHollowNode(-140, -25, -50, 16);
+        createHollowNode(-40, -40, 50, 14);
 
         createHollowNode(0, -20, -10, 15);
         createHollowNode(0, -60, -20, 15);
         createSolidNode(-30, -65, -40, 13);
         createSolidNode(-10, -85, -40, 8);
 
-        createSolidNode(10, 30, 0, 13);
+        createSolidNode(10, 30, 0, 15);
         createHollowNode(-5, 8, -20, 10);
         createHollowNode(-8, 58, -20, 11);
         createHollowNode(-18, 38, -20, 9);
@@ -262,10 +225,10 @@ function createLinksPanel(renderer, scale){
         createHollowNode(60, -60, 10, 9);
 
         createSolidNode(120, 10, -10, 9);
-        createSolidNode(160, 10, -10, 11);
-        createHollowNode(170, -30, -20, 11);
-        createHollowNode(180, -30, 10, 11);
-        createHollowNode(200, 40, -20, 11);
+        createSolidNode(160, 10, -10, 15);
+        createHollowNode(170, -30, -20, 15);
+        createHollowNode(180, -30, 10, 15);
+        createHollowNode(200, 40, -20, 15);
 
 
         var splineGeometry = new THREE.Geometry();
