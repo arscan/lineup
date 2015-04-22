@@ -269,7 +269,7 @@ function createLinksPanel(renderer, scale){
 
 
         var splineGeometry = new THREE.Geometry();
-        var splineMaterial = new THREE.LineBasicMaterial({color: 0x6FC0BA, linewidth: 3});
+        var splineMaterial = new THREE.LineBasicMaterial({color: 0x6FC0BA, linewidth: 1});
 
         splineGeometry.vertices.push(new THREE.Vector3(-120, 25, 10));
         splineGeometry.vertices.push(new THREE.Vector3(-142, 30, -20));
