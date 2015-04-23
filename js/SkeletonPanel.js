@@ -118,7 +118,7 @@ function createSkeletonPanel(renderer, scale){
     function render(time, mouseX){
 
         if(skeleton){
-            skeleton.rotation.y = -time/2 + mouseX;
+            skeleton.rotation.y = -time/2; // + mouseX;
         }
         Shaders.skeleton.uniforms.currentTime.value = time -6;
         Shaders.organs.uniforms.currentTime.value = time -7;
