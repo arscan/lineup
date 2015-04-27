@@ -10,6 +10,30 @@ function createToolPanel(renderer, scale){
 
    var toolBGPlane;
 
+   function createTitlePlane(text){
+
+       var titleCanvas =  panel.renderToCanvas(512, 160, function(ctx){
+           ctx.strokeStyle="#fff";
+
+           ctx.font = "24pt Roboto";
+           ctx.fillStyle = '#ff8d07';
+           ctx.fillText(text, 50, 35);
+
+       });
+
+        var titleTexture = new THREE.Texture(titleCanvas)
+        titleTexture.needsUpdate = true;
+
+        var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
+        var titleGeometry = new THREE.PlaneBufferGeometry( 256, 80);
+
+        var plane = new THREE.Mesh( titleGeometry, titleMaterial );
+        plane.position.set(0, 90, 0);
+        // panel.addToScene( plane );
+        return plane;
+
+   };
+
     function init(){
         var toolTexture = THREE.ImageUtils.loadTexture('images/tools-foreground.png', undefined, LOADSYNC.register() );
         var toolMaterial = new THREE.MeshBasicMaterial({map: toolTexture, transparent: true});
@@ -38,9 +62,9 @@ function createToolPanel(renderer, scale){
         
         var selectorTexture = THREE.ImageUtils.loadTexture("images/tools-selector.png", undefined, LOADSYNC.register() );
         var selectorMaterial = new THREE.MeshBasicMaterial({map: selectorTexture, depthTest: false, transparent: true});
-        var selectorGeometry = new THREE.PlaneBufferGeometry( 310, 174);
+        var selectorGeometry = new THREE.PlaneBufferGeometry( 310, 200);
         var selectorPlane = new THREE.Mesh(selectorGeometry, selectorMaterial );
-        selectorPlane.position.set(210, height/2 - 40,5);
+        selectorPlane.position.set(210, height/2 - 24,5);
         selectorPlane.scale.set(.8, .8, .8);
         panel.addToScene(selectorPlane);
 
