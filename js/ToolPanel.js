@@ -37,35 +37,36 @@ function createToolPanel(renderer, scale){
     function init(){
         var toolTexture = THREE.ImageUtils.loadTexture('images/tools-foreground.png', undefined, LOADSYNC.register() );
         var toolMaterial = new THREE.MeshBasicMaterial({map: toolTexture, transparent: true});
-        var toolGeometry = new THREE.PlaneBufferGeometry( 512 * scale, 512 * scale);
+        var toolGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 350 * scale);
         toolPlane = new THREE.Mesh( toolGeometry, toolMaterial );
-        toolPlane.position.set(width/2 + 50, height/2 - 40, 1);
+        toolPlane.position.set(width/2 + 45 * scale, height/2 - 40 * scale, 1);
         toolPlane.scale.set(.6,.6,.6);
 
         panel.addToScene( toolPlane );
 
         var toolBGTexture = THREE.ImageUtils.loadTexture('images/tools-background.png', undefined, LOADSYNC.register() );
         var toolBGMaterial = new THREE.MeshBasicMaterial({map: toolBGTexture, transparent: true, opacity: .5});
-        var toolBGGeometry = new THREE.PlaneBufferGeometry( 512 * scale, 512 * scale);
+        var toolBGGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 350 * scale);
         toolBGPlane = new THREE.Mesh( toolBGGeometry, toolBGMaterial );
-        toolBGPlane.position.set(width/2 + 50, height/2 - 40, 0);
+        toolBGPlane.position.set(width/2 + 45 * scale, height/2 - 40 * scale, 0);
         toolBGPlane.scale.set(.6,.6,.6);
 
         panel.addToScene( toolBGPlane );
 
         var headerTexture = THREE.ImageUtils.loadTexture("images/tools-header.png", undefined, LOADSYNC.register() );
         var headerMaterial = new THREE.MeshBasicMaterial({map: headerTexture, depthTest: false, transparent: true});
-        var headerGeometry = new THREE.PlaneBufferGeometry( 134 * 1.2 * scale, 32 * 1.2 * scale);
+        var headerGeometry = new THREE.PlaneBufferGeometry( 134 * scale, 32 * scale);
         var headerPlane = new THREE.Mesh(headerGeometry, headerMaterial );
-        headerPlane.position.set(110, height - 100,5);
+        headerPlane.position.set(110 * scale, height - 100 * scale,5);
+        headerPlane.scale.set(.7,.7,.7);
         panel.addToScene(headerPlane);
         
         var selectorTexture = THREE.ImageUtils.loadTexture("images/tools-selector.png", undefined, LOADSYNC.register() );
         var selectorMaterial = new THREE.MeshBasicMaterial({map: selectorTexture, depthTest: false, transparent: true});
         var selectorGeometry = new THREE.PlaneBufferGeometry( 310 * scale, 200 * scale);
         var selectorPlane = new THREE.Mesh(selectorGeometry, selectorMaterial );
-        selectorPlane.position.set(210, height/2 - 24,5);
-        selectorPlane.scale.set(.8, .8, .8);
+        selectorPlane.position.set(160 * scale, height/2 - 32 * scale,5);
+        selectorPlane.scale.set(.5, .5, .5);
         panel.addToScene(selectorPlane);
 
     }
