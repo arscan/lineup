@@ -26,7 +26,7 @@ function createToolPanel(renderer, scale){
         plane.position.set(width/2, height/2, -1);
         panel.addToScene( plane );
    };
-   function createTextPlane(text, header){
+   function createTextPlane(text, header, highlighted){
 
        var titleCanvas =  panel.renderToCanvas(512, 160, function(ctx){
            ctx.strokeStyle="#fff";
@@ -37,6 +37,10 @@ function createToolPanel(renderer, scale){
            }
            // ctx.fillStyle = '#ff8d07';
            ctx.fillStyle = '#fff';
+
+           if(highlighted){
+               ctx.fillStyle = '#ffcc00';
+           }
            ctx.fillText(text, 50, 35);
 
        });
@@ -48,8 +52,6 @@ function createToolPanel(renderer, scale){
         var titleGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 80 * scale);
 
         var plane = new THREE.Mesh( titleGeometry, titleMaterial );
-        //plane.position.set(0, 90, 0);
-        // panel.addToScene( plane );
         return plane;
 
    };
@@ -96,8 +98,9 @@ function createToolPanel(renderer, scale){
             title.position.set(( 65 + 256/2) * scale, 60 * scale,10);
             panel.addToScene(title);
             for(var j = 0; j < menu[i][1].length; j++){
-
-
+                var unhighlightedTitle = createTextPlane(menu[i][1][j], false);
+                unhighlightedTitle.position.set(( 65 + 256/2) * scale, 88 * scale + 12*j,10);
+                panel.addToScene(unhighlightedTitle);
             }
         }
 
