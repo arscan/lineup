@@ -10,13 +10,33 @@ function createToolPanel(renderer, scale){
 
    var toolBGPlane;
 
-   function createTitlePlane(text){
+   var menu = [
+           ["Editors", ["Vim", "IntelliJ", "Visual Studio"]],
+           ["Languages", ["Javascript", "C#", "Java", "Go"]],
+           ["Platforms", ["Modern Web", "Android"]],
+           ["OS", ["Linux", "Windows"]]
+       ];
+
+   function createBackground(){
+
+        var material = new THREE.MeshBasicMaterial({transparent: false, color: 0x000000});
+        var geometry = new THREE.PlaneBufferGeometry( width, height);
+
+        var plane = new THREE.Mesh( geometry, material );
+        plane.position.set(width/2, height/2, -1);
+        panel.addToScene( plane );
+   };
+   function createTextPlane(text, header){
 
        var titleCanvas =  panel.renderToCanvas(512, 160, function(ctx){
            ctx.strokeStyle="#fff";
 
-           ctx.font = "24pt Roboto";
-           ctx.fillStyle = '#ff8d07';
+           ctx.font = "20pt Roboto";
+           if(header){
+               ctx.font = "30pt Roboto";
+           }
+           // ctx.fillStyle = '#ff8d07';
+           ctx.fillStyle = '#fff';
            ctx.fillText(text, 50, 35);
 
        });
@@ -25,16 +45,17 @@ function createToolPanel(renderer, scale){
         titleTexture.needsUpdate = true;
 
         var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
-        var titleGeometry = new THREE.PlaneBufferGeometry( 256, 80);
+        var titleGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 80 * scale);
 
         var plane = new THREE.Mesh( titleGeometry, titleMaterial );
-        plane.position.set(0, 90, 0);
+        //plane.position.set(0, 90, 0);
         // panel.addToScene( plane );
         return plane;
 
    };
 
     function init(){
+        createBackground();
         var toolTexture = THREE.ImageUtils.loadTexture('images/tools-foreground.png', undefined, LOADSYNC.register() );
         var toolMaterial = new THREE.MeshBasicMaterial({map: toolTexture, transparent: true});
         var toolGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 350 * scale);
@@ -45,7 +66,7 @@ function createToolPanel(renderer, scale){
         panel.addToScene( toolPlane );
 
         var toolBGTexture = THREE.ImageUtils.loadTexture('images/tools-background.png', undefined, LOADSYNC.register() );
-        var toolBGMaterial = new THREE.MeshBasicMaterial({map: toolBGTexture, transparent: true, opacity: .5});
+        var toolBGMaterial = new THREE.MeshBasicMaterial({map: toolBGTexture, transparent: true, opacity: .9});
         var toolBGGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 350 * scale);
         toolBGPlane = new THREE.Mesh( toolBGGeometry, toolBGMaterial );
         toolBGPlane.position.set(width/2 + 45 * scale, height/2 - 40 * scale, 0);
@@ -68,6 +89,17 @@ function createToolPanel(renderer, scale){
         selectorPlane.position.set(160 * scale, height/2 - 32 * scale,5);
         selectorPlane.scale.set(.5, .5, .5);
         panel.addToScene(selectorPlane);
+
+
+        for(var i =0; i< menu.length; i++){
+            var title = createTextPlane(menu[i][0], true);
+            title.position.set(( 65 + 256/2) * scale, 60 * scale,10);
+            panel.addToScene(title);
+            for(var j = 0; j < menu[i][1].length; j++){
+
+
+            }
+        }
 
     }
 
