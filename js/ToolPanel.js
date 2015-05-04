@@ -10,6 +10,11 @@ function createToolPanel(renderer, scale){
 
    var toolBGPlane;
 
+   var coverPlane;
+   
+   var started = false;
+
+
    var menu = [
            ["Editors", ["Vim", "IntelliJ", "Visual Studio"]],
            ["Languages", ["Javascript", "C#", "Java", "Go"]],
@@ -26,6 +31,20 @@ function createToolPanel(renderer, scale){
         plane.position.set(width/2, height/2, -1);
         panel.addToScene( plane );
    };
+
+   function createCoverPlane(){
+
+        var material = new THREE.MeshBasicMaterial({transparent: false, color: 0x000000});
+        var geometry = new THREE.PlaneBufferGeometry( 256 * scale, 100 * scale);
+
+        var plane = new THREE.Mesh( geometry, material );
+        plane.position.set(200 * scale, 110 * scale,2);
+        panel.addToScene( plane );
+        
+        return plane;
+
+   }
+
    function createTextPlane(text, header, highlighted){
 
        var titleCanvas =  panel.renderToCanvas(512, 160, function(ctx){
@@ -62,7 +81,7 @@ function createToolPanel(renderer, scale){
         var toolMaterial = new THREE.MeshBasicMaterial({map: toolTexture, transparent: true});
         var toolGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 350 * scale);
         toolPlane = new THREE.Mesh( toolGeometry, toolMaterial );
-        toolPlane.position.set(width/2 + 45 * scale, height/2 - 40 * scale, 1);
+        toolPlane.position.set(width/2 + 45 * scale, height/2 - 40 * scale, 3);
         toolPlane.scale.set(.6,.6,.6);
 
         panel.addToScene( toolPlane );
@@ -71,7 +90,7 @@ function createToolPanel(renderer, scale){
         var toolBGMaterial = new THREE.MeshBasicMaterial({map: toolBGTexture, transparent: true, opacity: .9});
         var toolBGGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 350 * scale);
         toolBGPlane = new THREE.Mesh( toolBGGeometry, toolBGMaterial );
-        toolBGPlane.position.set(width/2 + 45 * scale, height/2 - 40 * scale, 0);
+        toolBGPlane.position.set(width/2 + 45 * scale, height/2 - 40 * scale, 2);
         toolBGPlane.scale.set(.6,.6,.6);
 
         panel.addToScene( toolBGPlane );
@@ -95,20 +114,42 @@ function createToolPanel(renderer, scale){
 
         for(var i =0; i< menu.length; i++){
             var title = createTextPlane(menu[i][0], true);
-            title.position.set(( 65 + 256/2) * scale, 60 * scale,10);
+            title.position.set(( 65 + 256/2) * scale, 60 * scale,0);
             panel.addToScene(title);
             for(var j = 0; j < menu[i][1].length; j++){
                 var unhighlightedTitle = createTextPlane(menu[i][1][j], false);
-                unhighlightedTitle.position.set(( 65 + 256/2) * scale, 88 * scale + 12*j,10);
+                unhighlightedTitle.position.set(( 65 + 256/2) * scale, 88 * scale + 12*j,0);
                 panel.addToScene(unhighlightedTitle);
             }
         }
 
+        coverPlane = createCoverPlane();
+
     }
 
+
     function render(time){
-        toolPlane.rotation.z = time/2;
+        if(!started){
+            setTimeout(function(){
+            new TWEEN.Tween({x: 200 * scale})
+                .to({x:500 * scale}, 1000)
+                .onUpdate(function(){
+                    // coverPlane.position.set(0, 0, 0);
+                    // console.log(coverPlane);
+                    coverPlane.position.x = this.x;
+                    console.log(coverPlane.position.x);
+                })
+                .start();
+
+            }, 2000);
+
+            started = true;
+             
+
+        }
+
         panel.render(time);
+
     }
 
     init();
