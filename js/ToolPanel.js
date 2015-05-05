@@ -16,11 +16,19 @@ function createToolPanel(renderer, scale){
 
 
    var menu = [
-           ["Editors", ["Vim", "IntelliJ", "Visual Studio"]],
            ["Languages", ["Javascript", "C#", "Java", "Go"]],
+           ["Editors", ["Vim", "IntelliJ", "Visual Studio"]],
            ["Platforms", ["Modern Web", "Android"]],
            ["OS", ["Linux", "Windows"]]
        ];
+
+   var unpackedMenu = [];
+
+   for(var i = 0; i< menu.length; i++){
+       for(var j = 0; j < menu[i][1].length; j++){
+           unpackedMenu.push([menu[i][0], menu[i][1][j]]);
+       }
+   }
 
    function createBackground(){
 
@@ -130,21 +138,61 @@ function createToolPanel(renderer, scale){
 
     function render(time){
         if(!started){
-            setTimeout(function(){
-            new TWEEN.Tween({x: 200 * scale})
-                .to({x:500 * scale}, 1000)
-                .onUpdate(function(){
-                    // coverPlane.position.set(0, 0, 0);
-                    // console.log(coverPlane);
-                    coverPlane.position.x = this.x;
-                    console.log(coverPlane.position.x);
-                })
-                .start();
+            // var step1 = new TWEEN.Tween(coverPlane.position)
+            //     .to({x:500 * scale}, 1000);
+                // .onUpdate(function(){
+                //     coverPlane.position.x = this.x;
+                // });
+                //
+            // var step2 = new TWEEN.Tween(coverPlane.position)
+            //     .to({x:200 * scale}, 1000)
+            //     .delay(5000);
 
-            }, 2000);
+            // step1.chain(step2);
+            // step2.chain(step1);
+            // step1.start();
+
+            var rotation = [];
+            var sliders = [];
+            var previous = "";
+
+            for(var i = 0; i< unpackedMenu.length; i++){
+                rotation.push(new TWEEN.Tween(toolPlane.rotation)
+                   .delay(1000)
+                   .easing(TWEEN.Easing.Cubic.InOut)
+                   .to({z: 2 * (i + 1) * Math.PI / unpackedMenu.length}, 500));
+
+                if(previous != unpackedMenu[i][0]){
+                    sliders.push(new TWEEN.Tween(coverPlane.position)
+                            .to({x:500 * scale}, 500));
+                    sliders.push(new TWEEN.Tween(coverPlane.position)
+                            .delay(menu[(sliders.length-1) / 2][1].length * 1000)
+                            .to({x:200 * scale}, 500));
+                    if(sliders.length > 2){
+                        sliders[sliders.length - 3].chain(sliders[sliders.length - 2]);
+                    }
+
+                    sliders[sliders.length - 2].chain(sliders[sliders.length - 1]);
+
+                    previous = unpackedMenu[i][0];
+                }
+
+
+                if(i > 0){
+                    rotation[i - 1].chain(rotation[i]);
+                }
+            };
+
+            // rotation.push(new TWEEN.Tween(toolPlane.rotation).delay(1000).easing(TWEEN.Easing.Cubic.InOut).to({z:0}, 500));
+            // rotation[rotation.length - 2].chain(rotation[rotation.length - 1]);
+            rotation[rotation.length - 1].chain(rotation[0]);
+
+            rotation[0].start();
+
+            sliders[sliders.length - 1].chain(sliders[0]);
+            sliders[0].start();
 
             started = true;
-             
 
         }
 
