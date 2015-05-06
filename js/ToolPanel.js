@@ -14,6 +14,7 @@ function createToolPanel(renderer, scale){
    
    var started = false;
 
+   var menuPlanes = [];
 
    var menu = [
            ["Languages", ["Javascript", "C#", "Java", "Go"]],
@@ -21,14 +22,6 @@ function createToolPanel(renderer, scale){
            ["Platforms", ["Modern Web", "Android"]],
            ["OS", ["Linux", "Windows"]]
        ];
-
-   var unpackedMenu = [];
-
-   for(var i = 0; i< menu.length; i++){
-       for(var j = 0; j < menu[i][1].length; j++){
-           unpackedMenu.push([menu[i][0], menu[i][1][j]]);
-       }
-   }
 
    function createBackground(){
 
@@ -56,17 +49,17 @@ function createToolPanel(renderer, scale){
    function createTextPlane(text, header, highlighted){
 
        var titleCanvas =  panel.renderToCanvas(512, 160, function(ctx){
-           ctx.strokeStyle="#fff";
+           ctx.strokeStyle="#eac7df";
 
-           ctx.font = "20pt Roboto";
+           ctx.font = "18pt Roboto";
            if(header){
                ctx.font = "30pt Roboto";
            }
            // ctx.fillStyle = '#ff8d07';
-           ctx.fillStyle = '#fff';
+           ctx.fillStyle = '#eac7df';
 
            if(highlighted){
-               ctx.fillStyle = '#ffcc00';
+               ctx.fillStyle = '#eac7df';
            }
            ctx.fillText(text, 50, 35);
 
@@ -123,51 +116,77 @@ function createToolPanel(renderer, scale){
         for(var i =0; i< menu.length; i++){
             var title = createTextPlane(menu[i][0], true);
             title.position.set(( 65 + 256/2) * scale, 60 * scale,0);
+            if(i == 0){
+                title.position.x = -1000;
+                console.log("COUND DSF");
+            }
             panel.addToScene(title);
+
+
+            menuPlanes[i] = [];
+            menuPlanes[i].push(title);
             for(var j = 0; j < menu[i][1].length; j++){
                 var unhighlightedTitle = createTextPlane(menu[i][1][j], false);
-                unhighlightedTitle.position.set(( 65 + 256/2) * scale, 88 * scale + 12*j,0);
+                unhighlightedTitle.position.set(( 65 + 256/2) * scale, 88 * scale + 20*j,0);
+
+                if(i == 0){
+                    unhighlightedTitle.position.x = -1000;
+                }
+
                 panel.addToScene(unhighlightedTitle);
+
+                menuPlanes[i].push(unhighlightedTitle);
             }
         }
 
         coverPlane = createCoverPlane();
+
+        console.log(menuPlanes);
 
     }
 
 
     function render(time){
         if(!started){
-            // var step1 = new TWEEN.Tween(coverPlane.position)
-            //     .to({x:500 * scale}, 1000);
-                // .onUpdate(function(){
-                //     coverPlane.position.x = this.x;
-                // });
-                //
-            // var step2 = new TWEEN.Tween(coverPlane.position)
-            //     .to({x:200 * scale}, 1000)
-            //     .delay(5000);
-
-            // step1.chain(step2);
-            // step2.chain(step1);
-            // step1.start();
 
             var rotation = [];
             var sliders = [];
             var previous = "";
 
+            var unpackedMenu = [];
+
+            for(var i = 0; i< menu.length; i++){
+                for(var j = 0; j < menu[i][1].length; j++){
+                    unpackedMenu.push([menu[i][0], menu[i][1][j], i]);
+                }
+            }
+
             for(var i = 0; i< unpackedMenu.length; i++){
                 rotation.push(new TWEEN.Tween(toolPlane.rotation)
                    .delay(1000)
                    .easing(TWEEN.Easing.Cubic.InOut)
-                   .to({z: 2 * (i + 1) * Math.PI / unpackedMenu.length}, 500));
+                   .to({z: (2 * (i + 1) * Math.PI / unpackedMenu.length ) % (1.9999 * Math.PI)}, 500));
 
                 if(previous != unpackedMenu[i][0]){
                     sliders.push(new TWEEN.Tween(coverPlane.position)
-                            .to({x:500 * scale}, 500));
+                            .to({x:500 * scale}, 750));
                     sliders.push(new TWEEN.Tween(coverPlane.position)
-                            .delay(menu[(sliders.length-1) / 2][1].length * 1000)
-                            .to({x:200 * scale}, 500));
+                            .delay(menu[(sliders.length-1) / 2][1].length * 1500 - 1500)
+                            .onComplete(function(index){ return function(){
+                                console.log("DO SOME SWITCHING to " + index);
+                                for(var layer = 0; layer<menuPlanes.length; layer++){ 
+                                    for(var layerSub = 0; layerSub < menuPlanes[layer].length; layerSub++){
+                                        if(layer === index){
+                                            menuPlanes[layer][layerSub].position.x = (65 + 256/2) * scale;
+                                        } else {
+                                            menuPlanes[layer][layerSub].position.x = -1000;
+                                        }
+
+                                    }
+
+                                }
+                            }}((unpackedMenu[i][2] + 1) % menu.length))
+                            .to({x:200 * scale}, 750));
                     if(sliders.length > 2){
                         sliders[sliders.length - 3].chain(sliders[sliders.length - 2]);
                     }
