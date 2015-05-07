@@ -8,9 +8,9 @@ function createToolPanel(renderer, scale){
 
    var panel = createPanel(renderer, width, height, {foregroundGlow: true});
 
-   var toolBGPlane;
-
-   var coverPlane;
+   var toolBGPlane,
+       coverPlane,
+       pointerPlane;
    
    var started = false;
 
@@ -46,22 +46,25 @@ function createToolPanel(renderer, scale){
 
    }
 
-   function createTextPlane(text, header, highlighted){
+   function createTextPlane(text, header, orange){
 
        var titleCanvas =  panel.renderToCanvas(512, 160, function(ctx){
            ctx.strokeStyle="#eac7df";
 
+           ctx.fillStyle = '#eac7df';
            ctx.font = "18pt Roboto";
            if(header){
-               ctx.font = "30pt Roboto";
-           }
-           // ctx.fillStyle = '#ff8d07';
-           ctx.fillStyle = '#eac7df';
+               ctx.font = "26pt Roboto";
 
-           if(highlighted){
-               ctx.fillStyle = '#eac7df';
+               if(orange){
+                   ctx.fillStyle = '#f15a24';
+               } else {
+                   ctx.fillStyle = '#12b7a7';
+               }
            }
-           ctx.fillText(text, 50, 35);
+
+
+           ctx.fillText(text.toUpperCase(), 50, 35);
 
        });
 
@@ -83,7 +86,7 @@ function createToolPanel(renderer, scale){
         var toolGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 350 * scale);
         toolPlane = new THREE.Mesh( toolGeometry, toolMaterial );
         toolPlane.position.set(width/2 + 45 * scale, height/2 - 40 * scale, 3);
-        toolPlane.scale.set(.6,.6,.6);
+        toolPlane.scale.set(.5,.5,.5);
 
         panel.addToScene( toolPlane );
 
@@ -106,19 +109,25 @@ function createToolPanel(renderer, scale){
         
         var selectorTexture = THREE.ImageUtils.loadTexture("images/tools-selector.png", undefined, LOADSYNC.register() );
         var selectorMaterial = new THREE.MeshBasicMaterial({map: selectorTexture, depthTest: false, transparent: true});
-        var selectorGeometry = new THREE.PlaneBufferGeometry( 310 * scale, 200 * scale);
+        var selectorGeometry = new THREE.PlaneBufferGeometry( 392 * scale, 156 * scale);
         var selectorPlane = new THREE.Mesh(selectorGeometry, selectorMaterial );
-        selectorPlane.position.set(160 * scale, height/2 - 32 * scale,5);
+        selectorPlane.position.set(181 * scale, height/2 - 22 * scale,5);
         selectorPlane.scale.set(.5, .5, .5);
         panel.addToScene(selectorPlane);
 
-
+        var pointerTexture = THREE.ImageUtils.loadTexture("images/tools-pointer.png", undefined, LOADSYNC.register() );
+        var pointerMaterial = new THREE.MeshBasicMaterial({map: pointerTexture, depthTest: false, transparent: true});
+        var pointerGeometry = new THREE.PlaneBufferGeometry( 26 * scale, 30 * scale);
+        pointerPlane = new THREE.Mesh(pointerGeometry, pointerMaterial );
+        pointerPlane.position.set(75 * scale, 115 * scale,15);
+        pointerPlane.scale.set(.5, .5, .5);
+        panel.addToScene(pointerPlane);
+        
         for(var i =0; i< menu.length; i++){
-            var title = createTextPlane(menu[i][0], true);
+            var title = createTextPlane(menu[i][0], true, i%2);
             title.position.set(( 65 + 256/2) * scale, 60 * scale,0);
-            if(i == 0){
+            if(i != 0){
                 title.position.x = -1000;
-                console.log("COUND DSF");
             }
             panel.addToScene(title);
 
@@ -127,9 +136,9 @@ function createToolPanel(renderer, scale){
             menuPlanes[i].push(title);
             for(var j = 0; j < menu[i][1].length; j++){
                 var unhighlightedTitle = createTextPlane(menu[i][1][j], false);
-                unhighlightedTitle.position.set(( 65 + 256/2) * scale, 88 * scale + 20*j,0);
+                unhighlightedTitle.position.set(( 65 + 256/2) * scale, 88 * scale + 15*j * scale,0);
 
-                if(i == 0){
+                if(i != 0){
                     unhighlightedTitle.position.x = -1000;
                 }
 
@@ -141,8 +150,6 @@ function createToolPanel(renderer, scale){
 
         coverPlane = createCoverPlane();
 
-        console.log(menuPlanes);
-
     }
 
 
@@ -151,13 +158,14 @@ function createToolPanel(renderer, scale){
 
             var rotation = [];
             var sliders = [];
+            var pointers = [];
             var previous = "";
-
             var unpackedMenu = [];
+            var subIndex = 0;
 
             for(var i = 0; i< menu.length; i++){
                 for(var j = 0; j < menu[i][1].length; j++){
-                    unpackedMenu.push([menu[i][0], menu[i][1][j], i]);
+                    unpackedMenu.push([menu[i][0], menu[i][1][j], i, j]);
                 }
             }
 
@@ -166,6 +174,11 @@ function createToolPanel(renderer, scale){
                    .delay(1000)
                    .easing(TWEEN.Easing.Cubic.InOut)
                    .to({z: (2 * (i + 1) * Math.PI / unpackedMenu.length ) % (1.9999 * Math.PI)}, 500));
+
+                pointers.push(new TWEEN.Tween(pointerPlane.position)
+                        .to({y: 115 * scale + 15 * unpackedMenu[i][3] * scale}, 500)
+                        .easing(TWEEN.Easing.Cubic.InOut)
+                        .delay(1000));
 
                 if(previous != unpackedMenu[i][0]){
                     sliders.push(new TWEEN.Tween(coverPlane.position)
@@ -199,14 +212,17 @@ function createToolPanel(renderer, scale){
 
                 if(i > 0){
                     rotation[i - 1].chain(rotation[i]);
+                    pointers[i-1].chain(pointers[i]);
                 }
             };
 
             // rotation.push(new TWEEN.Tween(toolPlane.rotation).delay(1000).easing(TWEEN.Easing.Cubic.InOut).to({z:0}, 500));
             // rotation[rotation.length - 2].chain(rotation[rotation.length - 1]);
             rotation[rotation.length - 1].chain(rotation[0]);
+            pointers[pointers.length - 1].chain(pointers[0]);
 
             rotation[0].start();
+            pointers[1].start();
 
             sliders[sliders.length - 1].chain(sliders[0]);
             sliders[0].start();
