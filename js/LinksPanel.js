@@ -15,23 +15,23 @@ function createLinksPanel(renderer, scale){
        highlight = null,
        showSelectionText;
 
+
    function createPointCloud(){
        var geometry = new THREE.Geometry();
 
-       var sprite = THREE.ImageUtils.loadTexture( "images/online-closed-circle.png", undefined, LOADSYNC.register() );
+       var sprite = THREE.ImageUtils.loadTexture( "images/links-particles.png", undefined, LOADSYNC.register() );
 
-       for ( i = 0; i < 50; i ++ ) {
-
-           var vertex = new THREE.Vector3();
-           vertex.x = 500 * Math.random() - 250;
-           vertex.y = 150 * Math.random() - 75;
-           vertex.z = 150 * Math.random() - 75;
-
-           geometry.vertices.push( vertex );
-
+       for (var  i = -150; i < 200; i+=30  ) {
+           for(var j = -100; j< 100; j+=30){
+               for(var k = -100; k< 100; k+= 30){
+                   if(Math.sqrt(j * j + k * k) <= 90){
+                       geometry.vertices.push( new THREE.Vector3(i, j, k) );
+                   }
+               }
+           }
        }
 
-       var material = new THREE.PointCloudMaterial( { opacity: .5, size: 2, map: sprite, transparent: true } );
+       var material = new THREE.PointCloudMaterial( { opacity: .2, size: 3, map: sprite, transparent: true } );
 
        var particles = new THREE.PointCloud( geometry, material );
        graph.add( particles );
@@ -124,8 +124,8 @@ function createLinksPanel(renderer, scale){
         var iconMaterial = new THREE.MeshBasicMaterial({map: iconTexture, depthTest: false, transparent: true});
         var iconGeometry = new THREE.PlaneBufferGeometry( 134 * 1.2, 32 * 1.2);
         var iconPlane = new THREE.Mesh(iconGeometry, iconMaterial );
-        iconPlane.position.set(-160, 70, 50);
-        iconPlane.scale.set(.5, .5, .5);
+        iconPlane.position.set(-130, 70, 50);
+        iconPlane.scale.set(.8, .8, .8);
         panel.addToScene(iconPlane);
    }
 
@@ -286,6 +286,36 @@ function createLinksPanel(renderer, scale){
         var splineLine = new THREE.Line(splineGeometry, splineMaterial);
         graph.add(splineLine);
         panel.addToScene(graph);
+
+
+        var rotation = [];
+
+        rotation.push(new TWEEN.Tween(graph.rotation)
+                .delay(1000)
+                .easing(TWEEN.Easing.Cubic.InOut)
+                .onUpdate(function(){
+                    for(var i = 0; i< sprites.length; i++){
+                        sprites[i].rotation.x = -this.x;
+                    }
+                })
+                .to({x: Math.PI / 4 }));
+        rotation.push(new TWEEN.Tween(graph.rotation)
+                .easing(TWEEN.Easing.Cubic.InOut)
+                .onUpdate(function(){
+                    for(var i = 0; i< sprites.length; i++){
+                        sprites[i].rotation.x = -this.x;
+                    }
+                })
+                .delay(1000)
+                .to({x: -Math.PI/40}));
+
+        for(var i = 0; i< rotation.length; i++){
+            if(i > 0){
+                rotation[i-1].chain(rotation[i]);
+            }
+        }
+        rotation[rotation.length - 1].chain(rotation[0]);
+        rotation[0].start();
     }
 
     function checkBounds(x,y){
@@ -322,10 +352,10 @@ function createLinksPanel(renderer, scale){
         var center = {x: 120, y: 160}
             radius = 50;
 
-        graph.rotation.x = time/2;
-        for(var i = 0; i< sprites.length; i++){
-            sprites[i].rotation.x = -time/2;
-        }
+        // graph.rotation.x = time/2;
+        // for(var i = 0; i< sprites.length; i++){
+        //     sprites[i].rotation.x = -time/2;
+        // }
         if(highlight){
             highlight.coverHighlight(time/2);
 
