@@ -10,7 +10,7 @@ function createNamePanel(renderer, scale){
        textureIndex = 0,
        lastTextStartTime = 0;
 
-   var panel = createPanel(renderer, width, height);
+   var panel = createPanel(renderer, width, height, {foregroundGlow: true});
 
    var textHeader = "SCANLON";
    var textSubject = "ROB SCANLON";
@@ -204,6 +204,12 @@ function createNamePanel(renderer, scale){
     };
 
     function init(){
+
+        var backgroundGeometry = new THREE.PlaneGeometry( 2000, 2000);
+        var backgroundMaterial = new THREE.MeshBasicMaterial( {color: 0x000000} );
+        var backgroundPlane = new THREE.Mesh( backgroundGeometry, backgroundMaterial );
+        backgroundPlane.position.set(0, 0, -100);
+        panel.addToScene( backgroundPlane );
 
         for(var i = 0; i< textValues.length; i++){
             textures.push(new THREE.Texture(createNameCanvas(textHeader, textSubject, textValues[i])));
