@@ -104,7 +104,6 @@ function createToolPanel(renderer, scale){
         var headerGeometry = new THREE.PlaneBufferGeometry( 134 * scale, 32 * scale);
         var headerPlane = new THREE.Mesh(headerGeometry, headerMaterial );
         headerPlane.position.set(110 * scale, height - 100 * scale,5);
-        headerPlane.scale.set(.7,.7,.7);
         panel.addToScene(headerPlane);
         
         var selectorTexture = THREE.ImageUtils.loadTexture("images/tools-selector.png", undefined, LOADSYNC.register() );
