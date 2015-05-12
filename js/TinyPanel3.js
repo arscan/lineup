@@ -5,7 +5,7 @@ function createTinyPanel3(renderer, scale){
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale;
 
-   var panel = createPanel(renderer, width, height);
+   var panel = createPanel(renderer, width, height, {foregroundGlow: true});
 
    var maskMeshFull,
        maskMeshLine;
