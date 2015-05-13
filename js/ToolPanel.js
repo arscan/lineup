@@ -85,7 +85,7 @@ function createToolPanel(renderer, scale){
         var toolMaterial = new THREE.MeshBasicMaterial({map: toolTexture, transparent: true});
         var toolGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 350 * scale);
         toolPlane = new THREE.Mesh( toolGeometry, toolMaterial );
-        toolPlane.position.set(width/2 + 45 * scale, height/2 - 40 * scale, 3);
+        toolPlane.position.set(width/2 + 05 * scale, height/2 - 40 * scale, 3);
         toolPlane.scale.set(.5,.5,.5);
 
         panel.addToScene( toolPlane );
@@ -94,7 +94,7 @@ function createToolPanel(renderer, scale){
         var toolBGMaterial = new THREE.MeshBasicMaterial({map: toolBGTexture, transparent: true, opacity: .9});
         var toolBGGeometry = new THREE.PlaneBufferGeometry( 350 * scale, 350 * scale);
         toolBGPlane = new THREE.Mesh( toolBGGeometry, toolBGMaterial );
-        toolBGPlane.position.set(width/2 + 45 * scale, height/2 - 40 * scale, 2);
+        toolBGPlane.position.set(width/2 + 05 * scale, height/2 - 40 * scale, 2);
         toolBGPlane.scale.set(.6,.6,.6);
 
         panel.addToScene( toolBGPlane );
@@ -103,14 +103,14 @@ function createToolPanel(renderer, scale){
         var headerMaterial = new THREE.MeshBasicMaterial({map: headerTexture, depthTest: false, transparent: true});
         var headerGeometry = new THREE.PlaneBufferGeometry( 134 * scale, 32 * scale);
         var headerPlane = new THREE.Mesh(headerGeometry, headerMaterial );
-        headerPlane.position.set(110 * scale, height - 100 * scale,5);
+        headerPlane.position.set(108 * scale, height - 90 * scale,5);
         panel.addToScene(headerPlane);
         
         var selectorTexture = THREE.ImageUtils.loadTexture("images/tools-selector.png", undefined, LOADSYNC.register() );
         var selectorMaterial = new THREE.MeshBasicMaterial({map: selectorTexture, depthTest: false, transparent: true});
         var selectorGeometry = new THREE.PlaneBufferGeometry( 392 * scale, 156 * scale);
         var selectorPlane = new THREE.Mesh(selectorGeometry, selectorMaterial );
-        selectorPlane.position.set(181 * scale, height/2 - 22 * scale,5);
+        selectorPlane.position.set(141 * scale, height/2 - 22 * scale,5);
         selectorPlane.scale.set(.5, .5, .5);
         panel.addToScene(selectorPlane);
 
@@ -118,13 +118,13 @@ function createToolPanel(renderer, scale){
         var pointerMaterial = new THREE.MeshBasicMaterial({map: pointerTexture, depthTest: false, transparent: true});
         var pointerGeometry = new THREE.PlaneBufferGeometry( 26 * scale, 30 * scale);
         pointerPlane = new THREE.Mesh(pointerGeometry, pointerMaterial );
-        pointerPlane.position.set(75 * scale, 115 * scale,15);
+        pointerPlane.position.set(35 * scale, 115 * scale,15);
         pointerPlane.scale.set(.5, .5, .5);
         panel.addToScene(pointerPlane);
         
         for(var i =0; i< menu.length; i++){
             var title = createTextPlane(menu[i][0], true, i%2);
-            title.position.set(( 65 + 256/2) * scale, 60 * scale,0);
+            title.position.set(( 25 + 256/2) * scale, 60 * scale,0);
             if(i != 0){
                 title.position.x = -1000;
             }
@@ -135,7 +135,7 @@ function createToolPanel(renderer, scale){
             menuPlanes[i].push(title);
             for(var j = 0; j < menu[i][1].length; j++){
                 var unhighlightedTitle = createTextPlane(menu[i][1][j], false);
-                unhighlightedTitle.position.set(( 65 + 256/2) * scale, 88 * scale + 15*j * scale,0);
+                unhighlightedTitle.position.set(( 25 + 256/2) * scale, 88 * scale + 15*j * scale,0);
 
                 if(i != 0){
                     unhighlightedTitle.position.x = -1000;
@@ -185,11 +185,10 @@ function createToolPanel(renderer, scale){
                     sliders.push(new TWEEN.Tween(coverPlane.position)
                             .delay(menu[(sliders.length-1) / 2][1].length * 1500 - 1500)
                             .onComplete(function(index){ return function(){
-                                console.log("DO SOME SWITCHING to " + index);
                                 for(var layer = 0; layer<menuPlanes.length; layer++){ 
                                     for(var layerSub = 0; layerSub < menuPlanes[layer].length; layerSub++){
                                         if(layer === index){
-                                            menuPlanes[layer][layerSub].position.x = (65 + 256/2) * scale;
+                                            menuPlanes[layer][layerSub].position.x = (25 + 256/2) * scale;
                                         } else {
                                             menuPlanes[layer][layerSub].position.x = -1000;
                                         }
