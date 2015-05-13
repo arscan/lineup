@@ -121,6 +121,23 @@ function createToolPanel(renderer, scale){
         pointerPlane.position.set(35 * scale, 115 * scale,15);
         pointerPlane.scale.set(.5, .5, .5);
         panel.addToScene(pointerPlane);
+
+        var bottomTexture = THREE.ImageUtils.loadTexture("images/tools-bottom.png", undefined, LOADSYNC.register() );
+        var bottomMaterial = new THREE.MeshBasicMaterial({map: bottomTexture, depthTest: false, transparent: true});
+        var bottomGeometry = new THREE.PlaneBufferGeometry( 234 * scale, 45 * scale);
+        var bottomPlane = new THREE.Mesh(bottomGeometry, bottomMaterial );
+        bottomPlane.position.set(100 * scale, 55 * scale,5);
+        bottomPlane.scale.set(.5, .5, .5);
+        panel.addToScene(bottomPlane);
+
+        var rightTexture = THREE.ImageUtils.loadTexture("images/tools-right.png", undefined, LOADSYNC.register() );
+        rightTexture.minFilter = THREE.LinearFilter;
+        var rightMaterial = new THREE.MeshBasicMaterial({map: rightTexture, depthTest: false, transparent: true});
+        var rightGeometry = new THREE.PlaneBufferGeometry( 149 * scale, 201 * scale);
+        var rightPlane = new THREE.Mesh(rightGeometry, rightMaterial );
+        rightPlane.position.set(360 * scale, 125 * scale,5);
+        rightPlane.scale.set(.5, .5, .5);
+        panel.addToScene(rightPlane);
         
         for(var i =0; i< menu.length; i++){
             var title = createTextPlane(menu[i][0], true, i%2);
