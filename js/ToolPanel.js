@@ -133,7 +133,7 @@ function createToolPanel(renderer, scale){
         var rightTexture = THREE.ImageUtils.loadTexture("images/tools-right.png", undefined, LOADSYNC.register() );
         rightTexture.minFilter = THREE.LinearFilter;
         var rightMaterial = new THREE.MeshBasicMaterial({map: rightTexture, depthTest: false, transparent: true});
-        var rightGeometry = new THREE.PlaneBufferGeometry( 149 * scale, 201 * scale);
+        var rightGeometry = new THREE.PlaneBufferGeometry( 149 * scale, 270 * scale);
         var rightPlane = new THREE.Mesh(rightGeometry, rightMaterial );
         rightPlane.position.set(360 * scale, 125 * scale,5);
         rightPlane.scale.set(.5, .5, .5);
