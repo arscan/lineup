@@ -1,76 +1,51 @@
 function createPhotosPanel(renderer, scale){
 
-   var STANDARD_DIMENSIONS = {width: 256, height:256};
+   var STANDARD_DIMENSIONS = {width: 460, height:287};
 
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale;
 
-   var panel = createPanel(renderer, width, height);
+   var panel = createPanel(renderer, width, height, {foregroundGlow: false});
 
    var icons = [];
 
    var picHeight = 70;
+   function createBackground(){
 
-   function createTitleCanvas(){
+        var material = new THREE.MeshBasicMaterial({transparent: false, color: 0x000000});
+        var geometry = new THREE.PlaneBufferGeometry( width, height);
 
-       return panel.renderToCanvas(512, 160, function(ctx){
-           ctx.strokeStyle="#fff";
-
-           ctx.font = "24pt Roboto";
-           ctx.fillStyle = '#ff8d07';
-           ctx.fillText("RECENT PHOTOS", 50, 35);
-
-           ctx.lineWidth = 2.5;
-           ctx.strokeStyle="#fd5f00";
-           ctx.moveTo(4,28);
-           ctx.lineTo(4,60);
-           ctx.lineTo(440,60);
-           ctx.stroke();
-
-           ctx.beginPath();
-           ctx.fillStyle='#eac7df';
-           ctx.arc(4, 28, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.beginPath();
-           ctx.arc(4, 60, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.fillStyle='#fd5f00';
-           ctx.beginPath();
-           ctx.arc(380, 60, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.fillStyle='#eac7df';
-           ctx.beginPath();
-           ctx.arc(440, 60, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.beginPath();
-           ctx.fillStyle='#336699';
-           ctx.beginPath();
-           ctx.moveTo(30, 18);
-           ctx.lineTo(20, 28);
-           ctx.lineTo(40, 28);
-           ctx.fill();
-
-       });
-
+        var plane = new THREE.Mesh( geometry, material );
+        plane.position.set(width/2, height/2, -1);
+        panel.addToScene( plane );
    };
 
     function init(){
 
-        var titleCanvas= createTitleCanvas(); 
-        var titleTexture = new THREE.Texture(titleCanvas)
-        titleTexture.needsUpdate = true;
+        createBackground();
 
-        var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
-        var titleGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 80 * scale );
+        var headerTexture = THREE.ImageUtils.loadTexture("images/photos-header.png", undefined, LOADSYNC.register() );
+        var headerMaterial = new THREE.MeshBasicMaterial({map: headerTexture, depthTest: false, transparent: true});
+        var headerGeometry = new THREE.PlaneBufferGeometry( 134 * scale, 32 * scale);
+        var headerPlane = new THREE.Mesh(headerGeometry, headerMaterial );
+        // headerPlane.position.set(108 * scale, height - 90 * scale,5);
+        headerPlane.position.set(80 * scale, height - 40 * scale, 5);
+        panel.addToScene(headerPlane);
 
-        var plane = new THREE.Mesh( titleGeometry, titleMaterial );
-        plane.position.set(width/2 + 7, height-40*scale, 0);
-        panel.addToScene( plane );
+        var picsTexture = THREE.ImageUtils.loadTexture("images/pics.png", undefined, LOADSYNC.register() );
+        var picsMaterial = new THREE.MeshBasicMaterial({map: picsTexture, depthTest: false, transparent: true});
+        var picsGeometry = new THREE.PlaneBufferGeometry( 700 * scale, 412 * scale);
+        var picsPlane = new THREE.Mesh(picsGeometry, picsMaterial );
+        picsPlane.scale.set(.5,.5,.5);
+        // headerPlane.position.set(108 * scale, height - 90 * scale,5);
+        picsPlane.position.set(width/2, height/2, 0);
+        panel.addToScene(picsPlane);
 
+
+        // plane.position.set(width/2 + 7, height-40*scale, 0);
+        // panel.addToScene( plane );
+
+        /*
       var randomPics = FLICKR.getRandomLandscapes(4);
 
         for(var i = 0; i< randomPics.length; i++){
@@ -85,6 +60,7 @@ function createPhotosPanel(renderer, scale){
             panel.addToScene(tmpMesh);
 
         }
+            */
 
     }
 
