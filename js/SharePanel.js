@@ -11,7 +11,17 @@ function createSharePanel(renderer, scale){
        fontSize = Math.floor(12 * scale),
        startPosition = {x: 0, y: 0};
 
-   var panel = createPanel(renderer, width, height);
+   var panel = createPanel(renderer, width, height, {foregroundGlow: true});
+
+   function createBackground(){
+
+        var material = new THREE.MeshBasicMaterial({transparent: false, color: 0x000000});
+        var geometry = new THREE.PlaneBufferGeometry( width, height);
+
+        var plane = new THREE.Mesh( geometry, material );
+        plane.position.set(width/2, height/2, -1);
+        panel.addToScene( plane );
+   };
 
 
    function createTwitterCanvas(){
@@ -38,6 +48,8 @@ function createSharePanel(renderer, scale){
    };
 
     function init(){
+
+        createBackground();
 
         var twitterIconTexture = THREE.ImageUtils.loadTexture('images/twitter.png', undefined, LOADSYNC.register() );
         var twitterIconMaterial = new THREE.MeshBasicMaterial({map: twitterIconTexture, transparent: true});
