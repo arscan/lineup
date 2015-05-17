@@ -29,7 +29,7 @@ function createPhotosPanel(renderer, scale){
         var headerGeometry = new THREE.PlaneBufferGeometry( 134 * scale, 32 * scale);
         var headerPlane = new THREE.Mesh(headerGeometry, headerMaterial );
         // headerPlane.position.set(108 * scale, height - 90 * scale,5);
-        headerPlane.position.set(80 * scale, height - 40 * scale, 5);
+        headerPlane.position.set(140 * scale, height - 45 * scale, 5);
         panel.addToScene(headerPlane);
 
         var picsTexture = THREE.ImageUtils.loadTexture("images/pics.png", undefined, LOADSYNC.register() );
