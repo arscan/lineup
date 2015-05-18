@@ -10,6 +10,11 @@ function createPhotosPanel(renderer, scale){
    var icons = [];
 
    var picHeight = 70;
+
+   var selected = false;
+
+   var clickMaterial;
+
    function createBackground(){
 
         var material = new THREE.MeshBasicMaterial({transparent: false, color: 0x000000});
@@ -41,26 +46,13 @@ function createPhotosPanel(renderer, scale){
         picsPlane.position.set(width/2, height/2, 0);
         panel.addToScene(picsPlane);
 
-
-        // plane.position.set(width/2 + 7, height-40*scale, 0);
-        // panel.addToScene( plane );
-
-        /*
-      var randomPics = FLICKR.getRandomLandscapes(4);
-
-        for(var i = 0; i< randomPics.length; i++){
-            var item = randomPics[i];
-            var imageScale = item.height / picHeight;
-
-            var tmpMesh = new THREE.Mesh(
-                new THREE.PlaneBufferGeometry(item.width * scale / imageScale, item.height * scale / imageScale),
-                new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture(item.url, undefined, LOADSYNC.register()), blending: THREE.AdditiveBlending, transparent: true})
-                );
-            tmpMesh.position.set(scale *((i%2)*115 + 60), scale * (Math.floor(i/2)*85 + 85), 1);
-            panel.addToScene(tmpMesh);
-
-        }
-            */
+        var clickTexture = THREE.ImageUtils.loadTexture("images/photos-click.png", undefined, LOADSYNC.register() );
+        clickMaterial = new THREE.MeshBasicMaterial({map: clickTexture, depthTest: false, transparent: true, opacity: 0});
+        var clickGeometry = new THREE.PlaneBufferGeometry( 286 * scale, 41 * scale);
+        var clickPlane = new THREE.Mesh(clickGeometry, clickMaterial );
+        clickPlane.scale.set(.8,.8,.8);
+        clickPlane.position.set(width/2, height/2 + 10*scale, 10);
+        panel.addToScene(clickPlane);
 
     }
 
@@ -70,7 +62,25 @@ function createPhotosPanel(renderer, scale){
 
     function checkBounds(x, y){
         if(panel.checkBounds(x,y)){
+            if(!selected){
+                // run intro animation
+                 new TWEEN.Tween(clickMaterial)
+                   .to({opacity: 1}, 500)
+                   .start();
+
+                 selected = true;
+            }
             return "https://www.flickr.com/photos/45001949@N00/";
+        } else {
+            if(selected){
+                // run outro animation
+                 new TWEEN.Tween(clickMaterial)
+                   .to({opacity: 0}, 500)
+                   .start();
+
+                 selected = false;
+
+            }
         }
         return false;
     }
