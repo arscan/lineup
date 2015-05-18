@@ -7,7 +7,6 @@ function createBackgroundPanel(renderer, width, height){
     quad.position.set(width/2,height/2, 0);
 
 
-    var pointLight1, pointLight2, pointLight4;
     var scene = new THREE.Scene();
     var camera;
     var startTime = Date.now();
@@ -47,16 +46,7 @@ function createBackgroundPanel(renderer, width, height){
 
         // LIGHTS
 
-        var ambientLight = new THREE.AmbientLight( setBrightness(ambientLightColor,.08) );
-        // scene.add( ambientLight );
-
-        pointLight1 = new THREE.PointLight( 0xeac7df, 0.75, 1500 );
-        pointLight1.position.z = -480;
-
-        pointLight2 = new THREE.PointLight( 0x479578, 0.75, 1500 );
-        pointLight2.position.z = -480;
-
-        var ambient = 0x111111, diffuse = 0xbbbbbb, specular = 0x060606, shininess = 15;
+        var diffuse = 0xbbbbbb, specular = 0x060606, shininess = 15;
 
         var material = new THREE.MeshPhongMaterial( {
            color: diffuse,
@@ -189,22 +179,12 @@ function createBackgroundPanel(renderer, width, height){
 
         var diff = Date.now() - startTime; 
 
-        // pointLight1.position.x = Math.sin(diff/1000.0) * 200;
-        // pointLight1.position.y = 500 + Math.sin(diff/745) * 100;
-        // pointLight1.position.z = 100 + Math.sin(diff/100.0) * 100;
-        //
-        // pointLight2.position.x = -100 + Math.sin(diff/2000.0) * 200;
-        // pointLight2.position.y = 100 + Math.sin(diff/945) * 100;
-
         overheadLight.position.x = 50 + Math.cos(diff/2000.0) * 120;
         overheadLight.position.y = 850 + Math.sin(diff/745) * 120;
 
         middleLight.position.x = 100 + Math.sin(diff/2000.0) * 320;
         middleLight.position.y =  Math.cos(diff/945) * 120;
         
-        // pointLight4.position.x = 100 + Math.cos(diff/1500.0) * 800;
-        // pointLight4.position.y = -50 + Math.sin(diff/845) * 200;
-
         renderer.render( scene, camera, renderTarget );
 
     }

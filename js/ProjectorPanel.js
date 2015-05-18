@@ -42,6 +42,13 @@ function createProjectorPanel(renderer, width, height, elements){
         renderScene.add(glareLeft);
         renderScene.add(glareRight);
 
+        var reflectionTexture = THREE.ImageUtils.loadTexture("images/reflection.png", undefined, LOADSYNC.register() );
+        var reflectionMaterial = new THREE.MeshBasicMaterial({map: reflectionTexture, transparent: true, opacity: .9});
+        var reflectionGeometry = new THREE.PlaneBufferGeometry( width, height);
+        var reflectionPlane = new THREE.Mesh(reflectionGeometry, reflectionMaterial );
+        reflectionPlane.position.set(width/2, height/2, 0);
+        renderScene.add(reflectionPlane);
+
 
         renderComposer = new THREE.EffectComposer(renderer, renderTarget);
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
