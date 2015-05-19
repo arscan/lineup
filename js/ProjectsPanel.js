@@ -1,96 +1,91 @@
 function createProjectsPanel(renderer, scale){
 
-   var STANDARD_DIMENSIONS = {width: 256, height:256};
+   var STANDARD_DIMENSIONS = {width: 460, height:287};
 
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale,
        renderCamera;
 
-   var panel = createPanel(renderer, width, height);
+   var panel = createPanel(renderer, width, height, {foregroundGlow: true});
 
    var encomGlobe,
        encomBoardroom,
        hexasphere,
        githubWargames;
 
-   function createTitleCanvas(){
+   var menu = [
+               {title: "ENCOM BOARDROOM", pic: "images/projects-encom-boardroom.png", url: "http://www.github.com/arscan/encom-boardroom"},
+               {title: "ENCOM GLOBE", pic: "images/projects-encom-boardroom.png", url: "http://www.github.com/arscan/encom-boardroom"},
+               {title: "GITHUB WARGAMES", pic: "images/projects-encom-boardroom.png", url: "http://www.github.com/arscan/encom-boardroom"},
+               {title: "PLEASEROTATE.JS", pic: "images/projects-encom-boardroom.png", url: "http://www.github.com/arscan/encom-boardroom"}
+              ];
 
-       return panel.renderToCanvas(512, 160, function(ctx){
-           ctx.strokeStyle="#fff";
 
-           ctx.font = "24pt Roboto";
-           ctx.fillStyle = '#ff8d07';
-           ctx.fillText("OTHER PROJECTS", 50, 35);
+    function createTextPlane(text, header){
+       var titleCanvas =  panel.renderToCanvas(512, 160, function(ctx){
+           ctx.strokeStyle="#eac7df";
 
-           ctx.lineWidth = 2.5;
-           ctx.strokeStyle="#fd5f00";
-           ctx.moveTo(4,28);
-           ctx.lineTo(4,60);
-           ctx.lineTo(440,60);
-           ctx.stroke();
+           ctx.fillStyle = '#eac7df';
+           ctx.font = "18pt Roboto";
+           if(header){
+               ctx.font = "26pt Roboto";
 
-           ctx.beginPath();
-           ctx.fillStyle='#eac7df';
-           ctx.arc(4, 28, 4, 0, 2 * Math.PI);
-           ctx.fill();
+               if(orange){
+                   ctx.fillStyle = '#f15a24';
+               } else {
+                   ctx.fillStyle = '#12b7a7';
+               }
+           }
 
-           ctx.beginPath();
-           ctx.arc(4, 60, 4, 0, 2 * Math.PI);
-           ctx.fill();
 
-           ctx.fillStyle='#fd5f00';
-           ctx.beginPath();
-           ctx.arc(380, 60, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.fillStyle='#eac7df';
-           ctx.beginPath();
-           ctx.arc(440, 60, 4, 0, 2 * Math.PI);
-           ctx.fill();
-
-           ctx.beginPath();
-           ctx.fillStyle='#336699';
-           ctx.beginPath();
-           ctx.moveTo(30, 18);
-           ctx.lineTo(20, 28);
-           ctx.lineTo(40, 28);
-           ctx.fill();
+           ctx.fillText(text.toUpperCase(), 50, 35);
 
        });
-
-   };
-
-    function init(){
-
-        renderCamera = new THREE.PerspectiveCamera( 70, width / height, 1, 1000 );
-        renderCamera.position.z = 200;
-        renderCamera.position.y = 0;
-
-        panel.setCamera(renderCamera);
-
-        var titleCanvas = createTitleCanvas();
 
         var titleTexture = new THREE.Texture(titleCanvas)
         titleTexture.needsUpdate = true;
 
         var titleMaterial = new THREE.MeshBasicMaterial({map: titleTexture, transparent: true});
-        var titleGeometry = new THREE.PlaneBufferGeometry( 256, 80);
+        var titleGeometry = new THREE.PlaneBufferGeometry( 256 * scale, 80 * scale);
 
         var plane = new THREE.Mesh( titleGeometry, titleMaterial );
-        plane.position.set(0, 90, 0);
-        panel.addToScene( plane );
+        return plane;
 
-        encomGlobe = createEncomGlobe(panel.renderScene);
-        encomBoardroom = createEncomBoardroom(panel.renderScene);
-        githubWargames = createGithubWargames(panel.renderScene);
+
+    }
+    function buildMenu(){
+        for(var i = 0; i< menu.length; i++){
+            var leftPlane = createTextPlane(menu[i].title);
+            leftPlane.position.set(170 * scale, height - 110*scale - 20*scale*i, 0);
+            panel.addToScene(leftPlane);
+
+            var rightPlane = createTextPlane(menu[i].title);
+            rightPlane.position.set(350 * scale, 30*scale, 0);
+            panel.addToScene(rightPlane);
+
+        }
+    }
+
+    function init(){
+
+        var backgroundTexture = THREE.ImageUtils.loadTexture("images/projects-background.png", undefined, LOADSYNC.register() );
+        var backgroundMaterial = new THREE.MeshBasicMaterial({map: backgroundTexture, depthTest: false, transparent: true});
+        var backgroundGeometry = new THREE.PlaneBufferGeometry( 776 * scale, 494 * scale);
+        var backgroundPlane = new THREE.Mesh(backgroundGeometry, backgroundMaterial );
+        backgroundPlane.scale.set(.5,.5,.5);
+        // headerPlane.position.set(108 * scale, height - 90 * scale,5);
+        backgroundPlane.position.set(width/2, height/2, 0);
+        panel.addToScene(backgroundPlane);
+
+        buildMenu();
 
     }
 
     function render(time){
 
-        encomBoardroom.render();
-        encomGlobe.render();
-        githubWargames.render();
+        // encomBoardroom.render();
+        // encomGlobe.render();
+        // githubWargames.render();
 
         panel.render(time);
 
