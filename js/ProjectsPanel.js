@@ -3,15 +3,15 @@ function createProjectsPanel(renderer, scale){
    var STANDARD_DIMENSIONS = {width: 460, height:287};
 
    var width = STANDARD_DIMENSIONS.width * scale,
-       height = STANDARD_DIMENSIONS.height * scale,
-       renderCamera;
+       height = STANDARD_DIMENSIONS.height * scale;
 
    var panel = createPanel(renderer, width, height, {foregroundGlow: true});
 
    var encomGlobe,
        encomBoardroom,
        hexasphere,
-       githubWargames;
+       githubWargames,
+       mousePos = null;
 
    var menu = [
                {title: "ENCOM BOARDROOM", pic: "images/projects-encom-boardroom.png", url: "http://www.github.com/arscan/encom-boardroom"},
@@ -19,6 +19,8 @@ function createProjectsPanel(renderer, scale){
                {title: "GITHUB WARGAMES", pic: "images/projects-encom-boardroom.png", url: "http://www.github.com/arscan/encom-boardroom"},
                {title: "PLEASEROTATE.JS", pic: "images/projects-encom-boardroom.png", url: "http://www.github.com/arscan/encom-boardroom"}
               ];
+
+    var choices = [];
 
 
     function createTextPlane(text, header){
@@ -58,10 +60,12 @@ function createProjectsPanel(renderer, scale){
             var leftPlane = createTextPlane(menu[i].title);
             leftPlane.position.set(170 * scale, height - 110*scale - 20*scale*i, 0);
             panel.addToScene(leftPlane);
+            leftPlane._index = i;
+            choices.push(leftPlane);
 
-            var rightPlane = createTextPlane(menu[i].title);
-            rightPlane.position.set(350 * scale, 30*scale, 0);
-            panel.addToScene(rightPlane);
+            menu[i].rightPlane = createTextPlane(menu[i].title);
+            menu[i].rightPlane.position.set(-100, 30*scale, 0);
+            panel.addToScene(menu[i].rightPlane);
 
         }
     }
@@ -83,31 +87,33 @@ function createProjectsPanel(renderer, scale){
 
     function render(time){
 
-        // encomBoardroom.render();
-        // encomGlobe.render();
-        // githubWargames.render();
-
         panel.render(time);
-
     }
 
-    function checkBounds(x, y){
-        if(panel.checkBounds(x,y)){
-            var panelPos = panel.positionWithinPanel(x, y);
-
-            if(panelPos.y > 160*scale && panelPos.y < 270*scale){
-                return "http://www.robscanlon.com/encom-boardroom";
-            }
-            if(panelPos.y <= 160*scale){
-                if(panelPos.x < width/2){
-                    return "http://www.robscanlon.com/encom-globe";
-                } else {
-                    return "http://www.github.com/arscan/streamed";
-                }
-
+    function setMenu(index){
+        if(index >= 0 && index < menu.length){
+            for(var i = 0; i< menu.length; i++){
+                menu[i].rightPlane.position.x = 450 * scale * (i == index) - 100 * scale;
             }
 
-            return true;
+        }
+    }
+
+
+
+    function checkBounds(x,y){
+        if(!panel.checkBounds(x,y)){
+            mousePos = null;
+            return false;
+        }
+        var pos = panel.positionWithinPanel(x,y);
+
+        if(pos.x > 90 && pos.x < 300){
+            var index = Math.floor(((height-pos.y) - 110) / 28);
+            if(index >= 0 && index < choices.length){
+                setMenu(index);
+                return menu[index].url;
+            }
         }
 
         return false;

@@ -160,6 +160,10 @@ function createPanel(renderer, width, height, opts){
         renderComposer.passes[0].camera = camera;
     }
 
+    function getCamera(){
+        return renderComposer.passes[0].camera;
+    }
+
     function addToScene(obj){
        renderScene.add(obj);
     }
@@ -179,6 +183,7 @@ function createPanel(renderer, width, height, opts){
         setPosition: setPosition,
         setDeltaPosition: setDeltaPosition,
         setCamera: setCamera,
+        getCamera: getCamera,
         renderScene: renderScene, /* should get rid of this, but need to fix the projects objects */
         addToScene: addToScene,
         renderToCanvas: renderToCanvas
