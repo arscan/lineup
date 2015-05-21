@@ -11,13 +11,14 @@ function createProjectsPanel(renderer, scale){
        encomBoardroom,
        hexasphere,
        githubWargames,
-       mousePos = null;
+       mousePos = null,
+       currentSelection = -1;
 
    var menu = [
-               {title: "ENCOM BOARDROOM", pic: "images/projects-encom-boardroom.png", url: "http://www.github.com/arscan/encom-boardroom"},
-               {title: "ENCOM GLOBE", pic: "images/projects-encom-boardroom.png", url: "http://www.github.com/arscan/encom-boardroom"},
-               {title: "GITHUB WARGAMES", pic: "images/projects-encom-boardroom.png", url: "http://www.github.com/arscan/encom-boardroom"},
-               {title: "PLEASEROTATE.JS", pic: "images/projects-encom-boardroom.png", url: "http://www.github.com/arscan/encom-boardroom"}
+               {title: "ENCOM BOARDROOM", pic: "images/projects-boardroom.png", url: "http://www.robscanlon.com/encom-boardroom"},
+               {title: "ENCOM GLOBE", pic: "images/projects-globe.png", url: "http://www.robscanlon.com/encom-globe"},
+               {title: "GITHUB WARGAMES", pic: "images/projects-wargames.png", url: "http://www.robscanlon.com/github-wargames"},
+               {title: "PLEASEROTATE.JS", pic: "images/projects-rotate.png", url: "http://www.robscanlon.com/pleaserotate"}
               ];
 
     var choices = [];
@@ -63,8 +64,18 @@ function createProjectsPanel(renderer, scale){
             leftPlane._index = i;
             choices.push(leftPlane);
 
+            var menuTexture = THREE.ImageUtils.loadTexture(menu[i].pic, undefined, LOADSYNC.register() );
+            var menuMaterial = new THREE.MeshBasicMaterial({map: menuTexture, depthTest: false, transparent: true, blending: THREE.AdditiveBlending, opacity: 0.0});
+            var menuGeometry = new THREE.PlaneBufferGeometry( 281 * scale, 281 * scale);
+            var menuPlane = new THREE.Mesh(menuGeometry, menuMaterial );
+            menuPlane.scale.set(.5,.5,.5);
+            // headerPlane.position.set(108 * scale, height - 90 * scale,5);
+            menuPlane.position.set(306 * scale, 140 * scale, 0);
+            panel.addToScene(menuPlane);
+
             menu[i].rightPlane = createTextPlane(menu[i].title);
             menu[i].rightPlane.position.set(-100, 30*scale, 0);
+            menu[i].picPlane = menuPlane;
             panel.addToScene(menu[i].rightPlane);
 
         }
@@ -94,11 +105,23 @@ function createProjectsPanel(renderer, scale){
         if(index >= 0 && index < menu.length){
             for(var i = 0; i< menu.length; i++){
                 menu[i].rightPlane.position.x = 450 * scale * (i == index) - 100 * scale;
+                menu[i].picPlane.material.opacity = (i == index);
+
             }
 
         }
+        currentSelection = index;
     }
 
+    function clearMenu(){
+        if(currentSelection > -1){
+            menu[currentSelection].rightPlane.position.x = 450 * scale *  - 100 * scale;
+            menu[currentSelection].picPlane.material.opacity = 0;
+        }
+
+        currentSelection = -1;
+
+    }
 
 
     function checkBounds(x,y){
@@ -108,13 +131,15 @@ function createProjectsPanel(renderer, scale){
         }
         var pos = panel.positionWithinPanel(x,y);
 
-        if(pos.x > 90 && pos.x < 300){
-            var index = Math.floor(((height-pos.y) - 110) / 28);
+        if(pos.x > 60 * scale && pos.x < 200 * scale){
+            var index = Math.floor(((height-pos.y) - 72 * scale) / (20 * scale));
             if(index >= 0 && index < choices.length){
                 setMenu(index);
                 return menu[index].url;
             }
         }
+
+        clearMenu();
 
         return false;
     }
