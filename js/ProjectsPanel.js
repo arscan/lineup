@@ -12,7 +12,9 @@ function createProjectsPanel(renderer, scale){
        hexasphere,
        githubWargames,
        mousePos = null,
-       currentSelection = -1;
+       currentSelection = -1,
+       currentTween = null,
+       currentTimeout = null;
 
    var menu = [
                {title: "ENCOM BOARDROOM", pic: "images/projects-boardroom.png", url: "http://www.robscanlon.com/encom-boardroom"},
@@ -76,6 +78,7 @@ function createProjectsPanel(renderer, scale){
             menu[i].rightPlane = createTextPlane(menu[i].title);
             menu[i].rightPlane.position.set(-100, 30*scale, 0);
             menu[i].picPlane = menuPlane;
+            menu[i].leftPlane = leftPlane;
             panel.addToScene(menu[i].rightPlane);
 
         }
@@ -94,6 +97,8 @@ function createProjectsPanel(renderer, scale){
 
         buildMenu();
 
+        setMenu(0);
+
     }
 
     function render(time){
@@ -102,15 +107,31 @@ function createProjectsPanel(renderer, scale){
     }
 
     function setMenu(index){
-        if(index >= 0 && index < menu.length){
-            for(var i = 0; i< menu.length; i++){
-                menu[i].rightPlane.position.x = 450 * scale * (i == index) - 100 * scale;
-                menu[i].picPlane.material.opacity = (i == index);
+        clearTimeout(currentTimeout);
 
-            }
-
+        if(currentTween != null){
+            currentTween.stop();
         }
+
+
+        menu[index].leftPlane.scale.set(1.05, 1.05, 1.05);
+        currentTween = new TWEEN.Tween({val: 0}, 1000)
+            .to({val: 1})
+            .onUpdate(function(val){
+                // menu[currentSelection].picPlane.material.opacity = 1 - val;
+                menu[index].picPlane.material.opacity = val;
+            }).start();
+
+        if(currentSelection >= 0){
+            menu[currentSelection].leftPlane.scale.set(1, 1, 1);
+            menu[currentSelection].picPlane.material.opacity = 0;
+        }
+
         currentSelection = index;
+
+        currentTimeout = setTimeout(function(){
+            setMenu((index + 1) % menu.length);
+        }, 5000);
     }
 
     function clearMenu(){
@@ -134,7 +155,9 @@ function createProjectsPanel(renderer, scale){
         if(pos.x > 60 * scale && pos.x < 200 * scale){
             var index = Math.floor(((height-pos.y) - 72 * scale) / (20 * scale));
             if(index >= 0 && index < choices.length){
-                setMenu(index);
+                if(currentSelection != index){
+                    setMenu(index);
+                }
                 return menu[index].url;
             }
         }
