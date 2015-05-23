@@ -1,15 +1,17 @@
 function createSharePanel(renderer, scale){
 
-   var STANDARD_DIMENSIONS = {width: 255, height:30};
+   var STANDARD_DIMENSIONS = {width: 355, height:36};
 
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale,
        twitterPlane,
        githubPlane,
+       aboutPlane,
        githubStars = 0,
        tweets = 0,
-       fontSize = Math.floor(12 * scale),
-       startPosition = {x: 0, y: 0};
+       fontSize = 12,
+       startPosition = {x: 0, y: 0},
+       currentSelection = -1;
 
    var panel = createPanel(renderer, width, height, {foregroundGlow: true});
 
@@ -23,6 +25,19 @@ function createSharePanel(renderer, scale){
         panel.addToScene( plane );
    };
 
+   function createAboutCanvas(){
+
+       return panel.renderToCanvas(width/2, height, function(ctx){
+           ctx.strokeStyle="#fff";
+
+           ctx.font = "" + fontSize + "pt Roboto";
+           ctx.fillStyle = '#ff8d07';
+           ctx.fillText('ABOUT', 5, 12*scale);
+
+       });
+
+   };
+
 
    function createTwitterCanvas(){
 
@@ -31,7 +46,7 @@ function createSharePanel(renderer, scale){
 
            ctx.font = "" + fontSize + "pt Roboto";
            ctx.fillStyle = '#ff8d07';
-           ctx.fillText(tweets + ' tweets', 5, 12*scale);
+           ctx.fillText(tweets + ' TWEETS', 5, 12*scale);
 
        });
 
@@ -43,7 +58,7 @@ function createSharePanel(renderer, scale){
 
            ctx.font = fontSize + "pt Roboto";
            ctx.fillStyle = '#ff8d07';
-           ctx.fillText(githubStars + ' stars', 5, 12*scale);
+           ctx.fillText(githubStars + ' STARS', 5, 12*scale);
        });
    };
 
@@ -51,30 +66,43 @@ function createSharePanel(renderer, scale){
 
         createBackground();
 
+        var aboutIconTexture = THREE.ImageUtils.loadTexture('images/about.png', undefined, LOADSYNC.register() );
+        var aboutIconMaterial = new THREE.MeshBasicMaterial({map: aboutIconTexture, transparent: true});
+        var aboutIconGeometry = new THREE.PlaneBufferGeometry( 25 * scale, 25*scale );
+        var aboutIconPlane = new THREE.Mesh(aboutIconGeometry, aboutIconMaterial );
+        aboutIconPlane.position.set(25*scale, 25*scale/2 + 4, 0);
+        panel.addToScene(aboutIconPlane);
+
+        var aboutTexture = new THREE.Texture(createAboutCanvas())
+        aboutTexture.needsUpdate = true;
+        aboutPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry( width/2, height ),new THREE.MeshBasicMaterial({map: aboutTexture, transparent: true}));
+        aboutPlane.position.set(24*scale*1.6 + width/4 , 5, 0);
+        panel.addToScene( aboutPlane );
+
         var twitterIconTexture = THREE.ImageUtils.loadTexture('images/twitter.png', undefined, LOADSYNC.register() );
         var twitterIconMaterial = new THREE.MeshBasicMaterial({map: twitterIconTexture, transparent: true});
         var twitterIconGeometry = new THREE.PlaneBufferGeometry( 25 * scale, 25*scale );
         var twitterIconPlane = new THREE.Mesh(twitterIconGeometry, twitterIconMaterial );
-        twitterIconPlane.position.set(25*scale, 25*scale/2 + 4, 0);
+        twitterIconPlane.position.set(width/3 + 25*scale - 20, 25*scale/2 + 4, 0);
         panel.addToScene(twitterIconPlane);
 
         var twitterTexture = new THREE.Texture(createTwitterCanvas())
         twitterTexture.needsUpdate = true;
         twitterPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry( width/2, height ),new THREE.MeshBasicMaterial({map: twitterTexture, transparent: true}));
-        twitterPlane.position.set(24*scale*1.6 + width/4 , 5, 0);
+        twitterPlane.position.set(width/3 + 24*scale*1.6 + width/4  - 20, 5, 0);
         panel.addToScene( twitterPlane );
 
         var githubIconTexture = THREE.ImageUtils.loadTexture('images/github.png', undefined, LOADSYNC.register() );
         var githubIconMaterial = new THREE.MeshBasicMaterial({map: githubIconTexture, transparent: true});
         var githubIconGeometry = new THREE.PlaneBufferGeometry( 25 * scale, 25 * scale);
         var githubIconPlane = new THREE.Mesh(githubIconGeometry, githubIconMaterial );
-        githubIconPlane.position.set(width/2 + 25 * scale / 2 + 5, 25*scale/2 + 2, 0);
+        githubIconPlane.position.set(2*width/3 + 25 * scale / 2 + 5, 25*scale/2 + 2, 0);
         panel.addToScene(githubIconPlane);
 
         var githubTexture = new THREE.Texture(createGithubCanvas())
         githubTexture.needsUpdate = true;
         githubPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry( width/2, height ), new THREE.MeshBasicMaterial({map: githubTexture, transparent: true}));
-        githubPlane.position.set(width/2 + 25*scale *1.3 + width/4, 5, 0);
+        githubPlane.position.set(2*width/3 + 25*scale *1.3 + width/4, 5, 0);
         panel.addToScene( githubPlane );
     }
 
@@ -93,20 +121,39 @@ function createSharePanel(renderer, scale){
         if(panel.checkBounds(x,y)){
             var panelPos = panel.positionWithinPanel(x, y);
 
-            if(panelPos.x < width / 2){
+            if(panelPos.x < width / 3){
+                if(currentSelection != 0){
+                    new TWEEN.Tween({val: .95})
+                        .to({val: 1}, 300)
+                        .onUpdate(function(){
+                            aboutPlane.scale.set(this.val, this.val, this.val);
+                        }).start();
+                }
+                currentSelection = 0;
+                return function(){
+                    alert('about called');
+
+                }
+            } else if(panelPos.x > width / 3 && panelPos.x < 2 * width/3) {
+                if(currentSelection != 1){
+                }
+                currentSelection = 1;
                 return "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Frobscanlon.com%2flineup&text=%23GotG%20Lineup%20in%20HTML5&tw_p=tweetbutton&url=http%3A%2F%2Fwww.robscanlon.com%2Flineup%2F&via=arscan";
+
             } else {
+                if(currentSelection != 2){
+                }
+                currentSelection = 2;
                 return "http://github.com/arscan/lineup";
             }
-
-            return true;
         }
+        currentSelection = -1;
 
         return false;
     }
 
     function setTweets(_tweets){
-        tweets = _tweets;
+        tweets = Math.min(9999,_tweets);
 
         var twitterTexture = new THREE.Texture(createTwitterCanvas())
         twitterTexture.needsUpdate = true;

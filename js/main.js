@@ -368,9 +368,15 @@ function main(renderWidth){
             }
 
             var res= sharePanel.checkBounds(event.offsetX, renderHeight - event.offsetY)
+            console.log(res);
             if(typeof res === "string"){
                 location.href=res;
                 return;
+            } else if(typeof res === "function"){
+                console.log("function called");
+                res.call(this);
+                return;
+
             }
 
         });
