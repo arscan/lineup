@@ -5,11 +5,12 @@ function createSharePanel(renderer, scale){
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale,
        twitterPlane,
+       twitterHighlightPlane,
        githubPlane,
+       githubHighlightPlane,
        aboutPlane,
-       twitterIconPlane,
-       githubIconPlane,
-       aboutIconPlane,
+       aboutHighlightPlane,
+       currentTween,
        githubStars = 0,
        tweets = 0,
        fontSize = Math.floor(8 * scale),
@@ -28,42 +29,30 @@ function createSharePanel(renderer, scale){
         panel.addToScene( plane );
    };
 
-   function createAboutCanvas(){
 
-       return panel.renderToCanvas(100*scale, height, function(ctx){
+   function createTextCanvas(text, color){
+       return panel.renderToCanvas(150*scale, height, function(ctx){
            ctx.strokeStyle="#fff";
 
            ctx.font = "" + fontSize + "pt Roboto";
-           ctx.fillStyle = '#ff8d07';
-           ctx.fillText('ABOUT', 5, 12*scale);
+           ctx.fillStyle = color;//'#ff8d07';
+           ctx.fillText(text, 5, 12*scale);
 
        });
 
+   }
+   function createTextPlane(text, color, background){
+       
+       var canvas = createTextCanvas(text, color);
+       var texture = new THREE.Texture(canvas);
+
+        texture.needsUpdate = true;
+        
+        var plane = new THREE.Mesh(new THREE.PlaneBufferGeometry( 150 * scale, height ),new THREE.MeshBasicMaterial({map: texture, transparent: true, opacity: (background ? 0 : 1)}));
+
+        return plane;
    };
 
-
-   function createTwitterCanvas(){
-
-       return panel.renderToCanvas(150 * scale, height, function(ctx){
-           ctx.strokeStyle="#fff";
-
-           ctx.font = "" + fontSize + "pt Roboto";
-           ctx.fillStyle = '#ff8d07';
-           ctx.fillText(tweets + ' TWEETS', 5, 12*scale);
-
-       });
-
-   };
-
-   function createGithubCanvas(){
-       return panel.renderToCanvas(100 * scale, height, function(ctx){
-           ctx.strokeStyle="#fff";
-
-           ctx.font = fontSize + "pt Roboto";
-           ctx.fillStyle = '#ff8d07';
-           ctx.fillText(githubStars + ' STARS', 5, 12*scale);
-       });
-   };
 
     function init(){
 
@@ -72,41 +61,48 @@ function createSharePanel(renderer, scale){
         var aboutIconTexture = THREE.ImageUtils.loadTexture('images/about.png', undefined, LOADSYNC.register() );
         var aboutIconMaterial = new THREE.MeshBasicMaterial({map: aboutIconTexture, transparent: true});
         var aboutIconGeometry = new THREE.PlaneBufferGeometry( 25 * scale, 25*scale );
-        aboutIconPlane = new THREE.Mesh(aboutIconGeometry, aboutIconMaterial );
+        var aboutIconPlane = new THREE.Mesh(aboutIconGeometry, aboutIconMaterial );
         aboutIconPlane.position.set(25*scale, 25*scale/2 + 4, 0);
         panel.addToScene(aboutIconPlane);
 
-        var aboutTexture = new THREE.Texture(createAboutCanvas())
-        aboutTexture.needsUpdate = true;
-        aboutPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry( 100 * scale, height ),new THREE.MeshBasicMaterial({map: aboutTexture, transparent: true}));
-        aboutPlane.position.set(90*scale, 5 * scale, 0);
+        aboutPlane = createTextPlane("ABOUT", "#ff8d07");
+        aboutPlane.position.set(115*scale, 5 * scale, 0);
         panel.addToScene( aboutPlane );
+
+        aboutHighlightPlane = createTextPlane("ABOUT", "#ffffff", true);
+        aboutHighlightPlane.position.set(115*scale, 5 * scale, 0);
+        panel.addToScene( aboutHighlightPlane );
 
         var twitterIconTexture = THREE.ImageUtils.loadTexture('images/twitter.png', undefined, LOADSYNC.register() );
         var twitterIconMaterial = new THREE.MeshBasicMaterial({map: twitterIconTexture, transparent: true});
         var twitterIconGeometry = new THREE.PlaneBufferGeometry( 25 * scale, 25*scale );
-        twitterIconPlane = new THREE.Mesh(twitterIconGeometry, twitterIconMaterial );
-        twitterIconPlane.position.set(width/3 + 25*scale - 20, 25*scale/2 + 4, 0);
+        var twitterIconPlane = new THREE.Mesh(twitterIconGeometry, twitterIconMaterial );
+        twitterIconPlane.position.set(120 * scale, 25*scale/2 + 4, 0);
         panel.addToScene(twitterIconPlane);
 
-        var twitterTexture = new THREE.Texture(createTwitterCanvas())
-        twitterTexture.needsUpdate = true;
-        twitterPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry( 150 * scale, height ),new THREE.MeshBasicMaterial({map: twitterTexture, transparent: true}));
-        twitterPlane.position.set(220 * scale, 5 * scale, 0);
+        twitterPlane = createTextPlane(tweets + " TWEETS", "#ff8d07");
+        twitterPlane.position.set(210 * scale, 5 * scale, 0);
         panel.addToScene( twitterPlane );
+
+        twitterHighlightPlane = createTextPlane(tweets + " TWEETS", "#ffffff", true);
+        twitterHighlightPlane.position.set(210 * scale, 5 * scale, 0);
+        panel.addToScene( twitterHighlightPlane );
 
         var githubIconTexture = THREE.ImageUtils.loadTexture('images/github.png', undefined, LOADSYNC.register() );
         var githubIconMaterial = new THREE.MeshBasicMaterial({map: githubIconTexture, transparent: true});
         var githubIconGeometry = new THREE.PlaneBufferGeometry( 25 * scale, 25 * scale);
-        githubIconPlane = new THREE.Mesh(githubIconGeometry, githubIconMaterial );
+        var githubIconPlane = new THREE.Mesh(githubIconGeometry, githubIconMaterial );
         githubIconPlane.position.set(2*width/3 + 25 * scale / 2 + 5, 25*scale/2 + 2, 0);
         panel.addToScene(githubIconPlane);
 
-        var githubTexture = new THREE.Texture(createGithubCanvas())
-        githubTexture.needsUpdate = true;
-        githubPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry( 100 * scale, height ), new THREE.MeshBasicMaterial({map: githubTexture, transparent: true}));
-        githubPlane.position.set(320 * scale, 5 * scale, 0);
+        githubPlane = createTextPlane(githubStars + " STARS", "#ff8d07");
+        githubPlane.position.set(345 * scale, 5 * scale, 0);
         panel.addToScene( githubPlane );
+
+        githubHighlightPlane = createTextPlane(githubStars + " STARS", "#ffffff", true);
+        githubHighlightPlane.position.set(345 * scale, 5 * scale, 0);
+        panel.addToScene( githubHighlightPlane );
+
     }
 
     function render(time){
@@ -126,11 +122,15 @@ function createSharePanel(renderer, scale){
 
             if(panelPos.x < width / 3){
                 if(currentSelection != 0){
-                    new TWEEN.Tween({val: .95})
-                        .to({val: 1}, 300)
+                    if(currentTween){
+                        currentTween.stop();
+                    }
+                    currentTween = new TWEEN.Tween({val: 0})
+                        .to({val: 1}, 400)
                         .onUpdate(function(){
-                            aboutIconPlane.scale.set(this.val, this.val, this.val);
-                            aboutPlane.scale.set(this.val, this.val, this.val);
+                            aboutHighlightPlane.material.opacity = this.val;
+                            twitterHighlightPlane.material.opacity = Math.min(twitterHighlightPlane.material.opacity, 1 - this.val);
+                            githubHighlightPlane.material.opacity = Math.min(githubHighlightPlane.material.opacity, 1 - this.val);
                         }).start();
                 }
                 currentSelection = 0;
@@ -140,11 +140,15 @@ function createSharePanel(renderer, scale){
                 }
             } else if(panelPos.x > width / 3 && panelPos.x < 2 * width/3) {
                 if(currentSelection != 1){
-                    new TWEEN.Tween({val: .95})
+                    if(currentTween){
+                        currentTween.stop();
+                    }
+                    currentTween = new TWEEN.Tween({val: 0})
                         .to({val: 1}, 300)
                         .onUpdate(function(){
-                            twitterIconPlane.scale.set(this.val, this.val, this.val);
-                            twitterPlane.scale.set(this.val, this.val, this.val);
+                            twitterHighlightPlane.material.opacity = this.val;
+                            aboutHighlightPlane.material.opacity = Math.min(aboutHighlightPlane.material.opacity, 1 - this.val);
+                            githubHighlightPlane.material.opacity = Math.min(githubHighlightPlane.material.opacity, 1 - this.val);
                         }).start();
                 }
                 currentSelection = 1;
@@ -152,18 +156,35 @@ function createSharePanel(renderer, scale){
 
             } else {
                 if(currentSelection != 2){
-                    new TWEEN.Tween({val: .95})
+                    if(currentTween){
+                        currentTween.stop();
+                    }
+                    currentTween = new TWEEN.Tween({val: 0})
                         .to({val: 1}, 300)
                         .onUpdate(function(){
-                            githubIconPlane.scale.set(this.val, this.val, this.val);
-                            githubPlane.scale.set(this.val, this.val, this.val);
+                            githubHighlightPlane.material.opacity = this.val;
+                            aboutHighlightPlane.material.opacity = Math.min(aboutHighlightPlane.material.opacity, 1 - this.val);
+                            twitterHighlightPlane.material.opacity = Math.min(twitterHighlightPlane.material.opacity, 1 - this.val);
                         }).start();
                 }
                 currentSelection = 2;
                 return "http://github.com/arscan/lineup";
             }
         }
-        currentSelection = -1;
+
+        if(currentSelection != -1){
+            if(currentTween){
+                currentTween.stop();
+            }
+            currentTween = new TWEEN.Tween({val: 0})
+                .to({val: 1}, 300)
+                .onUpdate(function(){
+                    twitterHighlightPlane.material.opacity = Math.min(twitterHighlightPlane.material.opacity, 1 - this.val);
+                    aboutHighlightPlane.material.opacity = Math.min(aboutHighlightPlane.material.opacity, 1 - this.val);
+                    githubHighlightPlane.material.opacity = Math.min(githubHighlightPlane.material.opacity, 1 - this.val);
+                }).start();
+            currentSelection = -1;
+        }
 
         return false;
     }
@@ -171,17 +192,25 @@ function createSharePanel(renderer, scale){
     function setTweets(_tweets){
         tweets = Math.min(9999,_tweets);
 
-        var twitterTexture = new THREE.Texture(createTwitterCanvas())
+        var twitterTexture = new THREE.Texture(createTextCanvas(tweets + " TWEETS", "#ff8d07"));
         twitterTexture.needsUpdate = true;
         twitterPlane.material.map = twitterTexture;
+
+        var twitterHighlightTexture = new THREE.Texture(createTextCanvas(tweets + " TWEETS", "#ffffff"));
+        twitterHighlightTexture.needsUpdate = true;
+        twitterHighlightPlane.material.map = twitterHighlightTexture;
     }
 
     function setStars(_stars){
         githubStars = _stars;
 
-        var githubTexture = new THREE.Texture(createGithubCanvas())
+        var githubTexture = new THREE.Texture(createTextCanvas(githubStars + " STARS", "#ff8d07"));
         githubTexture.needsUpdate = true;
         githubPlane.material.map = githubTexture;
+
+        var githubHighlightTexture = new THREE.Texture(createTextCanvas(githubStars + " STARS", "#ffffff"));
+        githubHighlightTexture.needsUpdate = true;
+        githubHighlightPlane.material.map = githubHighlightTexture;
     }
 
     init();
