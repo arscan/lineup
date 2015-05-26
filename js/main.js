@@ -593,4 +593,9 @@ $(function(){
             load();
         }
     });
+
+    $("#about-x").click(function(){
+        console.log($(this));
+        $(this).parent().css("display", "none");
+    });
 });

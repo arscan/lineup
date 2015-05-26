@@ -135,8 +135,7 @@ function createSharePanel(renderer, scale){
                 }
                 currentSelection = 0;
                 return function(){
-                    alert('about called');
-
+                    $("#about-panel").css("display", "block");
                 }
             } else if(panelPos.x > width / 3 && panelPos.x < 2 * width/3) {
                 if(currentSelection != 1){

@@ -154,3 +154,52 @@ video {
     color: #fff;
     background-color: #000;
 }
+
+#about-panel{
+    position: absolute;
+    z-index: 1;
+    width: 500px;
+    color: #fff;
+    font-family: Roboto;
+    border: 2px solid #f15a24;
+    border-radius: 8px;
+    padding: 0 15px;
+    background-color: rgba(0,0,0,.8);
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    display: none;
+}
+
+#about-panel p {
+    line-height: 1.5em;
+    text-align: justify;
+    font-size: 14pt;
+
+}
+
+#about-panel h1 {
+    text-transform: uppercase;
+
+}
+
+#about-panel a, #about-panel a:visited{
+    color: #12b7a7;
+
+}
+
+#about-panel a:hover{
+    color: #ffff00;
+}
+
+#about-x {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 35px;
+    cursor: pointer;
+}
+
+#about-panel a.about-me-link{
+    color: #f15a24;
+}
