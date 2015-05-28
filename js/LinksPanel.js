@@ -182,7 +182,7 @@ function createLinksPanel(renderer, scale){
         plane.position.set(0, 0, -100);
         panel.addToScene( plane );
 
-        createPointCloud();
+        // createPointCloud();
         createLegend();
         createHeader();
 
