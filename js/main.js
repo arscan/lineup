@@ -17,6 +17,9 @@ function main(renderWidth){
         snapTween = new TWEEN.Tween(),
         scene = new THREE.Scene();
 
+    /* loading panel */
+    var loadingPanel = createLoadingPanel(renderer, screenScale);
+
     /* panels and such */
     var skeletonPanel = createSkeletonPanel(renderer, screenScale),
         namePanel = createNamePanel(renderer, screenScale),
@@ -31,7 +34,7 @@ function main(renderWidth){
         photosPanel = createPhotosPanel(renderer, screenScale),
         linksPanel = createLinksPanel(renderer, screenScale),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
-        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [toolPanel, namePanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, tinyPanel4, tinyPanel5, sharePanel, photosPanel, projectsPanel, linksPanel]),
+        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [loadingPanel, toolPanel, namePanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, tinyPanel4, tinyPanel5, sharePanel, photosPanel, projectsPanel, linksPanel]),
         subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
@@ -57,6 +60,8 @@ function main(renderWidth){
     scene.add(subjectPanel.quad);
     scene.add(backgroundPanel.quad);
     backgroundPanel.quad.material.opacity = .1;
+
+    loadingPanel.setPosition(renderWidth / 2 - 200 * screenScale, renderHeight /2 + 200 * screenScale, 1);
 
     skeletonPanel.setPosition(380 * screenScale, renderHeight - 20 * screenScale, 1);
     subjectPanel.setPosition(450 * screenScale, 450 * screenScale, 1);
@@ -475,6 +480,7 @@ function main(renderWidth){
 
         }
 
+        loadingPanel.render(time);
 
         skeletonPanel.render(time, 2 * Math.PI * mouseX / renderWidth);
         namePanel.render(time);
