@@ -7,6 +7,7 @@ function createLoadingPanel(renderer, scale){
    var width = STANDARD_DIMENSIONS.width * scale,
        height = STANDARD_DIMENSIONS.height * scale,
        donutImages = [
+           'images/loading-donut4.png',
            'images/loading-donut3.png',
            'images/loading-donut2.png',
            'images/loading-donut1.png'
@@ -57,6 +58,7 @@ var    donutMaterials = [],
            '  if(headerInStartTime > 0.0 && vUv.x > .15 && vUv.y > textStart && vUv.y < textStart + .1 && vUv.x > headerInPercent){',
            '    gl_FragColor.a = 0.0;',
            '  }',*/
+           // '  gl_FragColor.a = 1.0;',
            '}',
        ].join('\n')
     };
@@ -81,7 +83,8 @@ var    donutMaterials = [],
             fragmentShader: donutShader.fragmentShader,
             blending: THREE.AdditiveBlending,
             transparent: true,
-            depthTest: true
+            depthTest: true,
+            opacity: .3
         });
         material.uniforms.tDiffuse.value = THREE.ImageUtils.loadTexture(filename, undefined, LOADSYNC.register() );
         material.transparent = true;
