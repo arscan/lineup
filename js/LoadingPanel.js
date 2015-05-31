@@ -40,6 +40,17 @@ var    donutMaterials = [],
            'void main() {',
            '  gl_FragColor = texture2D(tDiffuse, vUv);',
 
+           '  if(vUv.x - .5 > 0.0){',
+           '    if((vUv.x - .5) / (vUv.y - .5) > currentTime){',
+           '      gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);',
+           '    }',
+           '  }',
+           '  if(vUv.x - .5 < 0.0){',
+           '    if((vUv.x - .5) / (vUv.y - .5) > currentTime){',
+           '      gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);',
+           '    }',
+           '  }',
+
            /*'  float bulletPercent = clamp((currentTime - bulletStartTime) / bulletDuration, 0.0, 1.0);',
            '  float textInPercent = clamp((currentTime - textInStartTime) / textInDuration, 0.0, 1.0);',
            '  float textOutPercent = clamp((currentTime - textOutStartTime) / textOutDuration, 0.0, 1.0);',
@@ -65,6 +76,17 @@ var    donutMaterials = [],
 
     function createBackground(){
         var backgroundTexture = THREE.ImageUtils.loadTexture("images/loading-background.png", undefined, LOADSYNC.register() );
+        var backgroundMaterial = new THREE.MeshBasicMaterial( {map: backgroundTexture, transparent: true } );
+        var backgroundGeometry = new THREE.PlaneGeometry( 400 * scale, 400 * scale);
+        var backgroundPlane = new THREE.Mesh( backgroundGeometry, backgroundMaterial );
+        backgroundPlane.position.set(width/2, height/2, 0);
+        panel.addToScene( backgroundPlane );
+        console.log(panel);
+
+    }
+
+    function createCircles(){
+        var backgroundTexture = THREE.ImageUtils.loadTexture("images/loading-circles.png", undefined, LOADSYNC.register() );
         var backgroundMaterial = new THREE.MeshBasicMaterial( {map: backgroundTexture, transparent: true } );
         var backgroundGeometry = new THREE.PlaneGeometry( 400 * scale, 400 * scale);
         var backgroundPlane = new THREE.Mesh( backgroundGeometry, backgroundMaterial );
@@ -100,6 +122,7 @@ var    donutMaterials = [],
         // load images
 
         createBackground();
+        createCircles();
 
         donutImages.forEach(function(url){
             console.log(url);
@@ -114,6 +137,9 @@ var    donutMaterials = [],
     }
 
     function render(time){
+        donutMaterials.forEach(function(donut, index){
+            donut.uniforms.currentTime.value = time - index * 10;
+        });
 
         /*
         if(lastTextStartTime + ROTATE_TIME < time){
