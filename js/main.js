@@ -542,50 +542,48 @@ $(function(){
         $("#cassette-bg").css({"visibility":"hidden"});
         $("#play-image").css({"display": "block", "top": window.innerHeight/2 - 50, "left": window.innerWidth/2});
         $("#cassette-svg").css({"top": window.innerHeight/2 - 150, "left": window.innerWidth/2 - 300});
-        new Vivus('cassette-svg', {type: 'oneByOne', duration: 100, start: "autostart"}, function(){
-            WebFont.load({
-                google: {
-                    families: ['Roboto:500']
-                },
-                active: function(){
-                    // unhide the laoding graphic
-                    $("#cassette-bg").css({"visibility": "visible", "top": window.innerHeight/2, "left": window.innerWidth/2});
-                    if(isMobile && VIDEO_ENABLED){
-                        $("#play-button").click(function(){
-                            $("#play-button").velocity({opacity: 0}, {complete: function(){
-                                $("#play-button").css({display: "none"});
-                            }});
-                            setTimeout(function(){
-                                var video = $("#video")[0];
-                                if(typeof video.load == "function"){
-                                    video.src = "videos/video.mp4";
-                                    video.setAttribute('crossorigin', 'anonymous');
-                                    video.load();
-                                    video.play();
-                                } else {
-                                    VIDEO_ENABLED = false;
+        WebFont.load({
+            google: {
+                families: ['Roboto:500']
+            },
+            active: function(){
+                // unhide the laoding graphic
+                $("#cassette-bg").css({"visibility": "visible", "top": window.innerHeight/2, "left": window.innerWidth/2});
+                if(isMobile && VIDEO_ENABLED){
+                    $("#play-button").click(function(){
+                        $("#play-button").velocity({opacity: 0}, {complete: function(){
+                            $("#play-button").css({display: "none"});
+                        }});
+                        setTimeout(function(){
+                            var video = $("#video")[0];
+                            if(typeof video.load == "function"){
+                                video.src = "videos/video.mp4";
+                                video.setAttribute('crossorigin', 'anonymous');
+                                video.load();
+                                video.play();
+                            } else {
+                                VIDEO_ENABLED = false;
 
-                                }
-                                main(getWidth());
-                            }, 500);
+                            }
+                            main(getWidth());
+                        }, 500);
 
-                        });
+                    });
+                } else {
+                    var video = $("#video")[0];
+                    if(typeof video.load == "function" && VIDEO_ENABLED){
+                        video.src = "videos/video.mp4";
+                        video.setAttribute('crossorigin', 'anonymous');
+                        video.load();
+                        video.play();
                     } else {
-                        var video = $("#video")[0];
-                        if(typeof video.load == "function" && VIDEO_ENABLED){
-                            video.src = "videos/video.mp4";
-                            video.setAttribute('crossorigin', 'anonymous');
-                            video.load();
-                            video.play();
-                        } else {
-                            VIDEO_ENABLED = false;
+                        VIDEO_ENABLED = false;
 
-                        }
-                        main(getWidth());
                     }
+                    main(getWidth());
                 }
-            }); 
-        });
+            }
+        }); 
     }
 
 
