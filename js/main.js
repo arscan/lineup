@@ -36,7 +36,7 @@ function main(renderWidth){
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
         projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, [loadingPanel, toolPanel, namePanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, tinyPanel4, tinyPanel5, sharePanel, photosPanel, projectsPanel, linksPanel]),
         subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
-        bottomPanel = createBottomPanel($("#bottom-panel").css({"top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
+        bottomPanel = createBottomPanel($("#bottom-panel").css({"opacity": 0, "top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
         carouselPanels = [linksPanel, toolPanel, photosPanel, projectsPanel],
         carouselLocation = 0,
@@ -71,6 +71,7 @@ function main(renderWidth){
     tinyPanel4.setPosition(2024 * screenScale, 115 * screenScale, .5);
     tinyPanel5.setPosition(2024 * screenScale, 120 * screenScale, .5);
     sharePanel.setPosition(renderWidth + 1000, 0, 0);
+    namePanel.setPosition(2024 * screenScale, 100 * screenScale, .5);
 
     // put the carouselPanels off the right side of the screen
     for(var i = 0; i< carouselPanels.length; i++){
@@ -156,11 +157,29 @@ function main(renderWidth){
            .onUpdate(function(){
                backgroundPanel.setLightBarLevel(this.level);
                backgroundPanel.setLightLevel(this.level);
-               // subjectPanel.setBrightness(this.level);
+               subjectPanel.setBrightness(this.level);
                bottomPanel.element.css({opacity: this.level});
 
            }).start();
 
+        new TWEEN.Tween({})
+            .to
+
+    loadingPanel.setPosition(renderWidth / 2 - 200 * screenScale, renderHeight /2 + 200 * screenScale, 1);
+        /* loadin gpanel */
+        createChainedTween(loadingPanel, [
+            {position: {x: renderWidth / 2  - 200 * screenScale, y: renderHeight / 2 + 200*screenScale, z:1}},
+            {   delay: 0, 
+                duration: 2000, 
+                easing: TWEEN.Easing.Quintic.InOut,
+                position: {x: 700 * screenScale, y: 500 * screenScale, z:0}
+            },
+            {   delay: 1000, 
+                duration: 1000, 
+                easing: TWEEN.Easing.Quadratic.In,
+                position: {x: -500 * screenScale, y: 500 * screenScale, z:0}
+            }]
+            ).start();
 
         /* Name Panel */
         createChainedTween(namePanel, [
@@ -268,16 +287,15 @@ function main(renderWidth){
     /* register what to do while loading */
 
     LOADSYNC.onUpdate(function(completedCount, totalCount){
-        $(".cassette-tape").velocity("stop");
-        $(".cassette-tape").velocity({"margin-left": 45 * completedCount / totalCount}, 1000);
+        loadingPanel.setPercent(completedCount / totalCount);
     });
 
     /* register what we want to do when loading is complete */
     LOADSYNC.onComplete(function(){
-        $("#loading-graphic").velocity({color: "#000", opacity: 0},{"display":"none"});
-        runIntroAnimation();
-        setTimeout(function(){clock.start()}, 3000);
-        // clock.start();
+        // hide the other stuff
+
+        setTimeout(runIntroAnimation, 2000);
+        setTimeout(function(){clock.start()}, 5000);
     });
 
     function setInteraction(){

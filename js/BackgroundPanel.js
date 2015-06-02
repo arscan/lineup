@@ -19,6 +19,13 @@ function createBackgroundPanel(renderer, width, height){
         middleLight,
         middleLightColor = new THREE.Color(0xff9600);
 
+    var horizTexture;
+
+    var number1,
+        number2, 
+        number3,
+        number4;
+
     function setBrightness(color, brightness){
         return new THREE.Color(color.r * brightness, color.g * brightness, color.b * brightness);
     }
@@ -79,27 +86,27 @@ function createBackgroundPanel(renderer, width, height){
         createPanel(geometry, {x:1500,y:-300}, material);
         createPanel(geometry, {x:-940,y:-300}, material);
 
-        var number1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("images/number1.png", undefined, LOADSYNC.register())}));
+        number1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: 0, map: THREE.ImageUtils.loadTexture("images/number1.png", undefined, LOADSYNC.register())}));
         number1.position.set(-510, 340, -460);
         scene.add(number1);
 
-        var number2 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("images/number2.png", undefined, LOADSYNC.register())}));
+        number2 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: 0, map: THREE.ImageUtils.loadTexture("images/number2.png", undefined, LOADSYNC.register())}));
         number2.position.set(-510, 145, -460);
         scene.add(number2);
 
-        var number3 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("images/number3.png", undefined, LOADSYNC.register())}));
+        number3 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: 0, map: THREE.ImageUtils.loadTexture("images/number3.png", undefined, LOADSYNC.register())}));
         number3.position.set(-510, -45, -460);
         scene.add(number3);
 
-        var number4 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
-                                     new THREE.MeshBasicMaterial({transparent: true, opacity: .7, map: THREE.ImageUtils.loadTexture("images/number4.png", undefined, LOADSYNC.register())}));
+        number4 = new THREE.Mesh(new THREE.PlaneBufferGeometry(35, 35), 
+                                     new THREE.MeshBasicMaterial({transparent: true, opacity: 0, map: THREE.ImageUtils.loadTexture("images/number4.png", undefined, LOADSYNC.register())}));
         number4.position.set(-510, -243, -460);
         scene.add(number4);
         
-        var horizTexture = new THREE.MeshBasicMaterial({transparent: true, opacity: .8, map: THREE.ImageUtils.loadTexture("images/horizontal_lights.png", undefined, LOADSYNC.register())});
+        horizTexture = new THREE.MeshBasicMaterial({transparent: true, opacity: .8, map: THREE.ImageUtils.loadTexture("images/horizontal_lights.png", undefined, LOADSYNC.register())});
 
         var horizLight1 = new THREE.Mesh(new THREE.PlaneBufferGeometry(1024, 18), horizTexture); 
         horizLight1.position.set(0, 350, -500);
@@ -149,6 +156,9 @@ function createBackgroundPanel(renderer, width, height){
         horizLight12.position.set(0, -250, -500);
         scene.add(horizLight12);
 
+        horizTexture.opacity = 0;
+        // setBrightness(new THREE.Color(0xffffff), 0);
+
     }
     function createPanel( geometry, posish, material ) {
 
@@ -171,6 +181,11 @@ function createBackgroundPanel(renderer, width, height){
         quad.material.color = setBrightness(new THREE.Color(0xffffff), level);
     }
     function setLightLevel(level){
+        number1.material.opacity = level;
+        number2.material.opacity = level;
+        number3.material.opacity = level;
+        number4.material.opacity = level;
+        horizTexture.opacity = level;
         overheadLight.color = setBrightness(overheadLightColor, level);
         middleLight.color = setBrightness(middleLightColor, level);
     }

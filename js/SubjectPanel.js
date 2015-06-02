@@ -13,7 +13,7 @@ function createSubjectPanel(renderer, scale){
 
    var targetParams = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat};
    var renderTarget = new THREE.WebGLRenderTarget(width, height, targetParams);
-   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true}));
+   var quad = new THREE.Mesh( new THREE.PlaneBufferGeometry(width, height), new THREE.MeshBasicMaterial({map: renderTarget, transparent: true, opacity: 0}));
 
    // quad.scale.set(1.34,1.34,1.34);
 
@@ -110,7 +110,7 @@ function createSubjectPanel(renderer, scale){
                 uniforms: subjectShader.uniforms,
                 vertexShader: subjectShader.vertexShader,
                 fragmentShader: subjectShader.fragmentShader,
-                transparent: true
+                transparent: true,
             });
         } else {
             videoMaterial = new THREE.MeshBasicMaterial({transparent: true, map: THREE.ImageUtils.loadTexture("images/snapshot_with_error.png", undefined, LOADSYNC.register())});
@@ -162,6 +162,7 @@ function createSubjectPanel(renderer, scale){
     }
 
     function setBrightness(level){
+        quad.material.opacity = Math.min(1, level * 3);
         // brightnessContrastPass.uniforms.brightness.value = -.1 - (.9 - level * .9);
     }
 

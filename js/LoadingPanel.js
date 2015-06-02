@@ -1,7 +1,8 @@
 function createLoadingPanel(renderer, scale){
 
    var STANDARD_DIMENSIONS = {width: 400, height:400},
-       ROTATE_TIME = 10.0;
+       ROTATE_TIME = 10.0,
+       clock = new THREE.Clock(false);
 
 
    var width = STANDARD_DIMENSIONS.width * scale,
@@ -19,7 +20,9 @@ var    donutMaterials = [],
        percent = 0,
        started = false,
        particleGroup,
-       particles = [];
+       particles = [],
+       percentComplete = 0,
+       currentTween = null;
 
    var panel = createPanel(renderer, width, height, {foregroundGlow: true});
 
@@ -57,41 +60,6 @@ var    donutMaterials = [],
            '      gl_FragColor = texture2D(tDiffuse, vUv);',
            '    }',
            '  }',
-           // '  if(vUv.x - .5 < 0.0){',
-           // '    if((vUv.y - .5) / (vUv.x - .5) < cos(PI + radians) / sin(PI + radians)){',
-           // '      gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);',
-           // '    }',
-           // '  }',
-           // '  if(vUv.x - .5 > 0.0 && vUv.y - .5 < 0.0){',
-           // '    if((vUv.x - .5) / (vUv.y - .5) > sin(radians) / cos(radians)){',
-           // '      gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);',
-           // '    }',
-           // '  }',
-           // '  if(vUv.x - .5 < 0.0){',
-           // '    if((vUv.x - .5) / (vUv.y - .5) > currentTime){',
-           // '      gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);',
-           // '    }',
-           // '  }',
-
-           /*'  float bulletPercent = clamp((currentTime - bulletStartTime) / bulletDuration, 0.0, 1.0);',
-           '  float textInPercent = clamp((currentTime - textInStartTime) / textInDuration, 0.0, 1.0);',
-           '  float textOutPercent = clamp((currentTime - textOutStartTime) / textOutDuration, 0.0, 1.0);',
-           '  float headerInPercent = clamp((currentTime - headerInStartTime) / headerInDuration, 0.0, 1.0);',
-           '  float floorNum = floor(textInPercent * 10.0);',
-           '  float myFloorNum = floor((textStart - vUv.y)/lineHeight);',
-           '  if(vUv.x < .18 && abs(vUv.y - mid)*4.0 > bulletPercent ){',
-           '    gl_FragColor.a = 0.0;',
-           '  }',
-           '  if(textInStartTime > 0.0 && vUv.x > .18 && vUv.y < textStart && vUv.x > (textInPercent - myFloorNum * .04 + .10 )){',
-           '    gl_FragColor.a = 0.0;',
-           '  }',
-           '  if(textOutStartTime > 0.0 && vUv.x > .18 && vUv.y < textStart && vUv.x > (1.0-textOutPercent)){',
-           '    gl_FragColor.a = 0.0;',
-           '  }',
-           '  if(headerInStartTime > 0.0 && vUv.x > .15 && vUv.y > textStart && vUv.y < textStart + .1 && vUv.x > headerInPercent){',
-           '    gl_FragColor.a = 0.0;',
-           '  }',*/
-           // '  gl_FragColor.a = 1.0;',
            '}',
        ].join('\n')
     };
@@ -185,25 +153,30 @@ var    donutMaterials = [],
         });
 
 
+    }
 
-
+    function setPercent(percent){
+        if(currentTween){
+            currentTween.stop();
+        }
+        currentTween = new TWEEN.Tween({percent: percentComplete})
+            .to({percent: percent}, 2000)
+            .onUpdate(function(){
+                percentComplete = this.percent;
+            }).start();
 
     }
 
     function render(time){
 
-        if(!started && time > 0){
-            new TWEEN.Tween({t: 0})
-                .to({t: 1}, 10000)
-                .onUpdate(function(){
-                    percent = this.t;
-            })
-            .start();
+        if(!started){
+            clock.start();
 
             started = true;
         }
+        time = clock.getElapsedTime();
         donutMaterials.forEach(function(donut, index){
-            donut.uniforms.currentTime.value = percent;
+            donut.uniforms.currentTime.value = percentComplete;
         });
 
         if(particleGroup){
@@ -212,20 +185,9 @@ var    donutMaterials = [],
             });
         }
 
-        /*
-        if(lastTextStartTime + ROTATE_TIME < time){
-           lastTextStartTime = time;
-           textureIndex = (textureIndex + 1) % textures.length;
-
-           nameBoxMaterial.uniforms.tDiffuse.value = textures[textureIndex];
-           nameBoxMaterial.uniforms.textInStartTime.value = time;
-           nameBoxMaterial.uniforms.textOutStartTime.value = time + ROTATE_TIME-2;
-        }
-
-        nameBoxShader.uniforms.currentTime.value = time -1;
-        */
         panel.render(time);
     }
+
 
     init();
 
@@ -239,7 +201,9 @@ var    donutMaterials = [],
         checkBounds: panel.checkBounds,
         setBlur: panel.setBlur,
         setPosition: panel.setPosition,
-        setDeltaPosition: panel.setDeltaPosition
+        setDeltaPosition: panel.setDeltaPosition,
+        setPercent: setPercent
+
     });
 }
 
