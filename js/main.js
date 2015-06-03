@@ -173,13 +173,18 @@ function main(renderWidth){
                 duration: 2000, 
                 easing: TWEEN.Easing.Quintic.InOut,
                 position: {x: 700 * screenScale, y: 500 * screenScale, z:0}
-            },
-            {   delay: 1000, 
-                duration: 1000, 
-                easing: TWEEN.Easing.Quadratic.In,
-                position: {x: -500 * screenScale, y: 500 * screenScale, z:0}
             }]
             ).start();
+
+        new TWEEN.Tween({opacity: 1})
+            .to({opacity: 0}, 1000)
+            .delay(1000)
+            .easing(TWEEN.Easing.Quintic.InOut)
+            .onUpdate(function(){
+                console.log("opacity: " + this.opacity);
+                loadingPanel.quad.material.opacity = this.opacity;
+
+            }).start();
 
         /* Name Panel */
         createChainedTween(namePanel, [
@@ -498,7 +503,9 @@ function main(renderWidth){
 
         }
 
-        loadingPanel.render(time);
+        if(time <= 0){
+            loadingPanel.render(time);
+        }
 
         skeletonPanel.render(time, 2 * Math.PI * mouseX / renderWidth);
         namePanel.render(time);
