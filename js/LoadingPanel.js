@@ -74,6 +74,16 @@ var    donutMaterials = [],
 
     }
 
+   function createBackdrop(){
+
+        var material = new THREE.MeshBasicMaterial({transparent: false, color: 0x000000});
+        var geometry = new THREE.PlaneBufferGeometry( width, height);
+
+        var plane = new THREE.Mesh( geometry, material );
+        plane.position.set(width/2, height/2, -1);
+        panel.addToScene( plane );
+   };
+
     function createCircles(){
         var backgroundTexture = THREE.ImageUtils.loadTexture("images/loading-circles.png", undefined, LOADSYNC.register() );
         var backgroundMaterial = new THREE.MeshBasicMaterial( {map: backgroundTexture, transparent: true, color: 0xff8d07 } );
@@ -141,6 +151,7 @@ var    donutMaterials = [],
 
         // load images
 
+        createBackdrop();
         createBackground();
         createCircles();
         for(var i =0; i< 5; i++){
@@ -160,6 +171,7 @@ var    donutMaterials = [],
             currentTween.stop();
         }
         currentTween = new TWEEN.Tween({percent: percentComplete})
+            .delay(500)
             .to({percent: percent}, 2000)
             .onUpdate(function(){
                 percentComplete = this.percent;

@@ -46,6 +46,7 @@ function main(renderWidth){
         carouselSnapping = false,
 
         mouseX = 0,
+        mouseY = 0,
 
         interactivePanels = [namePanel, skeletonPanel, sharePanel],
         grabbedPanel = null,
@@ -181,7 +182,6 @@ function main(renderWidth){
             .delay(1000)
             .easing(TWEEN.Easing.Quintic.InOut)
             .onUpdate(function(){
-                console.log("opacity: " + this.opacity);
                 loadingPanel.quad.material.opacity = this.opacity;
 
             }).start();
@@ -315,8 +315,8 @@ function main(renderWidth){
         $(window).resize(function() {
             snapTween.stop();
             if($(window).width() > renderWidth * 1.3 || $(window).width() < renderWidth * .7){
-                // location.href = '?';
-                // return;
+                location.href = '?';
+                return;
             }
             $('canvas').width($(window).width());
             $('canvas').height($(window).width() / screenRatio);
@@ -386,7 +386,7 @@ function main(renderWidth){
         $("canvas").on('click', function(event){
             if(carouselVelocity === 0){
                 for(var i = 0; i< carouselPanels.length; i++){
-                    var res= carouselPanels[i].checkBounds(event.offsetX, renderHeight - event.offsetY);
+                    var res= carouselPanels[i].checkBounds(mouseX, renderHeight - mouseY);
                     if(typeof res === "string"){
                         location.href=res;
                         return;
@@ -395,13 +395,11 @@ function main(renderWidth){
                 }
             }
 
-            var res= sharePanel.checkBounds(event.offsetX, renderHeight - event.offsetY)
-            console.log(res);
+            var res= sharePanel.checkBounds(mouseX, renderHeight - mouseY)
             if(typeof res === "string"){
                 location.href=res;
                 return;
             } else if(typeof res === "function"){
-                console.log("function called");
                 res.call(this);
                 return;
 
@@ -409,10 +407,11 @@ function main(renderWidth){
 
         });
         $("canvas").on('mousemove', function(event){
-            mouseX = event.offsetX;
+            mouseX = (event.offsetX || event.pageX - $(event.target).offset().left);
+            mouseY = (event.offsetY || event.pageY - $(event.target).offset().top);
             if(carouselVelocity === 0){
                 for(var i = 0; i< carouselPanels.length; i++){
-                    var res= carouselPanels[i].checkBounds(event.offsetX, renderHeight - event.offsetY);
+                    var res= carouselPanels[i].checkBounds(mouseX, renderHeight - mouseY);
                     if(typeof res === "string" || typeof res === "function"){
                         $("canvas").addClass("pointing");
                         return;
@@ -421,7 +420,7 @@ function main(renderWidth){
                 }
             }
 
-            var res= sharePanel.checkBounds(event.offsetX, renderHeight - event.offsetY);
+            var res= sharePanel.checkBounds(mouseX, renderHeight - mouseY);
             if(typeof res === "string" || typeof res === "function"){
                 $("canvas").addClass("pointing");
                 return;
@@ -617,14 +616,12 @@ $(function(){
     }
 
     PleaseRotate.onHide(function(){
-        console.log("hide");
         if(!loaded){
             load();
         }
     });
 
     $("#about-x").click(function(){
-        console.log($(this));
         $(this).parent().css("display", "none");
     });
 });
