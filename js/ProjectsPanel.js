@@ -12,19 +12,33 @@ function createProjectsPanel(renderer, scale){
        hexasphere,
        githubWargames,
        mousePos = null,
-       currentSelection = -1,
-       currentTween = null,
+       currentSelection = 3,
+       pointerPlane = null,
        currentTimeout = null;
 
    var menu = [
-               {title: "ENCOM BOARDROOM", pic: "images/projects-boardroom.png", url: "http://www.robscanlon.com/encom-boardroom"},
-               {title: "ENCOM GLOBE", pic: "images/projects-globe.png", url: "http://www.robscanlon.com/encom-globe"},
-               {title: "GITHUB WARGAMES", pic: "images/projects-wargames.png", url: "http://www.robscanlon.com/github-wargames"},
-               {title: "PLEASEROTATE.JS", pic: "images/projects-rotate.png", url: "http://www.robscanlon.com/pleaserotate"}
+               {title: "ENCOM BOARDROOM", pic: "images/projects-boardroom.png", url: "http://www.robscanlon.com/encom-boardroom", pointerX: 200 * scale},
+               {title: "ENCOM GLOBE", pic: "images/projects-globe.png", url: "http://www.robscanlon.com/encom-globe", pointerX: 165 * scale},
+               {title: "GITHUB WARGAMES", pic: "images/projects-wargames.png", url: "http://www.robscanlon.com/github-wargames", pointerX: 195 * scale},
+               {title: "PLEASEROTATE.JS", pic: "images/projects-rotate.png", url: "http://www.robscanlon.com/pleaserotate", pointerX: 187 * scale}
               ];
 
     var choices = [];
 
+    function createPointerPlane(){
+        var pointerTexture = THREE.ImageUtils.loadTexture("images/projects-pointer.png", undefined, LOADSYNC.register() );
+        var pointerMaterial = new THREE.MeshBasicMaterial({map: pointerTexture, depthTest: false, transparent: true});
+        var pointerGeometry = new THREE.PlaneBufferGeometry( 26 * scale, 30 * scale);
+        pointerPlane = new THREE.Mesh(pointerGeometry, pointerMaterial );
+        pointerPlane.position.set(35 * scale, 115 * scale,15);
+        pointerPlane.scale.set(.5, .5, .5);
+        panel.addToScene(pointerPlane);
+    }
+
+    function movePointerPlane(index){
+        new TWEEN.Tween(pointerPlane.position)
+            .to({y: height - (84 + index * 20)*scale, x: menu[index].pointerX}, 500).start();
+    }
 
     function createTextPlane(text, header){
        var titleCanvas =  panel.renderToCanvas(512, 160, function(ctx){
@@ -76,7 +90,7 @@ function createProjectsPanel(renderer, scale){
             panel.addToScene(menuPlane);
 
             menu[i].rightPlane = createTextPlane(menu[i].title);
-            menu[i].rightPlane.position.set(-100, 30*scale, 0);
+            menu[i].rightPlane.position.set(350*scale, 30*scale, 0);
             menu[i].picPlane = menuPlane;
             menu[i].leftPlane = leftPlane;
             panel.addToScene(menu[i].rightPlane);
@@ -95,6 +109,8 @@ function createProjectsPanel(renderer, scale){
         backgroundPlane.position.set(width/2, height/2, 0);
         panel.addToScene(backgroundPlane);
 
+        createPointerPlane();
+
         buildMenu();
 
         setMenu(0);
@@ -108,24 +124,23 @@ function createProjectsPanel(renderer, scale){
 
     function setMenu(index){
         clearTimeout(currentTimeout);
-
-        if(currentTween != null){
-            currentTween.stop();
+        if(index < 0){
+            return;
         }
 
+        movePointerPlane(index);
 
-        menu[index].leftPlane.scale.set(1.05, 1.05, 1.05);
-        currentTween = new TWEEN.Tween({val: 0}, 1000)
-            .to({val: 1})
-            .onUpdate(function(val){
-                // menu[currentSelection].picPlane.material.opacity = 1 - val;
-                menu[index].picPlane.material.opacity = val;
+        new TWEEN.Tween({val: 0, cs: currentSelection}, 1000)
+            .to({val: 1, cs: currentSelection})
+            .onUpdate(function(){
+                console.log(this);
+                if(this.cs >= 0){
+                    menu[this.cs].rightPlane.material.opacity = 1 - this.val;
+                    menu[this.cs].picPlane.material.opacity = 1 - this.val;
+                }
+                menu[index].rightPlane.material.opacity = this.val;
+                menu[index].picPlane.material.opacity = this.val;
             }).start();
-
-        if(currentSelection >= 0){
-            menu[currentSelection].leftPlane.scale.set(1, 1, 1);
-            menu[currentSelection].picPlane.material.opacity = 0;
-        }
 
         currentSelection = index;
 
@@ -161,8 +176,6 @@ function createProjectsPanel(renderer, scale){
                 return menu[index].url;
             }
         }
-
-        clearMenu();
 
         return false;
     }
