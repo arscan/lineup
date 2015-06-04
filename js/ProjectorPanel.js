@@ -1,4 +1,4 @@
-function createProjectorPanel(renderer, width, height, elements){
+function createProjectorPanel(renderer, width, height, scale, elements){
 
    var renderScene,
        renderComposer,
@@ -34,11 +34,11 @@ function createProjectorPanel(renderer, width, height, elements){
 
         var glareTexture = THREE.ImageUtils.loadTexture('images/projector_glare.png', undefined, LOADSYNC.register());
         glareMaterial = new THREE.MeshBasicMaterial({map: glareTexture, transparent: true, blend: THREE.AdditiveBlending});
-        var glareGeometry = new THREE.PlaneBufferGeometry( 64, 64 );
+        var glareGeometry = new THREE.PlaneBufferGeometry( 50 * scale, 50 * scale );
         var glareLeft = new THREE.Mesh(glareGeometry, glareMaterial );
         var glareRight = new THREE.Mesh(glareGeometry, glareMaterial );
-        glareLeft.position.set(0, 40, 0);
-        glareRight.position.set(width, 40, 0);
+        glareLeft.position.set(0, 30 * scale, 0);
+        glareRight.position.set(width, 30 * scale, 0);
         renderScene.add(glareLeft);
         renderScene.add(glareRight);
 
