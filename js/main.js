@@ -563,16 +563,13 @@ $(function(){
 
     function load(){
         loaded = true;
-        $("#cassette-bg").css({"visibility":"hidden"});
         $("#play-image").css({"display": "block", "top": window.innerHeight/2 - 50, "left": window.innerWidth/2});
-        $("#cassette-svg").css({"top": window.innerHeight/2 - 150, "left": window.innerWidth/2 - 300});
         WebFont.load({
             google: {
                 families: ['Roboto:500']
             },
             active: function(){
                 // unhide the laoding graphic
-                $("#cassette-bg").css({"visibility": "visible", "top": window.innerHeight/2, "left": window.innerWidth/2});
                 if(isMobile && VIDEO_ENABLED){
                     $("#play-button").click(function(){
                         $("#play-button").velocity({opacity: 0}, {complete: function(){

@@ -72,14 +72,6 @@ function createProjectorPanel(renderer, width, height, scale, elements){
 
         renderComposer.render();
         projectorComposer.render();
-        /*
-        projectorComposer.render();
-        blurComposer.render();
-        blurComposer.render();
-        glowComposer.render();
-
-        mainComposer.render();
-       */
 
     }
 

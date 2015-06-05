@@ -133,7 +133,6 @@ function createProjectsPanel(renderer, scale){
         new TWEEN.Tween({val: 0, cs: currentSelection}, 1000)
             .to({val: 1, cs: currentSelection})
             .onUpdate(function(){
-                console.log(this);
                 if(this.cs >= 0){
                     menu[this.cs].rightPlane.material.opacity = 1 - this.val;
                     menu[this.cs].picPlane.material.opacity = 1 - this.val;

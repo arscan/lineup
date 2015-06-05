@@ -33,7 +33,6 @@ function createPhotosPanel(renderer, scale){
         var headerMaterial = new THREE.MeshBasicMaterial({map: headerTexture, depthTest: false, transparent: true});
         var headerGeometry = new THREE.PlaneBufferGeometry( 134 * scale, 32 * scale);
         var headerPlane = new THREE.Mesh(headerGeometry, headerMaterial );
-        // headerPlane.position.set(108 * scale, height - 90 * scale,5);
         headerPlane.position.set(140 * scale, height - 45 * scale, 5);
         panel.addToScene(headerPlane);
 
@@ -42,7 +41,6 @@ function createPhotosPanel(renderer, scale){
         var picsGeometry = new THREE.PlaneBufferGeometry( 700 * scale, 412 * scale);
         var picsPlane = new THREE.Mesh(picsGeometry, picsMaterial );
         picsPlane.scale.set(.5,.5,.5);
-        // headerPlane.position.set(108 * scale, height - 90 * scale,5);
         picsPlane.position.set(width/2, height/2, 0);
         panel.addToScene(picsPlane);
 

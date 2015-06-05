@@ -36,12 +36,6 @@ function createSubjectPanel(renderer, scale){
        "uniform sampler2D tDiffuse;",
        "uniform vec3 cMaskColor;",
        "varying vec2 vUv;",
-        // "vec3 toYUV(vec3 colorIn){",
-        //    "float y = 0.299 * colorIn.r + 0.587 * colorIn.g + 0.114 * colorIn.b;",
-        //    "float u = 0.492 * (colorIn.b - y);",
-        //    "float v = 0.877 * (colorIn.r - y);",
-        //    "return vec3(y,u,v);",
-        // "}",
         "bool checkBlue(vec3 colorIn){",
         "   return (colorIn.g > colorIn.r + colorIn.b);",
         "}",
@@ -75,10 +69,6 @@ function createSubjectPanel(renderer, scale){
         " if(checkBlue(texture2D(tDiffuse, vec2(vUv.x, vUv.y - .004)).rgb)){",
         "    texel.a = texel.a * 0.6;",
         " }",
-        // "   texel.a  = step(.08, distance(toYUV(cMaskColor), toYUV(texel.rgb)) / 1.7);",
-        // "   texel.b += .05;",
-        // "   texel.r -= .1;",
-        // "   texel.g -= .1;",
         "   gl_FragColor = texel;",
         "}"
        ].join('\n')
@@ -127,22 +117,13 @@ function createSubjectPanel(renderer, scale){
 
         renderComposer = new THREE.EffectComposer(renderer, renderTarget);
         renderComposer.addPass(new THREE.RenderPass(renderScene, renderCamera));
-        // brightnessContrastPass = new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: .5, brightness: -.1});
-        // renderComposer.addPass(brightnessContrastPass);
-        // renderComposer.addPass(new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: .5, brightness: .1 - (1-brightness)}));
         renderComposer.addPass(new THREE.ShaderPass(THREE.BrightnessContrastShader, {contrast: 0, brightness: -.07}));
-        // renderComposer.addPass(new THREE.ShaderPass(THREE.HueSaturationShader, {hue: .05, saturation: -.6}));
-        // renderComposer.addPass(new THREE.ShaderPass(THREE.CopyShader)); // to line them up right
-        // renderComposer.addPass(new THREE.ShaderPass(THREE.FXAAShader)); // to line them up right
         renderComposer.addPass(new THREE.ShaderPass(THREE.FXAAShader, {resolution: new THREE.Vector2(1/width, 1/height)}));
-        // renderComposer.addPass(new THREE.ShaderPass(THREE.CopyShader)); // to line them up right
 
     }
 
     function render(){
-        // renderer.render(renderScene, renderCamera, renderTarget);
         renderComposer.render();
-
     }
 
     function setPosition(x, y, z){
@@ -163,7 +144,6 @@ function createSubjectPanel(renderer, scale){
 
     function setBrightness(level){
         quad.material.opacity = Math.min(1, level * 3);
-        // brightnessContrastPass.uniforms.brightness.value = -.1 - (.9 - level * .9);
     }
 
     init();

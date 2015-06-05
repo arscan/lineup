@@ -92,8 +92,6 @@ function createPanel(renderer, width, height, opts){
         glowComposer = new THREE.EffectComposer(renderer, createRenderTarget(width, height));
         glowComposer.addPass(renderScenePass);
 
-        // glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 4/width} ));
-        // glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 4/height}));
         glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 2/width} ));
         glowComposer.addPass(new THREE.ShaderPass(THREE.VerticalBlurShader, {v: 2/height}));
         glowComposer.addPass(new THREE.ShaderPass( THREE.HorizontalBlurShader, {h: 1/width} ));
