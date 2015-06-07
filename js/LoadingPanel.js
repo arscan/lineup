@@ -60,6 +60,9 @@ var    donutMaterials = [],
            '      gl_FragColor = texture2D(tDiffuse, vUv);',
            '    }',
            '  }',
+           '  if(vUv.x - .5 == 0.0 && currentTime > .5){',
+           '      gl_FragColor = texture2D(tDiffuse, vUv);',
+           '  }',
            '}',
        ].join('\n')
     };
