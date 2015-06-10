@@ -23,6 +23,7 @@ function main(renderWidth){
     /* panels and such */
     var skeletonPanel = createSkeletonPanel(renderer, screenScale),
         namePanel = createNamePanel(renderer, screenScale),
+        scrollPanel = createScrollPanel(renderer, screenScale),
         sharePanel = createSharePanel(renderer, screenScale),
         tinyPanel1 = createTinyPanel1(renderer, screenScale),
         tinyPanel2 = createTinyPanel2(renderer, screenScale),
@@ -34,7 +35,7 @@ function main(renderWidth){
         photosPanel = createPhotosPanel(renderer, screenScale),
         linksPanel = createLinksPanel(renderer, screenScale),
         backgroundPanel = createBackgroundPanel(renderer, renderWidth, renderHeight),
-        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, screenScale, [loadingPanel, toolPanel, namePanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, tinyPanel4, tinyPanel5, sharePanel, photosPanel, projectsPanel, linksPanel]),
+        projectorPanel = createProjectorPanel(renderer, renderWidth, renderHeight, screenScale, [loadingPanel, toolPanel, namePanel, scrollPanel, skeletonPanel, tinyPanel1, tinyPanel2, tinyPanel3, tinyPanel4, tinyPanel5, sharePanel, photosPanel, projectsPanel, linksPanel]),
         subjectPanel = createSubjectPanel(renderer, screenScale);//326, 580, 500 + 326/2, 580/2 - 120 ),
         bottomPanel = createBottomPanel($("#bottom-panel").css({"opacity": 0, "top":renderHeight - (60 * screenScale) + Math.max(0,(window.innerHeight - renderHeight)/2), "width": renderWidth})),
 
@@ -47,6 +48,10 @@ function main(renderWidth){
 
         mouseX = 0,
         mouseY = 0,
+
+        introDone = false,
+
+        hasScrolled = false,
 
         interactivePanels = [namePanel, skeletonPanel, sharePanel],
         grabbedPanel = null,
@@ -64,6 +69,7 @@ function main(renderWidth){
 
     loadingPanel.setPosition(renderWidth / 2 - 200 * screenScale, renderHeight /2 + 200 * screenScale, 1);
 
+    scrollPanel.setPosition(2000 * screenScale, renderHeight - 100 * screenScale, 1);
     skeletonPanel.setPosition(380 * screenScale, renderHeight - 20 * screenScale, 1);
     subjectPanel.setPosition(450 * screenScale, 450 * screenScale, 1);
     tinyPanel1.setPosition(2024 * screenScale, 100 * screenScale, .5);
@@ -163,10 +169,7 @@ function main(renderWidth){
 
            }).start();
 
-        new TWEEN.Tween({})
-            .to
-
-    loadingPanel.setPosition(renderWidth / 2 - 200 * screenScale, renderHeight /2 + 200 * screenScale, 1);
+        loadingPanel.setPosition(renderWidth / 2 - 200 * screenScale, renderHeight /2 + 200 * screenScale, 1);
         /* loadin gpanel */
         createChainedTween(loadingPanel, [
             {position: {x: renderWidth / 2  - 200 * screenScale, y: renderHeight / 2 + 200*screenScale, z:1}},
@@ -278,6 +281,8 @@ function main(renderWidth){
             .onUpdate(function(){
                 carouselLocation = this.pos;
                 setPanelPositions(true);
+            }).onComplete(function(){
+                introDone = true;
             }).start();
 
         /* tiny panel 1 */
@@ -287,6 +292,9 @@ function main(renderWidth){
         tinyPanelTween(tinyPanel4, 2024 * screenScale, .5);
         tinyPanelTween(tinyPanel5, 2024 * screenScale, .5);
 
+    }
+
+    function showScroll(){
     }
 
     /* register what to do while loading */
@@ -301,6 +309,8 @@ function main(renderWidth){
 
         setTimeout(runIntroAnimation, 2000);
         setTimeout(function(){clock.start()}, 5000);
+        setTimeout(function(){if(!hasScrolled){scrollPanel.activate()}}, 25000);
+
     });
 
     function setInteraction(){
@@ -325,7 +335,7 @@ function main(renderWidth){
         hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL });
         /* right carousel */
         hammertime.on('pan', function(ev){
-            if(ev.center.x > renderWidth / 2 && !panning){
+            if(ev.center.x > renderWidth / 2 && !panning && introDone){
                 snapTween.stop(); 
 
                 if(ev.velocity < 0){
@@ -338,6 +348,9 @@ function main(renderWidth){
                     carouselVelocity *= -1;
                 }
                  carouselVelocity *= 1.3;
+
+                scrollPanel.finish();
+                hasScrolled = true;
 
                 return;
             } 
@@ -380,8 +393,11 @@ function main(renderWidth){
         });
 
         $("canvas").on('mousewheel', function(event){
+            if(!introDone) return;
             snapTween.stop();
             carouselVelocity = Math.max(-.5, Math.min(.5, event.deltaY / 6 + carouselVelocity));
+            scrollPanel.finish();
+            hasScrolled = true;
         });
         $("canvas").on('click', function(event){
             if(carouselVelocity === 0){
@@ -407,6 +423,8 @@ function main(renderWidth){
 
         });
         $("canvas").on('mousemove', function(event){
+            if(!introDone) return;
+
             mouseX = (event.offsetX || event.pageX - $(event.target).offset().left);
             mouseY = (event.offsetY || event.pageY - $(event.target).offset().top);
             if(carouselVelocity === 0){
@@ -431,10 +449,14 @@ function main(renderWidth){
         });
 
         $(window).keydown(function(event){
+            scrollPanel.finish();
+            hasScrolled = true;
             if(event.which === 40 || event.which === 39){
+                if(!introDone) return;
                 snapTween.stop();
                 carouselVelocity -= .2;
             } else if (event.which === 38 || event.which === 37) {
+                if(!introDone) return;
                 snapTween.stop();
                 carouselVelocity += .2;
             }
@@ -506,6 +528,7 @@ function main(renderWidth){
             loadingPanel.render(time);
         }
 
+        scrollPanel.render(time);
         skeletonPanel.render(time, 2 * Math.PI * mouseX / renderWidth);
         namePanel.render(time);
 
