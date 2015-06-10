@@ -3,7 +3,6 @@ var VIDEO_ENABLED = window.location.href.indexOf('?DISABLE_VIDEO') === -1;
 function main(renderWidth){
 
     var container = document.createElement( 'div' ),
-        stats = new Stats(),
         renderer = new THREE.WebGLRenderer( { antialias: false, alpha: true } ), 
         hammertime = new Hammer(renderer.domElement),
         /* screen size */
@@ -87,7 +86,6 @@ function main(renderWidth){
     }
 
     /* place and position the rendering canvas */
-    container.appendChild( stats.domElement );
     document.body.appendChild( container );
     renderer.setSize( renderWidth, renderHeight );
     container.appendChild( renderer.domElement );
@@ -500,7 +498,6 @@ function main(renderWidth){
 
         var numTicks = (delta / .01666)
 
-        stats.update();
         carouselVelocity *= Math.pow(.95, numTicks);
 
         if(Math.abs(carouselVelocity) > .02){
