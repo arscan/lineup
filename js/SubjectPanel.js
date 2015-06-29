@@ -37,7 +37,7 @@ function createSubjectPanel(renderer, scale){
        "uniform vec3 cMaskColor;",
        "varying vec2 vUv;",
         "bool checkBlue(vec3 colorIn){",
-        "   return (colorIn.g > colorIn.r + colorIn.b);",
+        "   return (colorIn.g > colorIn.r + colorIn.b + .05);",
         "}",
         "void main()", 
         "{",
